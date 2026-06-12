@@ -1,0 +1,780 @@
+import React from "react";
+import "./Navbar.css";
+import navlogo from "./Assets/logo.png";
+
+function Navbar() {
+  return (
+    <>
+      {/* TOP BAR */}
+
+      <div className="top-bar">
+        <div className="header-container">
+          <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
+
+            {/* LEFT INFO */}
+
+            <div className="d-flex align-items-center flex-wrap gap-3">
+              <div className="info-item">
+                <i className="fa-solid fa-location-dot"></i>
+                <span>Pal Road, Jodhpur, Rajasthan</span>
+              </div>
+
+              <div className="vr d-none d-md-block"></div>
+
+              <div className="info-item d-none d-md-flex">
+                <i className="fa-solid fa-clock"></i>
+                <span>
+                  Mon–Sat 10am–3pm & 5:30pm–8:30pm
+                  &nbsp;|&nbsp;
+                  Sun 10am–3pm
+                </span>
+              </div>
+
+              <div className="vr d-none d-md-block"></div>
+
+              <div className="info-item">
+                <i className="fa-solid fa-phone"></i>
+                <a href="tel:+919829824356">
+                  +91 98298 24356
+                </a>
+              </div>
+            </div>
+
+            {/* RIGHT INFO */}
+
+            <div className="d-flex align-items-center gap-2">
+              <div className="info-item d-none d-lg-flex">
+                <i className="fa-solid fa-envelope"></i>
+                <a href="mailto:info@teethandgumscare.com">
+                  info@teethandgumscare.com
+                </a>
+              </div>
+
+              <div className="vr d-none d-lg-block"></div>
+
+              <div className="d-flex gap-2">
+                <a href="#!" className="soc-btn">
+                  <i className="fa-brands fa-facebook-f"></i>
+                </a>
+
+                <a href="#!" className="soc-btn">
+                  <i className="fa-brands fa-instagram"></i>
+                </a>
+
+                <a
+                  href="https://wa.me/919829824356"
+                  className="soc-btn"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <i className="fa-brands fa-whatsapp"></i>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      {/* NAVBAR */}
+
+      <nav className="navbar navbar-expand-lg main-navbar">
+        <div className="header-container">
+
+          {/* BRAND + TOGGLER ROW */}
+
+          <div className="d-flex align-items-center justify-content-between w-100">
+
+            <a className="navbar-brand m-0" href="/">
+              <div className="logo-icon">
+                <img
+                  src={navlogo}
+                  alt="Teeth & Gums Care"
+                  className="logo-img"
+                />
+              </div>
+
+              <div>
+                <div className="logo-name">
+                  Teeth &amp; Gums Care
+                </div>
+
+                <div className="logo-tagline">
+                  Dental Clinic · Jodhpur
+                </div>
+              </div>
+            </a>
+
+            <button
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#mainNav"
+              aria-controls="mainNav"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
+
+          </div>
+
+          {/* COLLAPSE */}
+
+          <div
+            className="collapse navbar-collapse justify-content-between"
+            id="mainNav"
+          >
+            {/* MENU */}
+
+            <ul className="navbar-nav mx-auto">
+
+              <li className="nav-item">
+                <a className="nav-link active" href="/">
+                  Home
+                </a>
+              </li>
+
+              <li className="nav-item">
+                <a className="nav-link" href="/about">
+                  About
+                </a>
+              </li>
+
+              <li className="nav-item dropdown">
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#!"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                >
+                  Services
+                </a>
+
+                <ul className="dropdown-menu">
+                  <li>
+                    <a className="dropdown-item" href="#!">
+                      Teeth Cleaning
+                    </a>
+                  </li>
+
+                  <li>
+                    <a className="dropdown-item" href="#!">
+                      Root Canal Treatment
+                    </a>
+                  </li>
+
+                  <li>
+                    <a className="dropdown-item" href="#!">
+                      Dental Implants
+                    </a>
+                  </li>
+
+                  <li>
+                    <a className="dropdown-item" href="#!">
+                      Teeth Whitening
+                    </a>
+                  </li>
+
+                  <li>
+                    <a className="dropdown-item" href="#!">
+                      Smile Design
+                    </a>
+                  </li>
+
+                  <li>
+                    <a className="dropdown-item" href="#!">
+                      Dental Veneers
+                    </a>
+                  </li>
+
+                  <li>
+                    <a className="dropdown-item" href="#!">
+                      Painless Extraction
+                    </a>
+                  </li>
+                </ul>
+              </li>
+
+              <li className="nav-item">
+                <a className="nav-link" href="/gallery">
+                  Gallery
+                </a>
+              </li>
+
+              <li className="nav-item">
+                <a className="nav-link" href="/contact">
+                  Contact
+                </a>
+              </li>
+
+            </ul>
+
+            {/* CTA BUTTONS */}
+
+            <div className="d-flex flex-column flex-lg-row gap-3 ms-lg-4">
+
+              <a
+                href="https://wa.me/919829824356"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-whatsapp"
+              >
+                <i className="fa-brands fa-whatsapp"></i>
+                WhatsApp
+              </a>
+
+              <a
+                href="/contact"
+                className="btn-book"
+              >
+                <i className="fa-solid fa-calendar-check"></i>
+                Book Appointment
+              </a>
+
+            </div>
+          </div>
+        </div>
+      </nav>
+    </>
+  );
+}
+
+export default Navbar;
+
+
+/* ======================================================
+   ROOT VARIABLES
+====================================================== */
+
+:root {
+  --clr-primary: #1a5fa8;
+  --clr-primary-dark: #0e4a8a;
+  --clr-primary-light: #e8f1fb;
+  --clr-topbar: #0e4a8a;
+  --clr-text: #1a2332;
+  --clr-muted: #5a6a7e;
+  --clr-border: #dce6f0;
+  --clr-whatsapp: #25d366;
+  --clr-whatsapp-h: #1db954;
+
+  --font-body: "DM Sans", sans-serif;
+  --font-display: "Playfair Display", serif;
+}
+
+/* ======================================================
+   CUSTOM CONTAINER
+====================================================== */
+
+.header-container {
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 0 70px;
+}
+
+/* ======================================================
+   TOP BAR
+====================================================== */
+
+.top-bar {
+  background: var(--clr-topbar);
+  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 12px 0;
+}
+
+.top-bar a {
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration: none;
+}
+
+.top-bar a:hover {
+  color: #fff;
+}
+
+.top-bar .info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.top-bar .info-item i {
+  font-size: 15px;
+}
+
+.top-bar .vr {
+  width: 1px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.top-bar .soc-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+
+  transition: all 0.3s ease;
+}
+
+.top-bar .soc-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ======================================================
+   NAVBAR
+====================================================== */
+
+.main-navbar {
+  background: #fff;
+  border-bottom: 1px solid var(--clr-border);
+  box-shadow: 0 4px 25px rgba(26, 95, 168, 0.08);
+
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+
+  padding: 12px 0;
+}
+
+.main-navbar .header-container {
+  min-height: 105px;
+}
+
+/* ======================================================
+   LOGO
+====================================================== */
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  margin-right: 80px;
+}
+
+.logo-icon {
+  width: 78px;
+  height: 78px;
+
+  border-radius: 14px;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  box-shadow: 0 4px 18px rgba(26, 95, 168, 0.15);
+}
+
+.logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.logo-name {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--clr-text);
+  line-height: 1.1;
+}
+
+.logo-tagline {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--clr-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+}
+
+/* ======================================================
+   MENU
+====================================================== */
+
+.navbar-nav {
+  gap: 22px !important;
+}
+
+.main-navbar .nav-link {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--clr-text);
+
+  padding: 10px 16px;
+
+  border-radius: 8px;
+
+  transition: all 0.25s ease;
+}
+
+.main-navbar .nav-link:hover {
+  background: var(--clr-primary-light);
+  color: var(--clr-primary);
+}
+
+.main-navbar .nav-link.active {
+  color: var(--clr-primary);
+  font-weight: 700;
+}
+
+/* ======================================================
+   DROPDOWN
+====================================================== */
+
+.main-navbar .dropdown-menu {
+  border: 1px solid var(--clr-border);
+  border-radius: 12px;
+  padding: 8px;
+
+  min-width: 250px;
+
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+}
+
+.main-navbar .dropdown-item {
+  padding: 10px 14px;
+  border-radius: 8px;
+
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.main-navbar .dropdown-item:hover {
+  background: var(--clr-primary-light);
+  color: var(--clr-primary);
+}
+
+/* ======================================================
+   CTA BUTTONS
+====================================================== */
+
+.btn-whatsapp,
+.btn-book {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  border-radius: 10px;
+
+  padding: 15px 28px;
+
+  transition: all 0.25s ease;
+
+  white-space: nowrap;
+}
+
+.btn-whatsapp {
+  background: var(--clr-whatsapp);
+  color: #fff !important;
+
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.25);
+}
+
+.btn-whatsapp:hover {
+  background: var(--clr-whatsapp-h);
+  transform: translateY(-2px);
+}
+
+.btn-book {
+  color: white !important;
+
+  background: linear-gradient(
+    135deg,
+    var(--clr-primary),
+    var(--clr-primary-dark)
+  );
+
+  box-shadow: 0 4px 18px rgba(26, 95, 168, 0.3);
+}
+
+.btn-book:hover {
+  transform: translateY(-2px);
+}
+
+/* ======================================================
+   TOGGLER
+====================================================== */
+
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+.navbar-toggler-icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width: 991px) {
+  .header-container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .logo-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .logo-name {
+    font-size: 24px;
+  }
+
+  .logo-tagline {
+    font-size: 11px;
+  }
+
+  .navbar-brand {
+    margin-right: 0;
+  }
+
+  .navbar-collapse {
+    margin-top: 15px;
+    border-top: 1px solid var(--clr-border);
+    padding-top: 15px;
+  }
+
+  .navbar-nav {
+    gap: 6px !important;
+  }
+
+  .btn-whatsapp,
+  .btn-book {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    font-size: 12px;
+  }
+
+  .top-bar .info-item {
+    white-space: normal;
+  }
+
+  .logo-name {
+    font-size: 20px;
+  }
+
+  .logo-tagline {
+    font-size: 10px;
+  }
+}
+
+/* ==========================================
+   MOBILE FIXES
+========================================== */
+
+@media (max-width: 991px) {
+
+  .main-navbar .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: auto;
+  }
+
+  .navbar-brand {
+    max-width: 80%;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .logo-name {
+    font-size: 18px;
+    line-height: 1.1;
+  }
+
+  .logo-tagline {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  .navbar-toggler {
+    margin-left: auto;
+    padding: 0;
+  }
+
+  .navbar-collapse {
+    width: 100%;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--clr-border);
+  }
+
+  .navbar-nav {
+    width: 100%;
+    align-items: flex-start !important;
+  }
+
+  .navbar-nav .nav-item {
+    width: 100%;
+  }
+
+  .navbar-nav .nav-link {
+    width: 100%;
+    text-align: left;
+    padding: 12px 0;
+  }
+
+  .btn-whatsapp,
+  .btn-book {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+
+  .header-container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .top-bar {
+    font-size: 11px;
+  }
+
+  .top-bar .info-item span {
+    font-size: 11px;
+  }
+
+  /* Hide long opening hours */
+  .top-bar .info-item.d-none.d-md-flex {
+    display: none !important;
+  }
+
+  .logo-name {
+    font-size: 16px;
+  }
+
+  .logo-tagline {
+    font-size: 9px;
+  }
+
+  .logo-icon {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ==========================================
+   DESKTOP LAYOUT FIX
+========================================== */
+
+@media (min-width: 992px) {
+  .main-navbar .navbar-collapse {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .navbar-nav {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* ==========================================
+   MOBILE FIX
+========================================== */
+
+@media (max-width: 991px) {
+  .main-navbar .header-container {
+    position: relative;
+  }
+
+  .navbar-brand {
+    max-width: calc(100% - 60px);
+  }
+
+  .navbar-toggler {
+    margin-left: auto;
+  }
+
+  .navbar-collapse {
+    width: 100%;
+    background: #fff;
+    margin-top: 15px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .navbar-nav {
+    width: 100%;
+    text-align: center;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 12px 0;
+  }
+
+  .navbar-collapse .btn-whatsapp,
+  .navbar-collapse .btn-book {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  .logo-name {
+    font-size: 20px;
+  }
+
+  .logo-tagline {
+    font-size: 10px;
+  }
+}
+
+/* Extra small phones */
+
+@media (max-width: 480px) {
+  .logo-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .logo-name {
+    font-size: 16px;
+  }
+
+  .logo-tagline {
+    font-size: 9px;
+  }
+
+  .top-bar {
+    padding: 8px 0;
+  }
+
+  .top-bar .info-item {
+    font-size: 11px;
+  }
+}

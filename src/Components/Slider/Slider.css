@@ -1,0 +1,300 @@
+/* ======================================================
+   HERO SLIDER
+====================================================== */
+.hero-slider {
+  position: relative;
+  width: 100%;
+  height: 88vh;
+  min-height: 520px;
+  max-height: 750px;
+  overflow: hidden;
+  background: #0a1628;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* ======================================================
+   SLIDE & IMAGE
+====================================================== */
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  /* zoom animation driven by JS inline style (scale) */
+  will-change: transform;
+  transition: opacity 0.7s ease, transform 6s ease;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(5, 20, 50, 0.82) 0%,
+    rgba(5, 20, 50, 0.55) 55%,
+    rgba(5, 20, 50, 0.12) 100%
+  );
+}
+
+/* ======================================================
+   TEXT CONTENT
+====================================================== */
+.hero-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 60px;        /* leave room for dots at bottom */
+  width: 55%;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 40px 40px 7%;
+  box-sizing: border-box;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #5dbbf5;
+  margin-bottom: 14px;
+  border-left: 3px solid #5dbbf5;
+  padding-left: 10px;
+}
+
+.hero-headline {
+  font-size: clamp(22px, 3.4vw, 48px);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 12px 0;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+.hero-subheadline {
+  font-size: clamp(13px, 1.6vw, 20px);
+  font-weight: 400;
+  line-height: 1.55;
+  margin: 0 0 22px 0;
+  color: rgba(255,255,255,0.85);
+}
+
+.hero-bullets {
+  list-style: none;
+  margin: 0 0 24px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hero-bullet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(12px, 1.3vw, 16px);
+  color: rgba(255,255,255,0.9);
+  font-weight: 500;
+}
+
+.hero-bullet-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5dbbf5;
+  flex-shrink: 0;
+}
+
+.hero-cta {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 12px 28px;
+  background: #1a73e8;
+  color: #fff !important;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 4px;
+  box-shadow: 0 4px 18px rgba(26,115,232,0.4);
+  transition: background 0.25s, transform 0.2s;
+  white-space: nowrap;
+}
+
+.hero-cta:hover {
+  background: #1558b0;
+  transform: translateY(-2px);
+}
+
+/* ======================================================
+   ARROWS — pushed to bottom on mobile so they don't
+   overlap the text block
+====================================================== */
+.hero-arrow {
+  position: absolute;
+  z-index: 20;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.5);
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s, border-color 0.2s;
+
+  /* Desktop: vertically centered */
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.hero-arrow:hover {
+  background: rgba(26,115,232,0.7);
+  border-color: #1a73e8;
+}
+
+.hero-arrow-prev { left: 16px; }
+.hero-arrow-next { right: 16px; }
+
+/* ======================================================
+   DOTS
+====================================================== */
+.hero-dots {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  gap: 10px;
+}
+
+.hero-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.7);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.25s, transform 0.2s;
+}
+
+.hero-dot.active {
+  background: #fff;
+  border-color: #fff;
+  transform: scale(1.25);
+}
+
+/* ======================================================
+   MOBILE
+====================================================== */
+@media (max-width: 768px) {
+
+  /* Taller slider so image isn't clipped */
+  .hero-slider {
+    height: auto;
+    min-height: 480px;
+    max-height: none;
+  }
+
+  /* Image fills full area, no clipping */
+  .hero-slide img {
+    object-position: center center;
+    /* Keep the zoom: JS applies scale via inline style */
+  }
+
+  /* Overlay stronger on mobile so text is always readable */
+  .hero-overlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(5, 20, 50, 0.30) 0%,
+      rgba(5, 20, 50, 0.75) 45%,
+      rgba(5, 20, 50, 0.90) 100%
+    );
+  }
+
+  /* Text: full width, sits at bottom of slider */
+  .hero-content {
+    width: 100%;
+    top: auto;
+    bottom: 70px;       /* above the dots */
+    left: 0;
+    right: 0;
+    padding: 0 20px 0 20px;
+    justify-content: flex-end;
+  }
+
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+
+  .hero-headline {
+    font-size: clamp(20px, 5.5vw, 32px);
+    margin-bottom: 8px;
+  }
+
+  .hero-subheadline {
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  .hero-bullets {
+    margin-bottom: 16px;
+    gap: 6px;
+  }
+
+  .hero-bullet {
+    font-size: 13px;
+  }
+
+  .hero-cta {
+    font-size: 13px;
+    padding: 10px 22px;
+  }
+
+  /* Arrows: move to bottom corners, above dots, away from text */
+  .hero-arrow {
+    top: auto;
+    bottom: 22px;
+    transform: none;
+    width: 36px;
+    height: 36px;
+  }
+
+  .hero-arrow-prev { left: 16px; }
+  .hero-arrow-next { right: 16px; }
+
+  /* Dots: center bottom */
+  .hero-dots {
+    bottom: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-slider {
+    min-height: 420px;
+  }
+
+  .hero-content {
+    bottom: 65px;
+    padding: 0 16px;
+  }
+}

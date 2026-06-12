@@ -1,0 +1,172 @@
+/* ===========================
+   FOOTER
+=========================== */
+
+
+.footer {
+  background: #0f172a;
+  color: #ffffff;
+  padding-top: 70px;
+}
+
+.footer-social a {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}
+
+.footer-logo {
+  color: white;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.footer-about {
+  color: #cbd5e1;
+  line-height: 1.8;
+}
+
+.footer h5 {
+  margin-bottom: 20px;
+  color: white;
+  font-weight: 600;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links li {
+  margin-bottom: 12px;
+}
+
+.footer-links a,
+.footer-links li {
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.footer-links a:hover {
+  color: #60a5fa;
+  padding-left: 6px;
+}
+
+.footer-contact p {
+  color: #cbd5e1;
+  margin-bottom: 15px;
+}
+
+.footer-contact i {
+  color: #60a5fa;
+  width: 25px;
+}
+
+.footer-social {
+  display: flex;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.footer-social a {
+  width: 42px;
+  height: 42px;
+  background: #1e293b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.footer-social a:hover {
+  background: #0d6efd;
+  transform: translateY(-3px);
+}
+
+.footer-divider {
+  margin-top: 30px;
+  border-color: rgba(255,255,255,0.1);
+}
+
+.footer-bottom {
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.footer-bottom p {
+  margin: 0;
+  color: #94a3b8;
+}
+
+@media (max-width: 768px) {
+
+  .footer-bottom {
+    text-align: center;
+    gap: 10px;
+    justify-content: center;
+  }
+
+}
+
+.footer-hours {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid #0d6efd;
+}
+
+.hours-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.hours-heading i {
+  color: #60a5fa;
+}
+
+.hours-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.hours-item span {
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.hours-item strong {
+  color: #ffffff;
+  text-align: right;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.footer-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.footer-highlights span {
+  color: #fff;
+  font-size: 14px;
+}
+
+.footer-highlights i {
+  color: #60a5fa;
+  margin-right: 5px;
+}

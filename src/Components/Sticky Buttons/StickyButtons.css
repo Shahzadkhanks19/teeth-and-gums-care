@@ -1,0 +1,83 @@
+.sticky-buttons {
+  position: fixed;
+  right: 22px;
+  bottom: 25px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sticky-btn {
+  width: 58px;
+  height: 58px;
+  border: none;
+  border-radius: 50%;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.sticky-btn span {
+  display: none;
+}
+
+/* Book Appointment */
+.sticky-book {
+  background: linear-gradient(
+    135deg,
+    #0d6efd,
+    #0b3c91
+  );
+  color: white;
+}
+
+.sticky-book:hover {
+  color: white;
+  transform: translateY(-5px) scale(1.05);
+}
+
+/* WhatsApp */
+.sticky-whatsapp {
+  background: #25d366;
+  color: white;
+}
+
+.sticky-whatsapp:hover {
+  color: white;
+  transform: translateY(-5px) scale(1.05);
+}
+
+/* Scroll To Top */
+.sticky-top-btn {
+  background: linear-gradient(
+    135deg,
+    #0d6efd,
+    #0b3c91
+  );
+  color: white;
+}
+
+.sticky-top-btn:hover {
+  color: white;
+  transform: translateY(-5px) scale(1.05);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .sticky-buttons {
+    right: 15px;
+    bottom: 15px;
+  }
+
+  .sticky-btn {
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
+  }
+}

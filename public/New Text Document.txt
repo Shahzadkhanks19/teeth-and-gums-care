@@ -1,0 +1,430 @@
+:root{
+  --primary:#0d4d92;
+  --primary-dark:#083b70;
+  --green:#25d366;
+}
+
+/* CONTAINER */
+
+.header-container{
+  max-width:1400px;
+  margin:auto;
+  padding:0 20px;
+}
+
+/* TOP BAR */
+
+.top-bar{
+  background:var(--primary);
+  color:#fff;
+  padding:12px 0;
+  font-size:14px;
+}
+
+.topbar-wrapper{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.topbar-left,
+.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.info-item{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.info-item a{
+  color:white;
+  text-decoration:none;
+}
+
+.soc-btn{
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  background:rgba(255,255,255,.15);
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  color:white;
+  text-decoration:none;
+}
+
+/* NAVBAR */
+
+.main-navbar{
+  background:white;
+  border-bottom:1px solid #eee;
+  padding:18px 0;
+  box-shadow:0 4px 20px rgba(0,0,0,.05);
+}
+
+/* LOGO */
+
+.navbar-brand{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  text-decoration:none;
+}
+
+.logo-icon{
+  width:70px;
+  height:70px;
+}
+
+.logo-img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+.logo-name{
+  font-size:22px;
+  font-weight:700;
+  color:#1d2430;
+}
+
+.logo-tagline{
+  font-size:12px;
+  letter-spacing:2px;
+  color:#777;
+  text-transform:uppercase;
+}
+
+/* DESKTOP MENU */
+
+.navbar-collapse{
+  justify-content:space-between;
+}
+
+.navbar-nav{
+  gap:10px;
+}
+
+.nav-link{
+  font-weight:600;
+  color:#222 !important;
+}
+
+.nav-link.active{
+  color:var(--primary)!important;
+}
+
+/* BUTTONS */
+
+.nav-buttons{
+  display:flex;
+  gap:15px;
+}
+
+.btn-whatsapp,
+.btn-book{
+  text-decoration:none;
+  padding:14px 22px;
+  border-radius:10px;
+  color:white;
+  font-weight:600;
+
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.btn-whatsapp{
+  background:var(--green);
+}
+
+.btn-book{
+  background:var(--primary);
+}
+
+/* MOBILE */
+
+@media(max-width:991px){
+
+  .hide-mobile{
+    display:none;
+  }
+
+  .navbar-brand{
+    max-width:80%;
+  }
+
+  .logo-icon{
+    width:55px;
+    height:55px;
+  }
+
+  .logo-name{
+    font-size:18px;
+  }
+
+  .logo-tagline{
+    font-size:9px;
+  }
+
+  .navbar-toggler{
+    border:none;
+    font-size:30px;
+  }
+
+  .navbar-toggler:focus{
+    box-shadow:none;
+  }
+
+  .navbar-collapse{
+    margin-top:20px;
+    border-top:1px solid #eee;
+    padding-top:20px;
+  }
+
+  .navbar-nav{
+    text-align:center;
+  }
+
+  .nav-link{
+    padding:12px 0 !important;
+  }
+
+  .nav-buttons{
+    flex-direction:column;
+    margin-top:20px;
+  }
+
+  .btn-whatsapp,
+  .btn-book{
+    width:100%;
+    justify-content:center;
+  }
+}
+
+@media(max-width:480px){
+
+  .top-bar{
+    font-size:11px;
+  }
+
+  .soc-btn{
+    width:30px;
+    height:30px;
+  }
+
+  .logo-name{
+    font-size:16px;
+  }
+}
+
+
+
+
+import React from "react";
+import "./Navbar.css";
+import navlogo from "./Assets/logo.png";
+
+function Navbar() {
+  return (
+    <>
+      {/* TOP BAR */}
+
+      <div className="top-bar">
+        <div className="header-container">
+          <div className="topbar-wrapper">
+
+            <div className="topbar-left">
+              <div className="info-item hide-mobile">
+                <i className="fa-solid fa-location-dot"></i>
+                <span>Pal Road, Jodhpur</span>
+              </div>
+
+              <div className="info-item">
+                <i className="fa-solid fa-phone"></i>
+                <a href="tel:+919829824356">
+                  +91 98298 24356
+                </a>
+              </div>
+            </div>
+
+            <div className="topbar-right">
+              <a href="#!" className="soc-btn">
+                <i className="fa-brands fa-facebook-f"></i>
+              </a>
+
+              <a href="#!" className="soc-btn">
+                <i className="fa-brands fa-instagram"></i>
+              </a>
+
+              <a
+                href="https://wa.me/919829824356"
+                className="soc-btn"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <i className="fa-brands fa-whatsapp"></i>
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      {/* MAIN NAVBAR */}
+
+      <nav className="navbar navbar-expand-lg main-navbar">
+
+        <div className="header-container">
+
+          {/* LOGO */}
+
+          <a className="navbar-brand" href="/">
+            <div className="logo-icon">
+              <img
+                src={navlogo}
+                alt="Teeth & Gums Care"
+                className="logo-img"
+              />
+            </div>
+
+            <div>
+              <div className="logo-name">
+                Teeth & Gums Care
+              </div>
+
+              <div className="logo-tagline">
+                Dental Clinic · Jodhpur
+              </div>
+            </div>
+          </a>
+
+          {/* TOGGLER */}
+
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNav"
+          >
+            <i className="fa-solid fa-bars"></i>
+          </button>
+
+          {/* MENU */}
+
+          <div
+            className="collapse navbar-collapse"
+            id="mainNav"
+          >
+
+            <ul className="navbar-nav mx-auto">
+
+              <li className="nav-item">
+                <a className="nav-link active" href="/">
+                  Home
+                </a>
+              </li>
+
+              <li className="nav-item">
+                <a className="nav-link" href="/about">
+                  About
+                </a>
+              </li>
+
+              <li className="nav-item dropdown">
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#!"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                >
+                  Services
+                </a>
+
+                <ul className="dropdown-menu">
+                  <li>
+                    <a className="dropdown-item" href="#!">
+                      Teeth Cleaning
+                    </a>
+                  </li>
+
+                  <li>
+                    <a className="dropdown-item" href="#!">
+                      Root Canal Treatment
+                    </a>
+                  </li>
+
+                  <li>
+                    <a className="dropdown-item" href="#!">
+                      Dental Implants
+                    </a>
+                  </li>
+
+                  <li>
+                    <a className="dropdown-item" href="#!">
+                      Teeth Whitening
+                    </a>
+                  </li>
+
+                  <li>
+                    <a className="dropdown-item" href="#!">
+                      Smile Design
+                    </a>
+                  </li>
+                </ul>
+              </li>
+
+              <li className="nav-item">
+                <a className="nav-link" href="/gallery">
+                  Gallery
+                </a>
+              </li>
+
+              <li className="nav-item">
+                <a className="nav-link" href="/contact">
+                  Contact
+                </a>
+              </li>
+
+            </ul>
+
+            {/* BUTTONS */}
+
+            <div className="nav-buttons">
+
+              <a
+                href="https://wa.me/919829824356"
+                className="btn-whatsapp"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <i className="fa-brands fa-whatsapp"></i>
+                WhatsApp
+              </a>
+
+              <a
+                href="/contact"
+                className="btn-book"
+              >
+                <i className="fa-solid fa-calendar-check"></i>
+                Book Appointment
+              </a>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </nav>
+    </>
+  );
+}
+
+export default Navbar;
