@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Contact.css";
+import API_BASE_URL from "../../api/api";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ function Contact() {
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -54,21 +56,44 @@ function Contact() {
     setErrors({ ...errors, [name]: "" });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
-    alert("Message submitted successfully!");
+    try {
+      setLoading(true);
 
-    setFormData({
-      name: "",
-      phone: "",
-      email: "",
-      message: "",
-    });
+      const response = await fetch(`${API_BASE_URL}/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    setErrors({});
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Failed to submit message");
+        return;
+      }
+
+      alert("Message submitted successfully!");
+
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        message: "",
+      });
+
+      setErrors({});
+    } catch (error) {
+      alert("Server error. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -205,9 +230,13 @@ function Contact() {
                     )}
                   </div>
 
-                  <button type="submit" className="contact-submit-btn">
+                  <button
+                    type="submit"
+                    className="contact-submit-btn"
+                    disabled={loading}
+                  >
                     <i className="fa-solid fa-paper-plane me-2"></i>
-                    Send Message
+                    {loading ? "Sending..." : "Send Message"}
                   </button>
                 </form>
               </div>

@@ -1,8 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./BookAppointment.css";
+import API_BASE_URL from "../../api/api";
 
 function BookAppointment() {
   const [selectedSlot, setSelectedSlot] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [slotLoading, setSlotLoading] = useState(false);
+
+  const [unavailableSlots, setUnavailableSlots] = useState([]);
+  const [isFullDayBlocked, setIsFullDayBlocked] = useState(false);
+
+  const [blockedReason, setBlockedReason] = useState("");
+  const [blockedSlotReasons, setBlockedSlotReasons] = useState({});
+
+  const [customAlert, setCustomAlert] = useState({
+    show: false,
+    type: "",
+    message: "",
+  });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -42,6 +57,74 @@ function BookAppointment() {
     ? new Date(formData.date).getDay() === 0
     : false;
 
+  const showAlert = (type, message) => {
+    setCustomAlert({
+      show: true,
+      type,
+      message,
+    });
+
+    setTimeout(() => {
+      setCustomAlert({
+        show: false,
+        type: "",
+        message: "",
+      });
+    }, 3500);
+  };
+
+  const fetchUnavailableSlots = async (date) => {
+    if (!date) return;
+
+    try {
+      setSlotLoading(true);
+
+      const response = await fetch(
+        `${API_BASE_URL}/blocked-slots/unavailable?date=${date}`,
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setUnavailableSlots(data.unavailableSlots || []);
+        setIsFullDayBlocked(data.isFullDayBlocked || false);
+
+        const fullDayBlock = data.blockedSlots?.find(
+          (item) => item.type === "day",
+        );
+
+        setBlockedReason(fullDayBlock?.reason || "");
+
+        const reasonsMap = {};
+
+        data.blockedSlots
+          ?.filter((item) => item.type === "slot")
+          .forEach((item) => {
+            reasonsMap[item.timeSlot] = item.reason;
+          });
+
+        setBlockedSlotReasons(reasonsMap);
+      }
+    } catch (error) {
+      showAlert("error", "Failed to load available slots");
+    } finally {
+      setSlotLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (formData.date) {
+      fetchUnavailableSlots(formData.date);
+    } else {
+      setUnavailableSlots([]);
+      setIsFullDayBlocked(false);
+    }
+  }, [formData.date]);
+
+  const isSlotUnavailable = (slot) => {
+    return isFullDayBlocked || unavailableSlots.includes(slot);
+  };
+
   const validateForm = () => {
     const newErrors = {};
     const indianPhoneRegex = /^[6-9]\d{9}$/;
@@ -74,8 +157,18 @@ function BookAppointment() {
       newErrors.doctor = "Please select preferred doctor";
     }
 
-    if (!selectedSlot) {
+    if (isFullDayBlocked) {
+      if (isFullDayBlocked) {
+        newErrors.slot = "Appointments are closed for this date.";
+      } else if (!selectedSlot) {
+        newErrors.slot = "Please select a time slot";
+      } else if (isSlotUnavailable(selectedSlot)) {
+        newErrors.slot = "This slot is already booked";
+      }
+    } else if (!selectedSlot) {
       newErrors.slot = "Please select a time slot";
+    } else if (isSlotUnavailable(selectedSlot)) {
+      newErrors.slot = "This slot is already booked";
     }
 
     setErrors(newErrors);
@@ -94,34 +187,115 @@ function BookAppointment() {
 
     if (name === "date") {
       setSelectedSlot("");
+      setUnavailableSlots([]);
+      setIsFullDayBlocked(false);
     }
 
     setErrors({ ...errors, [name]: "" });
   };
 
-  const handleSubmit = (e) => {
+  const handleSlotClick = (slot) => {
+    if (isSlotUnavailable(slot)) return;
+
+    setSelectedSlot(slot);
+    setErrors({ ...errors, slot: "" });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
-    alert("Appointment request submitted successfully!");
+    const appointmentData = {
+      ...formData,
+      timeSlot: selectedSlot,
+    };
 
-    setFormData({
-      name: "",
-      phone: "",
-      email: "",
-      service: "",
-      date: "",
-      doctor: "",
-      message: "",
-    });
+    try {
+      setLoading(true);
 
-    setSelectedSlot("");
-    setErrors({});
+      const response = await fetch(`${API_BASE_URL}/appointments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(appointmentData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        showAlert("error", data.message || "Failed to book appointment");
+        return;
+      }
+
+      showAlert("success", "Appointment request submitted successfully!");
+
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        service: "",
+        date: "",
+        doctor: "",
+        message: "",
+      });
+
+      setSelectedSlot("");
+      setUnavailableSlots([]);
+      setIsFullDayBlocked(false);
+      setErrors({});
+    } catch (error) {
+      showAlert("error", "Server error. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderSlotButton = (slot) => {
+    const unavailable = isSlotUnavailable(slot);
+
+    return (
+      <button
+        type="button"
+        key={slot}
+        disabled={unavailable || slotLoading}
+        className={
+          unavailable
+            ? "slot-btn booked-slot"
+            : selectedSlot === slot
+              ? "slot-btn active-slot"
+              : "slot-btn"
+        }
+        onClick={() => handleSlotClick(slot)}
+      >
+        <span>{slot}</span>
+        {unavailable && (
+          <small>
+            {blockedSlotReasons[slot]
+              ? `Blocked: ${blockedSlotReasons[slot]}`
+              : "Booked"}
+          </small>
+        )}
+      </button>
+    );
   };
 
   return (
     <>
+      {customAlert.show && (
+        <div className={`appointment-alert ${customAlert.type}`}>
+          <i
+            className={
+              customAlert.type === "success"
+                ? "fa-solid fa-circle-check"
+                : "fa-solid fa-circle-xmark"
+            }
+          ></i>
+          <span>{customAlert.message}</span>
+        </div>
+      )}
+
       <section className="appointment-hero">
         <div className="container text-center">
           <span>Teeth & Gums Care</span>
@@ -254,6 +428,9 @@ function BookAppointment() {
                     </div>
 
                     <div className="col-md-6 mb-3">
+                      <label className="appointment-field-label">
+                        Select Appointment Date
+                      </label>
                       <input
                         type="date"
                         name="date"
@@ -282,26 +459,36 @@ function BookAppointment() {
                     </div>
 
                     <div className="col-12 mb-4">
-                      <h5 className="slot-heading">Morning Slots</h5>
+                      <div className="slot-status-row">
+                        <h5 className="slot-heading">Morning Slots</h5>
+
+                        {slotLoading && (
+                          <span className="slot-loading">
+                            Checking availability...
+                          </span>
+                        )}
+                      </div>
+
+                      {isFullDayBlocked && (
+                        <div className="clinic-closed-note">
+                          <i className="fa-solid fa-circle-exclamation"></i>
+
+                          <div>
+                            <strong>
+                              Appointments are closed for this date.
+                            </strong>
+
+                            {blockedReason && (
+                              <div style={{ marginTop: "6px" }}>
+                                Reason: {blockedReason}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
 
                       <div className="slot-wrapper">
-                        {morningSlots.map((slot) => (
-                          <button
-                            type="button"
-                            key={slot}
-                            className={
-                              selectedSlot === slot
-                                ? "slot-btn active-slot"
-                                : "slot-btn"
-                            }
-                            onClick={() => {
-                              setSelectedSlot(slot);
-                              setErrors({ ...errors, slot: "" });
-                            }}
-                          >
-                            {slot}
-                          </button>
-                        ))}
+                        {morningSlots.map((slot) => renderSlotButton(slot))}
                       </div>
 
                       {!isSunday && (
@@ -309,23 +496,7 @@ function BookAppointment() {
                           <h5 className="slot-heading mt-4">Evening Slots</h5>
 
                           <div className="slot-wrapper">
-                            {eveningSlots.map((slot) => (
-                              <button
-                                type="button"
-                                key={slot}
-                                className={
-                                  selectedSlot === slot
-                                    ? "slot-btn active-slot"
-                                    : "slot-btn"
-                                }
-                                onClick={() => {
-                                  setSelectedSlot(slot);
-                                  setErrors({ ...errors, slot: "" });
-                                }}
-                              >
-                                {slot}
-                              </button>
-                            ))}
+                            {eveningSlots.map((slot) => renderSlotButton(slot))}
                           </div>
                         </>
                       )}
@@ -352,9 +523,15 @@ function BookAppointment() {
                     </div>
 
                     <div className="col-12">
-                      <button type="submit" className="appointment-submit">
+                      <button
+                        type="submit"
+                        className="appointment-submit"
+                        disabled={loading}
+                      >
                         <i className="fa-solid fa-paper-plane me-2"></i>
-                        Submit Appointment Request
+                        {loading
+                          ? "Submitting..."
+                          : "Submit Appointment Request"}
                       </button>
                     </div>
                   </div>

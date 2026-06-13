@@ -18,3 +18,8 @@ body {
     padding-top: 115px;
   }
 }
+
+/* Remove body padding on admin pages */
+body.admin-page {
+  padding-top: 0 !important;
+}

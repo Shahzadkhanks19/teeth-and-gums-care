@@ -185,3 +185,89 @@
   margin-top: 15px;
   margin-bottom: 0;
 }
+
+.appointment-alert {
+  position: fixed;
+  top: 25px;
+  right: 25px;
+  z-index: 99999;
+  padding: 16px 22px;
+  color: white;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.18);
+}
+
+.appointment-alert.success {
+  background: #16a34a;
+}
+
+.appointment-alert.error {
+  background: #dc2626;
+}
+
+.appointment-field-label {
+  display: block;
+  color: #0d47a1;
+  font-weight: 800;
+  margin-bottom: 7px;
+  font-size: 14px;
+}
+
+.slot-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.slot-loading {
+  color: #0d6efd;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.booked-slot {
+  background: #f1f5f9 !important;
+  color: #94a3b8 !important;
+  border-color: #e2e8f0 !important;
+  cursor: not-allowed !important;
+  position: relative;
+}
+
+.booked-slot span {
+  display: block;
+  text-decoration: line-through;
+}
+
+.booked-slot small {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  color: #dc2626;
+  margin-top: 2px;
+}
+
+.clinic-closed-note {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 13px 16px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 576px) {
+  .appointment-alert {
+    left: 15px;
+    right: 15px;
+    top: 15px;
+    justify-content: center;
+    text-align: center;
+  }
+}
