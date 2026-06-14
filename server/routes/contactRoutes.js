@@ -3,6 +3,7 @@ const {
   createContact,
   getContacts,
   updateContactStatus,
+  deleteContact,
 } = require("../controllers/contactController");
 
 const protectAdmin = require("../middleware/authMiddleware");
@@ -14,5 +15,7 @@ router.post("/", createContact);
 router.get("/", protectAdmin, getContacts);
 
 router.patch("/:id/status", protectAdmin, updateContactStatus);
+
+router.delete("/:id", protectAdmin, deleteContact);
 
 module.exports = router;

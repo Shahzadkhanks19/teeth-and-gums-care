@@ -22,6 +22,8 @@ import BookAppointment from "./Pages/Book Appointment/BookAppointment";
 import Gallery from "./Pages/Gallery/Gallery";
 import AdminLogin from "./Pages/AdminLogin/AdminLogin";
 import AdminDashboard from "./Pages/AdminDashboard/AdminDashboard";
+import ForgotPassword from "./Pages/AdminLogin/ForgotPassword";
+import ResetPassword from "./Pages/AdminLogin/ResetPassword";
 
 function AppLayout() {
   const location = useLocation();
@@ -70,6 +72,16 @@ function AppLayout() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+  path="/admin/forgot-password"
+  element={<ForgotPassword />}
+/>
+
+<Route
+  path="/admin/reset-password/:token"
+  element={<ResetPassword />}
+/>
         </Routes>
       </div>
 

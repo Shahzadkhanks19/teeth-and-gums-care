@@ -1,6 +1,23 @@
 const Appointment = require("../models/Appointment");
 const BlockedSlot = require("../models/BlockedSlots");
 
+const convertSlotToDateTime = (date, timeSlot) => {
+  if (!date || !timeSlot) return null;
+
+  const [time, modifier] = timeSlot.split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
+
+  if (modifier === "PM" && hours !== 12) hours += 12;
+  if (modifier === "AM" && hours === 12) hours = 0;
+
+  return new Date(
+    `${date}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+      2,
+      "0"
+    )}:00`
+  );
+};
+
 const getUnavailableSlots = async (req, res) => {
   try {
     const { date } = req.query;
@@ -19,7 +36,7 @@ const getUnavailableSlots = async (req, res) => {
 
     const blockedSlots = await BlockedSlot.find({ date });
 
-    const isFullDayBlocked = blockedSlots.some((item) => item.type === "day");
+    const fullDayBlock = blockedSlots.find((item) => item.type === "day");
 
     const unavailableSlots = [
       ...appointments.map((item) => item.timeSlot),
@@ -30,7 +47,8 @@ const getUnavailableSlots = async (req, res) => {
 
     res.json({
       success: true,
-      isFullDayBlocked,
+      isFullDayBlocked: Boolean(fullDayBlock),
+      fullDayReason: fullDayBlock?.reason || "",
       unavailableSlots: [...new Set(unavailableSlots)],
       blockedSlots,
     });
@@ -53,11 +71,31 @@ const blockSlotOrDay = async (req, res) => {
       });
     }
 
-    if (type === "slot" && !timeSlot) {
+    const today = new Date().toISOString().split("T")[0];
+
+    if (date < today) {
       return res.status(400).json({
         success: false,
-        message: "Time slot is required",
+        message: "You cannot block a past date.",
       });
+    }
+
+    if (type === "slot") {
+      if (!timeSlot) {
+        return res.status(400).json({
+          success: false,
+          message: "Time slot is required",
+        });
+      }
+
+      const slotDateTime = convertSlotToDateTime(date, timeSlot);
+
+      if (slotDateTime <= new Date()) {
+        return res.status(400).json({
+          success: false,
+          message: "You cannot block a past time slot.",
+        });
+      }
     }
 
     const existingBlock = await BlockedSlot.findOne({

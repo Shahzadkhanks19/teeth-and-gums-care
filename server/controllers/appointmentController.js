@@ -287,6 +287,27 @@ const rescheduleAppointment = async (req, res) => {
       });
     }
 
+    const convertSlotToDateTime = (date, slot) => {
+  const [time, modifier] = slot.split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
+
+  if (modifier === "PM" && hours !== 12) hours += 12;
+  if (modifier === "AM" && hours === 12) hours = 0;
+
+  return new Date(
+    `${date}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`
+  );
+};
+
+const appointmentDateTime = convertSlotToDateTime(date, timeSlot);
+
+if (appointmentDateTime <= new Date()) {
+  return res.status(400).json({
+    success: false,
+    message: "You cannot book appointment for a past date or time.",
+  });
+}
+
     const currentAppointment = await Appointment.findById(req.params.id);
 
     if (!currentAppointment) {
@@ -360,9 +381,35 @@ const rescheduleAppointment = async (req, res) => {
   }
 };
 
+const deleteAppointment = async (req, res) => {
+  try {
+    const appointment = await Appointment.findByIdAndDelete(
+      req.params.id
+    );
+
+    if (!appointment) {
+      return res.status(404).json({
+        success: false,
+        message: "Appointment not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Appointment deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete appointment",
+    });
+  }
+};
+
 module.exports = {
   createAppointment,
   getAppointments,
   updateAppointmentStatus,
   rescheduleAppointment,
+  deleteAppointment,
 };

@@ -9,7 +9,6 @@ function BookAppointment() {
 
   const [unavailableSlots, setUnavailableSlots] = useState([]);
   const [isFullDayBlocked, setIsFullDayBlocked] = useState(false);
-
   const [blockedReason, setBlockedReason] = useState("");
   const [blockedSlotReasons, setBlockedSlotReasons] = useState({});
 
@@ -57,6 +56,36 @@ function BookAppointment() {
     ? new Date(formData.date).getDay() === 0
     : false;
 
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  };
+
+  const convertSlotToDateTime = (date, slot) => {
+    if (!date || !slot) return null;
+
+    const [time, modifier] = slot.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+
+    if (modifier === "PM" && hours !== 12) hours += 12;
+    if (modifier === "AM" && hours === 12) hours = 0;
+
+    return new Date(
+      `${date}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+        2,
+        "0"
+      )}:00`
+    );
+  };
+
+  const isPastSlot = (slot) => {
+    if (!formData.date) return false;
+
+    const slotDateTime = convertSlotToDateTime(formData.date, slot);
+
+    return slotDateTime && slotDateTime <= new Date();
+  };
+
   const showAlert = (type, message) => {
     setCustomAlert({
       show: true,
@@ -80,7 +109,7 @@ function BookAppointment() {
       setSlotLoading(true);
 
       const response = await fetch(
-        `${API_BASE_URL}/blocked-slots/unavailable?date=${date}`,
+        `${API_BASE_URL}/blocked-slots/unavailable?date=${date}`
       );
 
       const data = await response.json();
@@ -90,10 +119,10 @@ function BookAppointment() {
         setIsFullDayBlocked(data.isFullDayBlocked || false);
 
         const fullDayBlock = data.blockedSlots?.find(
-          (item) => item.type === "day",
+          (item) => item.type === "day"
         );
 
-        setBlockedReason(fullDayBlock?.reason || "");
+        setBlockedReason(data.fullDayReason || fullDayBlock?.reason || "");
 
         const reasonsMap = {};
 
@@ -118,11 +147,18 @@ function BookAppointment() {
     } else {
       setUnavailableSlots([]);
       setIsFullDayBlocked(false);
+      setBlockedReason("");
+      setBlockedSlotReasons({});
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.date]);
 
   const isSlotUnavailable = (slot) => {
-    return isFullDayBlocked || unavailableSlots.includes(slot);
+    return (
+      isFullDayBlocked ||
+      unavailableSlots.includes(slot) ||
+      isPastSlot(slot)
+    );
   };
 
   const validateForm = () => {
@@ -158,17 +194,11 @@ function BookAppointment() {
     }
 
     if (isFullDayBlocked) {
-      if (isFullDayBlocked) {
-        newErrors.slot = "Appointments are closed for this date.";
-      } else if (!selectedSlot) {
-        newErrors.slot = "Please select a time slot";
-      } else if (isSlotUnavailable(selectedSlot)) {
-        newErrors.slot = "This slot is already booked";
-      }
+      newErrors.slot = "Appointments are closed for this date.";
     } else if (!selectedSlot) {
       newErrors.slot = "Please select a time slot";
     } else if (isSlotUnavailable(selectedSlot)) {
-      newErrors.slot = "This slot is already booked";
+      newErrors.slot = "This slot is already booked, blocked, or passed";
     }
 
     setErrors(newErrors);
@@ -189,6 +219,8 @@ function BookAppointment() {
       setSelectedSlot("");
       setUnavailableSlots([]);
       setIsFullDayBlocked(false);
+      setBlockedReason("");
+      setBlockedSlotReasons({});
     }
 
     setErrors({ ...errors, [name]: "" });
@@ -244,6 +276,8 @@ function BookAppointment() {
       setSelectedSlot("");
       setUnavailableSlots([]);
       setIsFullDayBlocked(false);
+      setBlockedReason("");
+      setBlockedSlotReasons({});
       setErrors({});
     } catch (error) {
       showAlert("error", "Server error. Please try again later.");
@@ -254,6 +288,7 @@ function BookAppointment() {
 
   const renderSlotButton = (slot) => {
     const unavailable = isSlotUnavailable(slot);
+    const blockedReasonForSlot = blockedSlotReasons[slot];
 
     return (
       <button
@@ -264,16 +299,19 @@ function BookAppointment() {
           unavailable
             ? "slot-btn booked-slot"
             : selectedSlot === slot
-              ? "slot-btn active-slot"
-              : "slot-btn"
+            ? "slot-btn active-slot"
+            : "slot-btn"
         }
         onClick={() => handleSlotClick(slot)}
       >
         <span>{slot}</span>
+
         {unavailable && (
           <small>
-            {blockedSlotReasons[slot]
-              ? `Blocked: ${blockedSlotReasons[slot]}`
+            {isPastSlot(slot)
+              ? "Time passed"
+              : blockedReasonForSlot
+              ? `Blocked: ${blockedReasonForSlot}`
               : "Booked"}
           </small>
         )}
@@ -434,6 +472,7 @@ function BookAppointment() {
                       <input
                         type="date"
                         name="date"
+                        min={getTodayDate()}
                         value={formData.date}
                         onChange={handleChange}
                       />
@@ -496,7 +535,9 @@ function BookAppointment() {
                           <h5 className="slot-heading mt-4">Evening Slots</h5>
 
                           <div className="slot-wrapper">
-                            {eveningSlots.map((slot) => renderSlotButton(slot))}
+                            {eveningSlots.map((slot) =>
+                              renderSlotButton(slot)
+                            )}
                           </div>
                         </>
                       )}

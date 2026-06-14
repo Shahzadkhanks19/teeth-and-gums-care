@@ -13,12 +13,36 @@ function Contact() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
+  const [toast, setToast] = useState({
+    show: false,
+    type: "",
+    message: "",
+  });
+
+  const showToast = (type, message) => {
+    setToast({
+      show: true,
+      type,
+      message,
+    });
+
+    setTimeout(() => {
+      setToast({
+        show: false,
+        type: "",
+        message: "",
+      });
+    }, 3500);
+  };
+
   const validateForm = () => {
     const newErrors = {};
     const indianPhoneRegex = /^[6-9]\d{9}$/;
 
     if (!formData.name.trim()) {
       newErrors.name = "Full name is required";
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = "Name should be at least 2 characters";
     }
 
     if (!formData.phone.trim()) {
@@ -69,17 +93,22 @@ function Contact() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          phone: formData.phone,
+          email: formData.email.trim(),
+          message: formData.message.trim(),
+        }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.message || "Failed to submit message");
+        showToast("error", data.message || "Failed to submit message");
         return;
       }
 
-      alert("Message submitted successfully!");
+      showToast("success", "Message submitted successfully!");
 
       setFormData({
         name: "",
@@ -90,7 +119,7 @@ function Contact() {
 
       setErrors({});
     } catch (error) {
-      alert("Server error. Please try again later.");
+      showToast("error", "Server error. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -98,7 +127,19 @@ function Contact() {
 
   return (
     <>
-      {/* Page Banner */}
+      {toast.show && (
+        <div className={`contact-toast ${toast.type}`}>
+          <i
+            className={
+              toast.type === "success"
+                ? "fa-solid fa-circle-check"
+                : "fa-solid fa-circle-xmark"
+            }
+          ></i>
+          <span>{toast.message}</span>
+        </div>
+      )}
+
       <section className="contact-hero">
         <div className="container text-center">
           <h1>Contact Us</h1>
@@ -106,11 +147,9 @@ function Contact() {
         </div>
       </section>
 
-      {/* Contact Section */}
       <section className="contact-section">
         <div className="container">
           <div className="row g-4">
-            {/* Contact Information */}
             <div className="col-lg-5">
               <div className="contact-info-card">
                 <h2>Get In Touch</h2>
@@ -157,7 +196,6 @@ function Contact() {
               </div>
             </div>
 
-            {/* Contact Form */}
             <div className="col-lg-7">
               <div className="contact-form-card">
                 <div className="response-badge">
@@ -245,7 +283,6 @@ function Contact() {
         </div>
       </section>
 
-      {/* Why Visit Us */}
       <section className="why-visit">
         <div className="container">
           <div className="text-center mb-5">
@@ -285,7 +322,6 @@ function Contact() {
         </div>
       </section>
 
-      {/* Map */}
       <section className="map-section">
         <iframe
           title="Teeth & Gums Care Location"
@@ -296,7 +332,6 @@ function Contact() {
         />
       </section>
 
-      {/* CTA */}
       <section className="contact-cta">
         <div className="container text-center">
           <h2>Ready To Book Your Appointment?</h2>

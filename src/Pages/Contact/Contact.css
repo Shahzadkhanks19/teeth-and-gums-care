@@ -253,11 +253,43 @@
 
 .cta-call:hover {
   background: #f8f9fa;
-  color: #0d6efd !important;
+  color: #0d6efd !important; 
   opacity: 0.95;
 }
 
 .cta-whatsapp:hover {
   background: #1ebe5d;
   color: white !important;
+}
+
+.contact-toast {
+  position: fixed;
+  top: 25px;
+  right: 25px;
+  z-index: 99999;
+  padding: 16px 22px;
+  color: white;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.18);
+}
+
+.contact-toast.success {
+  background: #16a34a;
+}
+
+.contact-toast.error {
+  background: #dc2626;
+}
+
+@media (max-width: 576px) {
+  .contact-toast {
+    left: 15px;
+    right: 15px;
+    top: 15px;
+    justify-content: center;
+    text-align: center;
+  }
 }

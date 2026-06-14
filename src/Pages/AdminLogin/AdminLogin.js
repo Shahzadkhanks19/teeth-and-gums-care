@@ -96,13 +96,19 @@ function AdminLogin() {
             />
           </div>
 
+          <div className="forgot-password-link">
+  <a href="/admin/forgot-password">
+    Forgot Password?
+  </a>
+</div>
+
           <button type="submit" disabled={loading}>
             {loading ? "Logging in..." : "Login to Dashboard"}
           </button>
         </form>
       </div>
     </section>
-  );
+  ); 
 }
 
 export default AdminLogin;
