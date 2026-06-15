@@ -1,5 +1,6 @@
 const Appointment = require("../models/Appointment");
 const BlockedSlot = require("../models/BlockedSlots");
+const logActivity = require("../utils/logActivity");
 
 const convertSlotToDateTime = (date, timeSlot) => {
   if (!date || !timeSlot) return null;
@@ -118,6 +119,14 @@ const blockSlotOrDay = async (req, res) => {
       reason: reason || "",
     });
 
+    await logActivity(
+      "Availability Blocked",
+      type === "day"
+        ? `Full day blocked on ${date}`
+        : `Slot blocked on ${date} at ${timeSlot}`,
+      "availability"
+    );
+
     res.status(201).json({
       success: true,
       message: "Blocked successfully",
@@ -157,6 +166,14 @@ const deleteBlockedSlot = async (req, res) => {
         message: "Blocked slot/day not found",
       });
     }
+
+    await logActivity(
+      "Availability Restored",
+      block.type === "day"
+        ? `Full day restored on ${block.date}`
+        : `Slot restored on ${block.date} at ${block.timeSlot}`,
+      "availability"
+    );
 
     res.json({
       success: true,

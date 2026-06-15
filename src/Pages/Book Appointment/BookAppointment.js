@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./BookAppointment.css";
 import API_BASE_URL from "../../api/api";
+import toast from "react-hot-toast";
 
 function BookAppointment() {
   const [selectedSlot, setSelectedSlot] = useState("");
@@ -11,12 +12,6 @@ function BookAppointment() {
   const [isFullDayBlocked, setIsFullDayBlocked] = useState(false);
   const [blockedReason, setBlockedReason] = useState("");
   const [blockedSlotReasons, setBlockedSlotReasons] = useState({});
-
-  const [customAlert, setCustomAlert] = useState({
-    show: false,
-    type: "",
-    message: "",
-  });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -86,22 +81,6 @@ function BookAppointment() {
     return slotDateTime && slotDateTime <= new Date();
   };
 
-  const showAlert = (type, message) => {
-    setCustomAlert({
-      show: true,
-      type,
-      message,
-    });
-
-    setTimeout(() => {
-      setCustomAlert({
-        show: false,
-        type: "",
-        message: "",
-      });
-    }, 3500);
-  };
-
   const fetchUnavailableSlots = async (date) => {
     if (!date) return;
 
@@ -135,7 +114,7 @@ function BookAppointment() {
         setBlockedSlotReasons(reasonsMap);
       }
     } catch (error) {
-      showAlert("error", "Failed to load available slots");
+      toast.error("Failed to load available slots");
     } finally {
       setSlotLoading(false);
     }
@@ -155,9 +134,7 @@ function BookAppointment() {
 
   const isSlotUnavailable = (slot) => {
     return (
-      isFullDayBlocked ||
-      unavailableSlots.includes(slot) ||
-      isPastSlot(slot)
+      isFullDayBlocked || unavailableSlots.includes(slot) || isPastSlot(slot)
     );
   };
 
@@ -236,7 +213,10 @@ function BookAppointment() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      toast.error("Please complete all required fields");
+      return;
+    }
 
     const appointmentData = {
       ...formData,
@@ -257,11 +237,11 @@ function BookAppointment() {
       const data = await response.json();
 
       if (!response.ok) {
-        showAlert("error", data.message || "Failed to book appointment");
+        toast.error(data.message || "Failed to book appointment");
         return;
       }
 
-      showAlert("success", "Appointment request submitted successfully!");
+      toast.success("Appointment request submitted successfully!");
 
       setFormData({
         name: "",
@@ -280,7 +260,7 @@ function BookAppointment() {
       setBlockedSlotReasons({});
       setErrors({});
     } catch (error) {
-      showAlert("error", "Server error. Please try again later.");
+      toast.error("Server error. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -321,19 +301,6 @@ function BookAppointment() {
 
   return (
     <>
-      {customAlert.show && (
-        <div className={`appointment-alert ${customAlert.type}`}>
-          <i
-            className={
-              customAlert.type === "success"
-                ? "fa-solid fa-circle-check"
-                : "fa-solid fa-circle-xmark"
-            }
-          ></i>
-          <span>{customAlert.message}</span>
-        </div>
-      )}
-
       <section className="appointment-hero">
         <div className="container text-center">
           <span>Teeth & Gums Care</span>

@@ -1,8 +1,10 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Admin = require("../models/Admin");
 const crypto = require("crypto");
+
+const Admin = require("../models/Admin");
 const sendEmail = require("../utils/sendEmail");
+const logActivity = require("../utils/logActivity");
 
 const generateToken = (adminId) => {
   return jwt.sign({ id: adminId }, process.env.JWT_SECRET, {
@@ -48,6 +50,8 @@ const loginAdmin = async (req, res) => {
         message: "Invalid email or password",
       });
     }
+
+    await logActivity("Admin Login", admin.email, "admin");
 
     res.json({
       success: true,
@@ -114,6 +118,8 @@ const changeAdminPassword = async (req, res) => {
     admin.password = hashedPassword;
     await admin.save();
 
+    await logActivity("Password Changed", admin.email, "admin");
+
     res.json({
       success: true,
       message: "Password changed successfully",
@@ -163,6 +169,8 @@ const forgotAdminPassword = async (req, res) => {
         <p>This link will expire in 15 minutes.</p>
       `,
     });
+
+    await logActivity("Forgot Password Requested", admin.email, "admin");
 
     res.json({
       success: true,
@@ -223,6 +231,8 @@ const resetAdminPassword = async (req, res) => {
     admin.resetPasswordExpire = undefined;
 
     await admin.save();
+
+    await logActivity("Password Reset Successfully", admin.email, "admin");
 
     res.json({
       success: true,

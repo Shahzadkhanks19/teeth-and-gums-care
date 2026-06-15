@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API_BASE_URL from "../../api/api";
+import toast from "react-hot-toast";
 import "./AdminLogin.css";
 
 function AdminLogin() {
@@ -11,7 +12,6 @@ function AdminLogin() {
     password: "",
   });
 
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -19,15 +19,13 @@ function AdminLogin() {
       ...formData,
       [e.target.name]: e.target.value,
     });
-
-    setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
-      setError("Please enter email and password");
+      toast.error("Please enter email and password");
       return;
     }
 
@@ -45,16 +43,22 @@ function AdminLogin() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.message || "Invalid login credentials");
+        toast.error(
+          data.message || "Invalid login credentials"
+        );
         return;
       }
 
       localStorage.setItem("adminToken", data.token);
       localStorage.setItem("adminEmail", data.admin.email);
 
-      navigate("/admin/dashboard");
+      toast.success("Login successful");
+
+      setTimeout(() => {
+        navigate("/admin/dashboard");
+      }, 500);
     } catch (error) {
-      setError("Server error. Please try again.");
+      toast.error("Server error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -71,11 +75,10 @@ function AdminLogin() {
 
         <p>Access Teeth & Gums Care dashboard securely.</p>
 
-        {error && <div className="admin-login-error">{error}</div>}
-
         <form onSubmit={handleSubmit}>
           <div className="admin-input-group">
             <i className="fa-solid fa-envelope"></i>
+
             <input
               type="email"
               name="email"
@@ -87,6 +90,7 @@ function AdminLogin() {
 
           <div className="admin-input-group">
             <i className="fa-solid fa-lock"></i>
+
             <input
               type="password"
               name="password"
@@ -97,18 +101,20 @@ function AdminLogin() {
           </div>
 
           <div className="forgot-password-link">
-  <a href="/admin/forgot-password">
-    Forgot Password?
-  </a>
-</div>
+            <a href="/admin/forgot-password">
+              Forgot Password?
+            </a>
+          </div>
 
           <button type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login to Dashboard"}
+            {loading
+              ? "Logging in..."
+              : "Login to Dashboard"}
           </button>
         </form>
       </div>
     </section>
-  ); 
+  );
 }
 
 export default AdminLogin;

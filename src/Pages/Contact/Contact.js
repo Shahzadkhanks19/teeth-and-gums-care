@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Contact.css";
 import API_BASE_URL from "../../api/api";
+import toast from "react-hot-toast";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -12,28 +13,6 @@ function Contact() {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-
-  const [toast, setToast] = useState({
-    show: false,
-    type: "",
-    message: "",
-  });
-
-  const showToast = (type, message) => {
-    setToast({
-      show: true,
-      type,
-      message,
-    });
-
-    setTimeout(() => {
-      setToast({
-        show: false,
-        type: "",
-        message: "",
-      });
-    }, 3500);
-  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -83,7 +62,10 @@ function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      toast.error("Please fix the highlighted fields");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -104,11 +86,11 @@ function Contact() {
       const data = await response.json();
 
       if (!response.ok) {
-        showToast("error", data.message || "Failed to submit message");
+        toast.error(data.message || "Failed to submit message");
         return;
       }
 
-      showToast("success", "Message submitted successfully!");
+      toast.success("Thank you! Your message has been sent successfully.");
 
       setFormData({
         name: "",
@@ -119,7 +101,7 @@ function Contact() {
 
       setErrors({});
     } catch (error) {
-      showToast("error", "Server error. Please try again later.");
+      toast.error("Server error. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -127,19 +109,6 @@ function Contact() {
 
   return (
     <>
-      {toast.show && (
-        <div className={`contact-toast ${toast.type}`}>
-          <i
-            className={
-              toast.type === "success"
-                ? "fa-solid fa-circle-check"
-                : "fa-solid fa-circle-xmark"
-            }
-          ></i>
-          <span>{toast.message}</span>
-        </div>
-      )}
-
       <section className="contact-hero">
         <div className="container text-center">
           <h1>Contact Us</h1>

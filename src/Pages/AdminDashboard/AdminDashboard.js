@@ -17,16 +17,20 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
+import { io } from "socket.io-client";
+import toast from "react-hot-toast";
+
+const SOCKET_URL = API_BASE_URL.replace("/api", "");
 
 function AdminDashboard() {
   const navigate = useNavigate();
 
   const [blockedSlotsForDate, setBlockedSlotsForDate] = useState([]);
-
   const [activeTab, setActiveTab] = useState("dashboard");
   const [appointments, setAppointments] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [blockedSlots, setBlockedSlots] = useState([]);
+  const [activityLogs, setActivityLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -38,8 +42,6 @@ function AdminDashboard() {
   const [viewAppointmentModal, setViewAppointmentModal] = useState(null);
   const [viewMessageModal, setViewMessageModal] = useState(null);
 
-  const [message, setMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const [cancelReason, setCancelReason] = useState("");
 
   const [rescheduleData, setRescheduleData] = useState({
@@ -91,16 +93,6 @@ function AdminDashboard() {
     "08:00 PM",
   ];
 
-  const showMessage = (text) => {
-    setMessage(text);
-    setTimeout(() => setMessage(""), 3000);
-  };
-
-  const showError = (text) => {
-    setErrorMessage(text);
-    setTimeout(() => setErrorMessage(""), 3000);
-  };
-
   const getTodayDate = () => {
     const today = new Date();
     return today.toISOString().split("T")[0];
@@ -118,30 +110,44 @@ function AdminDashboard() {
     return new Date(
       `${date}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(
         2,
-        "0",
-      )}:00`,
+        "0"
+      )}:00`
     );
+  };
+
+  const playNotificationSound = () => {
+    const audio = new Audio("/notification.mp3");
+    audio.volume = 0.8;
+
+    audio.play().catch(() => {
+      console.log("Notification sound blocked by browser");
+    });
   };
 
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
 
-      const [appointmentsRes, contactsRes, blockedRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/appointments`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${API_BASE_URL}/contact`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${API_BASE_URL}/blocked-slots`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      ]);
+      const [appointmentsRes, contactsRes, blockedRes, activityLogsRes] =
+        await Promise.all([
+          fetch(`${API_BASE_URL}/appointments`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${API_BASE_URL}/contact`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${API_BASE_URL}/blocked-slots`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${API_BASE_URL}/activity-logs`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
 
       const appointmentsData = await appointmentsRes.json();
       const contactsData = await contactsRes.json();
       const blockedData = await blockedRes.json();
+      const activityLogsData = await activityLogsRes.json();
 
       if (appointmentsData.success) {
         setAppointments(appointmentsData.appointments);
@@ -154,8 +160,12 @@ function AdminDashboard() {
       if (blockedData.success) {
         setBlockedSlots(blockedData.blockedSlots);
       }
+
+      if (activityLogsData.success) {
+        setActivityLogs(activityLogsData.logs);
+      }
     } catch (error) {
-      showError("Failed to load dashboard data");
+      toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
@@ -174,7 +184,7 @@ function AdminDashboard() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       const data = await response.json();
@@ -189,12 +199,56 @@ function AdminDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
+
+    const socket = io(SOCKET_URL);
+
+    socket.on("connect", () => {
+      console.log("Connected to real-time server");
+    });
+
+    socket.on("newAppointment", () => {
+      playNotificationSound();
+      toast.success("🔔 New appointment received");
+      fetchDashboardData();
+    });
+
+    socket.on("appointmentUpdated", () => {
+      fetchDashboardData();
+    });
+
+    socket.on("appointmentDeleted", () => {
+      fetchDashboardData();
+    });
+
+    socket.on("newContactMessage", () => {
+      playNotificationSound();
+      toast.success("📩 New contact message received");
+      fetchDashboardData();
+    });
+
+    socket.on("contactUpdated", () => {
+      fetchDashboardData();
+    });
+
+    socket.on("contactDeleted", () => {
+      fetchDashboardData();
+    });
+
+    socket.on("activityLogUpdated", () => {
+      fetchDashboardData();
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
     localStorage.removeItem("adminEmail");
+    toast.success("Logged out successfully");
     navigate("/admin/login");
   };
 
@@ -214,22 +268,22 @@ function AdminDashboard() {
             status,
             cancelReason: reason,
           }),
-        },
+        }
       );
 
       const data = await response.json();
 
       if (!response.ok) {
-        showError(data.message || "Failed to update appointment");
+        toast.error(data.message || "Failed to update appointment");
         return;
       }
 
-      showMessage(`Appointment ${status} successfully`);
+      toast.success(`Appointment ${status} successfully`);
       setCancelModal(null);
       setCancelReason("");
       fetchDashboardData();
     } catch (error) {
-      showError("Server error. Please try again.");
+      toast.error("Server error. Please try again.");
     } finally {
       setActionLoading(false);
     }
@@ -237,7 +291,7 @@ function AdminDashboard() {
 
   const rescheduleAppointment = async (id) => {
     if (!rescheduleData.date || !rescheduleData.timeSlot) {
-      showError("Please enter new date and time slot");
+      toast.error("Please select new date and time slot");
       return;
     }
 
@@ -257,17 +311,17 @@ function AdminDashboard() {
             timeSlot: rescheduleData.timeSlot,
             rescheduleReason: rescheduleData.reason,
           }),
-        },
+        }
       );
 
       const data = await response.json();
 
       if (!response.ok) {
-        showError(data.message || "Failed to reschedule appointment");
+        toast.error(data.message || "Failed to reschedule appointment");
         return;
       }
 
-      showMessage("Appointment rescheduled successfully");
+      toast.success("Appointment rescheduled successfully");
 
       setRescheduleModal(null);
       setRescheduleData({
@@ -278,7 +332,7 @@ function AdminDashboard() {
 
       fetchDashboardData();
     } catch (error) {
-      showError("Server error. Please try again.");
+      toast.error("Server error. Please try again.");
     } finally {
       setActionLoading(false);
     }
@@ -298,15 +352,15 @@ function AdminDashboard() {
       const data = await response.json();
 
       if (!response.ok) {
-        showError(data.message || "Failed to delete appointment");
+        toast.error(data.message || "Failed to delete appointment");
         return;
       }
 
-      showMessage("Appointment deleted successfully");
+      toast.success("Appointment deleted successfully");
       setDeleteModal(null);
       fetchDashboardData();
     } catch (error) {
-      showError("Server error");
+      toast.error("Server error");
     } finally {
       setActionLoading(false);
     }
@@ -316,12 +370,12 @@ function AdminDashboard() {
     e.preventDefault();
 
     if (!availabilityData.date) {
-      showError("Please select a date");
+      toast.error("Please select a date");
       return;
     }
 
     if (availabilityData.type === "slot" && !availabilityData.timeSlot) {
-      showError("Please select a time slot");
+      toast.error("Please select a time slot");
       return;
     }
 
@@ -340,11 +394,11 @@ function AdminDashboard() {
       const data = await response.json();
 
       if (!response.ok) {
-        showError(data.message || "Failed to block availability");
+        toast.error(data.message || "Failed to block availability");
         return;
       }
 
-      showMessage("Availability blocked successfully");
+      toast.success("Availability blocked successfully");
 
       setAvailabilityData({
         date: "",
@@ -356,7 +410,7 @@ function AdminDashboard() {
       setBlockedSlotsForDate([]);
       fetchDashboardData();
     } catch (error) {
-      showError("Server error. Please try again.");
+      toast.error("Server error. Please try again.");
     } finally {
       setActionLoading(false);
     }
@@ -376,18 +430,18 @@ function AdminDashboard() {
       const data = await response.json();
 
       if (!response.ok) {
-        showError(data.message || "Failed to remove block");
+        toast.error(data.message || "Failed to remove block");
         return;
       }
 
-      showMessage("Block removed successfully");
+      toast.success("Block removed successfully");
       fetchDashboardData();
 
       if (availabilityData.date) {
         fetchBlockedSlotsForDate(availabilityData.date);
       }
     } catch (error) {
-      showError("Server error. Please try again.");
+      toast.error("Server error. Please try again.");
     } finally {
       setActionLoading(false);
     }
@@ -409,14 +463,14 @@ function AdminDashboard() {
       const data = await response.json();
 
       if (!response.ok) {
-        showError(data.message || "Failed to update message");
+        toast.error(data.message || "Failed to update message");
         return;
       }
 
-      showMessage(`Message marked as ${status}`);
+      toast.success(`Message marked as ${status}`);
       fetchDashboardData();
     } catch (error) {
-      showError("Server error");
+      toast.error("Server error");
     } finally {
       setActionLoading(false);
     }
@@ -436,15 +490,15 @@ function AdminDashboard() {
       const data = await response.json();
 
       if (!response.ok) {
-        showError(data.message || "Failed to delete message");
+        toast.error(data.message || "Failed to delete message");
         return;
       }
 
-      showMessage("Contact message deleted successfully");
+      toast.success("Contact message deleted successfully");
       setDeleteMessageModal(null);
       fetchDashboardData();
     } catch (error) {
-      showError("Server error");
+      toast.error("Server error");
     } finally {
       setActionLoading(false);
     }
@@ -453,20 +507,20 @@ function AdminDashboard() {
   const totalAppointments = appointments.length;
 
   const pendingAppointments = appointments.filter(
-    (item) => item.status === "pending",
+    (item) => item.status === "pending"
   ).length;
 
   const confirmedAppointments = appointments.filter(
-    (item) => item.status === "confirmed",
+    (item) => item.status === "confirmed"
   ).length;
 
   const cancelledAppointments = appointments.filter(
-    (item) => item.status === "cancelled",
+    (item) => item.status === "cancelled"
   ).length;
 
   const uniquePatients = [
     ...new Set(
-      appointments.map((item) => item.phone?.trim() || item.email?.trim()),
+      appointments.map((item) => item.phone?.trim() || item.email?.trim())
     ),
   ].filter(Boolean);
 
@@ -487,20 +541,20 @@ function AdminDashboard() {
   const returningPatients = totalAppointments - totalPatients;
 
   const drSunitaCount = appointments.filter(
-    (item) => item.doctor === "Dr. Sunita Khetani",
+    (item) => item.doctor === "Dr. Sunita Khetani"
   ).length;
 
   const drVishalCount = appointments.filter(
-    (item) => item.doctor === "Dr. Vishal Khetani",
+    (item) => item.doctor === "Dr. Vishal Khetani"
   ).length;
 
   const noPreferenceCount = appointments.filter(
-    (item) => item.doctor === "No Preference",
+    (item) => item.doctor === "No Preference"
   ).length;
 
   const filteredAppointments = appointments
     .filter((item) =>
-      appointmentFilter === "all" ? true : item.status === appointmentFilter,
+      appointmentFilter === "all" ? true : item.status === appointmentFilter
     )
     .filter((item) => {
       const search = searchTerm.toLowerCase();
@@ -517,7 +571,7 @@ function AdminDashboard() {
 
   const filteredContacts = contacts
     .filter((item) =>
-      messageFilter === "all" ? true : item.status === messageFilter,
+      messageFilter === "all" ? true : item.status === messageFilter
     )
     .filter((item) => {
       const search = messageSearchTerm.toLowerCase();
@@ -533,7 +587,7 @@ function AdminDashboard() {
 
   const exportCSV = () => {
     if (filteredAppointments.length === 0) {
-      showError("No appointments to export");
+      toast.error("No appointments to export");
       return;
     }
 
@@ -553,7 +607,7 @@ function AdminDashboard() {
       ...rows.map((row) =>
         Object.values(row)
           .map((value) => `"${String(value || "").replace(/"/g, '""')}"`)
-          .join(","),
+          .join(",")
       ),
     ].join("\n");
 
@@ -565,11 +619,13 @@ function AdminDashboard() {
     link.href = URL.createObjectURL(blob);
     link.download = "appointments.csv";
     link.click();
+
+    toast.success("Appointments CSV exported");
   };
 
   const exportExcel = () => {
     if (filteredAppointments.length === 0) {
-      showError("No appointments to export");
+      toast.error("No appointments to export");
       return;
     }
 
@@ -589,11 +645,13 @@ function AdminDashboard() {
 
     XLSX.utils.book_append_sheet(workbook, worksheet, "Appointments");
     XLSX.writeFile(workbook, "appointments.xlsx");
+
+    toast.success("Appointments Excel exported");
   };
 
   const exportPDF = () => {
     if (filteredAppointments.length === 0) {
-      showError("No appointments to export");
+      toast.error("No appointments to export");
       return;
     }
 
@@ -616,11 +674,12 @@ function AdminDashboard() {
     });
 
     doc.save("appointments.pdf");
+    toast.success("Appointments PDF exported");
   };
 
   const exportContactsCSV = () => {
     if (filteredContacts.length === 0) {
-      showError("No contact messages to export");
+      toast.error("No contact messages to export");
       return;
     }
 
@@ -637,7 +696,7 @@ function AdminDashboard() {
       ...rows.map((row) =>
         Object.values(row)
           .map((value) => `"${String(value || "").replace(/"/g, '""')}"`)
-          .join(","),
+          .join(",")
       ),
     ].join("\n");
 
@@ -649,11 +708,13 @@ function AdminDashboard() {
     link.href = URL.createObjectURL(blob);
     link.download = "contact-messages.csv";
     link.click();
+
+    toast.success("Contact messages CSV exported");
   };
 
   const exportContactsExcel = () => {
     if (filteredContacts.length === 0) {
-      showError("No contact messages to export");
+      toast.error("No contact messages to export");
       return;
     }
 
@@ -670,11 +731,13 @@ function AdminDashboard() {
 
     XLSX.utils.book_append_sheet(workbook, worksheet, "Contact Messages");
     XLSX.writeFile(workbook, "contact-messages.xlsx");
+
+    toast.success("Contact messages Excel exported");
   };
 
   const exportContactsPDF = () => {
     if (filteredContacts.length === 0) {
-      showError("No contact messages to export");
+      toast.error("No contact messages to export");
       return;
     }
 
@@ -695,6 +758,7 @@ function AdminDashboard() {
     });
 
     doc.save("contact-messages.pdf");
+    toast.success("Contact messages PDF exported");
   };
 
   const isAvailabilitySunday = availabilityData.date
@@ -711,7 +775,7 @@ function AdminDashboard() {
   };
 
   const availableAdminSlotsFiltered = availableAdminSlots.filter(
-    (slot) => !blockedSlotsForDate.includes(slot) && !isAdminPastSlot(slot),
+    (slot) => !blockedSlotsForDate.includes(slot) && !isAdminPastSlot(slot)
   );
 
   const statusChartData = [
@@ -768,11 +832,11 @@ function AdminDashboard() {
       const data = await response.json();
 
       if (!response.ok) {
-        showError(data.message);
+        toast.error(data.message || "Failed to change password");
         return;
       }
 
-      showMessage("Password changed successfully");
+      toast.success("Password changed successfully");
 
       setPasswordData({
         currentPassword: "",
@@ -780,7 +844,7 @@ function AdminDashboard() {
         confirmPassword: "",
       });
     } catch (error) {
-      showError("Failed to change password");
+      toast.error("Failed to change password");
     } finally {
       setActionLoading(false);
     }
@@ -788,9 +852,6 @@ function AdminDashboard() {
 
   return (
     <div className="admin-dashboard">
-      {message && <div className="admin-toast success">{message}</div>}
-      {errorMessage && <div className="admin-toast error">{errorMessage}</div>}
-
       <aside className="admin-sidebar">
         <div className="admin-logo">
           <i className="fa-solid fa-tooth"></i>
@@ -827,6 +888,14 @@ function AdminDashboard() {
           </button>
 
           <button
+            className={activeTab === "activity" ? "active" : ""}
+            onClick={() => setActiveTab("activity")}
+          >
+            <i className="fa-solid fa-clock-rotate-left"></i>
+            Activity Logs
+          </button>
+
+          <button
             className={activeTab === "availability" ? "active" : ""}
             onClick={() => setActiveTab("availability")}
           >
@@ -853,7 +922,9 @@ function AdminDashboard() {
               {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
             </span>
             <i
-              className={`fa-solid fa-chevron-${mobileMenuOpen ? "up" : "down"}`}
+              className={`fa-solid fa-chevron-${
+                mobileMenuOpen ? "up" : "down"
+              }`}
             ></i>
           </button>
 
@@ -894,6 +965,17 @@ function AdminDashboard() {
             </button>
 
             <button
+              className={activeTab === "activity" ? "active" : ""}
+              onClick={() => {
+                setActiveTab("activity");
+                setMobileMenuOpen(false);
+              }}
+            >
+              <i className="fa-solid fa-clock-rotate-left"></i>
+              Activity Logs
+            </button>
+
+            <button
               className={activeTab === "availability" ? "active" : ""}
               onClick={() => {
                 setActiveTab("availability");
@@ -906,7 +988,10 @@ function AdminDashboard() {
 
             <button
               className={activeTab === "settings" ? "active" : ""}
-              onClick={() => setActiveTab("settings")}
+              onClick={() => {
+                setActiveTab("settings");
+                setMobileMenuOpen(false);
+              }}
             >
               <i className="fa-solid fa-gear"></i>
               Settings
@@ -1162,6 +1247,7 @@ function AdminDashboard() {
                               >
                                 View
                               </button>
+
                               {item.status === "pending" && (
                                 <button
                                   className="confirm-btn"
@@ -1169,7 +1255,7 @@ function AdminDashboard() {
                                   onClick={() =>
                                     updateAppointmentStatus(
                                       item._id,
-                                      "confirmed",
+                                      "confirmed"
                                     )
                                   }
                                 >
@@ -1183,7 +1269,6 @@ function AdminDashboard() {
                                   disabled={actionLoading}
                                   onClick={() => {
                                     setRescheduleModal(item);
-
                                     setRescheduleData({
                                       date: item.date,
                                       timeSlot: item.timeSlot,
@@ -1294,6 +1379,7 @@ function AdminDashboard() {
                               >
                                 View
                               </button>
+
                               {item.status === "new" && (
                                 <button
                                   className="confirm-btn"
@@ -1326,6 +1412,47 @@ function AdminDashboard() {
                           </td>
                         </tr>
                       ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            )}
+
+            {activeTab === "activity" && (
+              <section className="admin-panel-card">
+                <h2>Activity Logs</h2>
+
+                <div className="admin-table-wrapper">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Action</th>
+                        <th>Details</th>
+                        <th>Type</th>
+                        <th>Date & Time</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {activityLogs.map((log) => (
+                        <tr key={log._id}>
+                          <td>{log.action}</td>
+
+                          <td>{log.details}</td>
+
+                          <td>
+                            <span className="status-badge">{log.type}</span>
+                          </td>
+
+                          <td>{new Date(log.createdAt).toLocaleString()}</td>
+                        </tr>
+                      ))}
+
+                      {activityLogs.length === 0 && (
+                        <tr>
+                          <td colSpan="4">No activity logs found</td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -1469,52 +1596,52 @@ function AdminDashboard() {
             )}
 
             {activeTab === "settings" && (
-  <section className="admin-panel-card">
-    <h2>Change Password</h2>
+              <section className="admin-panel-card">
+                <h2>Change Password</h2>
 
-    <form className="password-form" onSubmit={changePassword}>
-      <input
-        type="password"
-        placeholder="Current Password"
-        value={passwordData.currentPassword}
-        onChange={(e) =>
-          setPasswordData({
-            ...passwordData,
-            currentPassword: e.target.value,
-          })
-        }
-      />
+                <form className="password-form" onSubmit={changePassword}>
+                  <input
+                    type="password"
+                    placeholder="Current Password"
+                    value={passwordData.currentPassword}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        currentPassword: e.target.value,
+                      })
+                    }
+                  />
 
-      <input
-        type="password"
-        placeholder="New Password"
-        value={passwordData.newPassword}
-        onChange={(e) =>
-          setPasswordData({
-            ...passwordData,
-            newPassword: e.target.value,
-          })
-        }
-      />
+                  <input
+                    type="password"
+                    placeholder="New Password"
+                    value={passwordData.newPassword}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        newPassword: e.target.value,
+                      })
+                    }
+                  />
 
-      <input
-        type="password"
-        placeholder="Confirm New Password"
-        value={passwordData.confirmPassword}
-        onChange={(e) =>
-          setPasswordData({
-            ...passwordData,
-            confirmPassword: e.target.value,
-          })
-        }
-      />
+                  <input
+                    type="password"
+                    placeholder="Confirm New Password"
+                    value={passwordData.confirmPassword}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        confirmPassword: e.target.value,
+                      })
+                    }
+                  />
 
-      <button type="submit" disabled={actionLoading}>
-        {actionLoading ? "Updating..." : "Update Password"}
-      </button>
-    </form>
-  </section>
-)}
+                  <button type="submit" disabled={actionLoading}>
+                    {actionLoading ? "Updating..." : "Update Password"}
+                  </button>
+                </form>
+              </section>
+            )}
           </>
         )}
       </main>
@@ -1552,7 +1679,7 @@ function AdminDashboard() {
                   updateAppointmentStatus(
                     cancelModal._id,
                     "cancelled",
-                    cancelReason,
+                    cancelReason
                   )
                 }
               >
@@ -1597,7 +1724,7 @@ function AdminDashboard() {
                     !(
                       convertSlotToDateTime(rescheduleData.date, slot) <=
                       new Date()
-                    ),
+                    )
                 )
                 .map((slot) => (
                   <button
@@ -1629,13 +1756,14 @@ function AdminDashboard() {
                     !(
                       convertSlotToDateTime(rescheduleData.date, slot) <=
                       new Date()
-                    ),
+                    )
                 ).length === 0 && (
                   <p className="no-slots-text">
                     No available slots for this date.
                   </p>
                 )}
             </div>
+
             <label>Reason</label>
 
             <textarea
@@ -1732,6 +1860,7 @@ function AdminDashboard() {
           </div>
         </div>
       )}
+
       {viewAppointmentModal && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">

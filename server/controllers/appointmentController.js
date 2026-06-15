@@ -1,6 +1,8 @@
 const Appointment = require("../models/Appointment");
 const BlockedSlot = require("../models/BlockedSlots");
 const sendEmail = require("../utils/sendEmail");
+const { getIO } = require("../utils/socket");
+const logActivity = require("../utils/logActivity");
 
 const validateAppointmentData = ({
   name,
@@ -29,7 +31,28 @@ const validateAppointmentData = ({
   return null;
 };
 
-const checkSlotUnavailable = async (date, timeSlot, excludeAppointmentId = null) => {
+const convertSlotToDateTime = (date, slot) => {
+  if (!date || !slot) return null;
+
+  const [time, modifier] = slot.split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
+
+  if (modifier === "PM" && hours !== 12) hours += 12;
+  if (modifier === "AM" && hours === 12) hours = 0;
+
+  return new Date(
+    `${date}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+      2,
+      "0"
+    )}:00`
+  );
+};
+
+const checkSlotUnavailable = async (
+  date,
+  timeSlot,
+  excludeAppointmentId = null
+) => {
   const appointmentQuery = {
     date,
     timeSlot,
@@ -98,6 +121,15 @@ const createAppointment = async (req, res) => {
       });
     }
 
+    const appointmentDateTime = convertSlotToDateTime(date, timeSlot);
+
+    if (!appointmentDateTime || appointmentDateTime <= new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot book appointment for a past date or time.",
+      });
+    }
+
     const slotError = await checkSlotUnavailable(date, timeSlot);
 
     if (slotError) {
@@ -163,6 +195,14 @@ const createAppointment = async (req, res) => {
       `,
     });
 
+    getIO().emit("newAppointment", appointment);
+
+    await logActivity(
+      "New Appointment",
+      `${appointment.name} booked ${appointment.service} on ${appointment.date} at ${appointment.timeSlot}`,
+      "appointment"
+    );
+
     res.status(201).json({
       success: true,
       message: "Appointment booked successfully",
@@ -195,6 +235,15 @@ const getAppointments = async (req, res) => {
 const updateAppointmentStatus = async (req, res) => {
   try {
     const { status, cancelReason } = req.body;
+
+    const allowedStatuses = ["pending", "confirmed", "cancelled", "rescheduled"];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid appointment status",
+      });
+    }
 
     const appointment = await Appointment.findByIdAndUpdate(
       req.params.id,
@@ -235,6 +284,12 @@ const updateAppointmentStatus = async (req, res) => {
           <p>Regards,<br/>Teeth & Gums Care</p>
         `,
       });
+
+      await logActivity(
+        "Appointment Confirmed",
+        `${appointment.name} - ${appointment.date} ${appointment.timeSlot}`,
+        "appointment"
+      );
     }
 
     if (status === "cancelled") {
@@ -261,7 +316,15 @@ const updateAppointmentStatus = async (req, res) => {
           <p>Regards,<br/>Teeth & Gums Care</p>
         `,
       });
+
+      await logActivity(
+        "Appointment Cancelled",
+        `${appointment.name} - ${appointment.date} ${appointment.timeSlot}`,
+        "appointment"
+      );
     }
+
+    getIO().emit("appointmentUpdated", appointment);
 
     res.json({
       success: true,
@@ -287,26 +350,14 @@ const rescheduleAppointment = async (req, res) => {
       });
     }
 
-    const convertSlotToDateTime = (date, slot) => {
-  const [time, modifier] = slot.split(" ");
-  let [hours, minutes] = time.split(":").map(Number);
+    const appointmentDateTime = convertSlotToDateTime(date, timeSlot);
 
-  if (modifier === "PM" && hours !== 12) hours += 12;
-  if (modifier === "AM" && hours === 12) hours = 0;
-
-  return new Date(
-    `${date}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`
-  );
-};
-
-const appointmentDateTime = convertSlotToDateTime(date, timeSlot);
-
-if (appointmentDateTime <= new Date()) {
-  return res.status(400).json({
-    success: false,
-    message: "You cannot book appointment for a past date or time.",
-  });
-}
+    if (!appointmentDateTime || appointmentDateTime <= new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot book appointment for a past date or time.",
+      });
+    }
 
     const currentAppointment = await Appointment.findById(req.params.id);
 
@@ -368,6 +419,14 @@ if (appointmentDateTime <= new Date()) {
       `,
     });
 
+    getIO().emit("appointmentUpdated", appointment);
+
+    await logActivity(
+      "Appointment Rescheduled",
+      `${appointment.name} rescheduled to ${appointment.date} at ${appointment.timeSlot}`,
+      "appointment"
+    );
+
     res.json({
       success: true,
       message: "Appointment rescheduled",
@@ -383,9 +442,7 @@ if (appointmentDateTime <= new Date()) {
 
 const deleteAppointment = async (req, res) => {
   try {
-    const appointment = await Appointment.findByIdAndDelete(
-      req.params.id
-    );
+    const appointment = await Appointment.findByIdAndDelete(req.params.id);
 
     if (!appointment) {
       return res.status(404).json({
@@ -393,6 +450,14 @@ const deleteAppointment = async (req, res) => {
         message: "Appointment not found",
       });
     }
+
+    getIO().emit("appointmentDeleted", appointment);
+
+    await logActivity(
+      "Appointment Deleted",
+      `${appointment.name} - ${appointment.date} ${appointment.timeSlot}`,
+      "appointment"
+    );
 
     res.json({
       success: true,

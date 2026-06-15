@@ -1,5 +1,7 @@
 const Contact = require("../models/Contact");
 const sendEmail = require("../utils/sendEmail");
+const { getIO } = require("../utils/socket");
+const logActivity = require("../utils/logActivity");
 
 const validateContactData = ({ name, phone, email, message }) => {
   const indianPhoneRegex = /^[6-9]\d{9}$/;
@@ -67,6 +69,14 @@ const createContact = async (req, res) => {
       `,
     });
 
+    getIO().emit("newContactMessage", contact);
+
+    await logActivity(
+      "New Contact Message",
+      `${contact.name} submitted a contact message`,
+      "contact"
+    );
+
     res.status(201).json({
       success: true,
       message: "Message submitted successfully",
@@ -122,6 +132,14 @@ const updateContactStatus = async (req, res) => {
       });
     }
 
+    getIO().emit("contactUpdated", contact);
+
+    await logActivity(
+      "Contact Status Updated",
+      `${contact.name} marked as ${status}`,
+      "contact"
+    );
+
     res.json({
       success: true,
       message: "Contact status updated",
@@ -145,6 +163,14 @@ const deleteContact = async (req, res) => {
         message: "Contact message not found",
       });
     }
+
+    getIO().emit("contactDeleted", contact);
+
+    await logActivity(
+      "Contact Deleted",
+      `${contact.name} contact message deleted`,
+      "contact"
+    );
 
     res.json({
       success: true,
