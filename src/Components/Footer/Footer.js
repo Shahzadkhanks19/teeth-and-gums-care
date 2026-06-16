@@ -1,84 +1,133 @@
+/* =====================================
+   IMPORTS
+===================================== */
+
 import React from "react";
 import { Link } from "react-router-dom";
 import "../Footer/Footer.css";
 import navlogo from "./Assets/logo.png";
 
+/* =====================================
+   FOOTER COMPONENT
+===================================== */
+
 function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="footer mt-5">
+    <footer className="footer">
+      <div className="footer-bg-shape footer-shape-one"></div>
+      <div className="footer-bg-shape footer-shape-two"></div>
+
       <div className="container">
-
-        <div className="row">
-
-          {/* About */}
-          <div className="col-lg-4 col-md-6 mb-4">
-            <a className="navbar-brand" href="/">
-              <div className="logo-icon">
-                <img src={navlogo} alt="Teeth & Gums Care" className="logo-img" />
+        {/* =====================================
+            FOOTER TOP GRID
+        ====================================== */}
+        <div className="footer-grid">
+          {/* =====================================
+              BRAND / ABOUT SECTION
+          ====================================== */}
+          <div className="footer-brand">
+            <Link className="footer-logo" to="/">
+              <div className="footer-logo-icon">
+                <img
+                  src={navlogo}
+                  alt="Teeth & Gums Care"
+                  className="footer-logo-img"
+                />
               </div>
+
               <div>
-                <div className="logo-name text-white">Teeth &amp; Gums Care</div>
-                <div className="logo-tagline text-white">Dental Clinic · Jodhpur</div>
+                <div className="footer-logo-name">Teeth &amp; Gums Care</div>
+                <div className="footer-logo-tagline">
+                  Dental Clinic · Jodhpur
+                </div>
               </div>
-            </a>
+            </Link>
 
-            <p className="footer-about mt-1">
-              Providing advanced dental care with compassion,
-              expertise, and modern technology. Our goal is to
-              help every patient achieve a healthy and confident smile.
+            <p className="footer-about">
+              Providing advanced dental care with compassion, expertise, and
+              modern technology. Our goal is to help every patient achieve a
+              healthy and confident smile.
             </p>
 
-    <div className="footer-highlights">
-  <span>
-    <i className="fa-solid fa-check"></i> Trusted Care
-  </span>
+            <div className="footer-highlights">
+              <span>
+                <i className="fa-solid fa-check"></i>
+                Trusted Care
+              </span>
 
-  <span>
-    <i className="fa-solid fa-check"></i> Modern Technology
-  </span>
+              <span>
+                <i className="fa-solid fa-check"></i>
+                Modern Technology
+              </span>
 
-  <span>
-    <i className="fa-solid fa-check"></i> Experienced Dentists
-  </span>
-</div>
+              <span>
+                <i className="fa-solid fa-check"></i>
+                Experienced Dentists
+              </span>
+            </div>
 
             <div className="footer-social">
-              <a href="/">
-                <i className="fab fa-facebook-f"></i>
+              <a href="#!" aria-label="Facebook">
+                <i className="fa-brands fa-facebook-f"></i>
               </a>
 
-              <a href="/">
-                <i className="fab fa-instagram"></i>
+              <a href="#!" aria-label="Instagram">
+                <i className="fa-brands fa-instagram"></i>
               </a>
 
-              <a href="/">
-                <i className="fab fa-youtube"></i>
+              <a
+                href="https://wa.me/919829824356"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+              >
+                <i className="fa-brands fa-whatsapp"></i>
               </a>
 
-              <a href="/">
-                <i className="fab fa-google"></i>
+              <a href="#!" aria-label="Google">
+                <i className="fa-brands fa-google"></i>
               </a>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="col-lg-2 col-md-6 mb-4">
+          {/* =====================================
+              QUICK LINKS
+          ====================================== */}
+          <div className="footer-column">
             <h5>Quick Links</h5>
 
             <ul className="footer-links">
-              <li><Link to="/">Home</Link></li>
-              <li><Link to="/about">About Us</Link></li>
-              <li><Link to="/services">Services</Link></li>
-              <li><Link to="/gallery">Gallery</Link></li>
-              <li><Link to="/contact">Contact</Link></li>
+              <li>
+                <Link to="/">Home</Link>
+              </li>
+
+              <li>
+                <Link to="/about">About Us</Link>
+              </li>
+
+              <li>
+                <Link to="/services">Services</Link>
+              </li>
+
+              <li>
+                <Link to="/gallery">Gallery</Link>
+              </li>
+
+              <li>
+                <Link to="/contact">Contact</Link>
+              </li>
             </ul>
           </div>
 
-          {/* Services */}
-          <div className="col-lg-3 col-md-6 mb-4">
+          {/* =====================================
+              SERVICES
+          ====================================== */}
+          <div className="footer-column">
             <h5>Our Services</h5>
 
-            <ul className="footer-links">
+            <ul className="footer-links footer-service-list">
               <li>Root Canal Treatment</li>
               <li>Dental Implants</li>
               <li>Teeth Whitening</li>
@@ -87,68 +136,98 @@ function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
-          <div className="col-lg-3 col-md-6 mb-4">
+          {/* =====================================
+              CONTACT INFORMATION
+          ====================================== */}
+          <div className="footer-column footer-contact-column">
             <h5>Contact Info</h5>
 
-            <div className="footer-contact">
-
-              <p>
+            <div className="footer-contact-list">
+              <div className="footer-contact-item">
                 <i className="fa-solid fa-location-dot"></i>
-                Jodhpur, Rajasthan
-              </p>
 
-              <p>
+                <div>
+                  <span>Address</span>
+                  <p>Pal Road, Jodhpur, Rajasthan</p>
+                </div>
+              </div>
+
+              <div className="footer-contact-item">
                 <i className="fa-solid fa-phone"></i>
-                +91 XXXXX XXXXX
-              </p>
 
-              <p>
+                <div>
+                  <span>Phone</span>
+                  <p>
+                    <a href="tel:+919829824356">+91 98298 24356</a>
+                  </p>
+                </div>
+              </div>
+
+              <div className="footer-contact-item">
                 <i className="fa-solid fa-envelope"></i>
-                info@teethandgumscare.in
-              </p>
 
-              <div className="footer-hours">
-  <div className="hours-heading">
-    <i className="fa-solid fa-clock"></i>
-    <span>Clinic Hours</span>
-  </div>
+                <div>
+                  <span>Email</span>
+                  <p>
+                    <a href="mailto:info@teethandgumscare.in">
+                      info@teethandgumscare.in
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
 
-  <div className="hours-item">
-    <span>Mon - Sat</span>
-    <strong>
-      10:00 AM - 3:00 PM
-      <br />
-      5:30 PM - 8:30 PM
-    </strong>
-  </div>
+            <div className="footer-hours">
+              <div className="hours-heading">
+                <i className="fa-solid fa-clock"></i>
+                <span>Clinic Hours</span>
+              </div>
 
-  <div className="hours-item">
-    <span>Sunday</span>
-    <strong>10:00 AM - 3:00 PM</strong>
-  </div>
-</div>
+              <div className="hours-item">
+                <span>Mon - Sat</span>
+                <strong>
+                  10:00 AM - 3:00 PM
+                  <br />
+                  5:30 PM - 8:30 PM
+                </strong>
+              </div>
 
+              <div className="hours-item">
+                <span>Sunday</span>
+                <strong>10:00 AM - 3:00 PM</strong>
+              </div>
             </div>
           </div>
-
         </div>
 
-        <hr className="footer-divider" />
+        {/* =====================================
+            FOOTER CTA STRIP
+        ====================================== */}
+        <div className="footer-cta-strip">
+          <div>
+            <span>Need dental help?</span>
+            <h4>Book your appointment today</h4>
+          </div>
 
+          <div className="footer-cta-actions">
+            <Link to="/book-appointment" className="footer-book-btn">
+              Book Appointment
+            </Link>
+
+            <a href="tel:+919829824356" className="footer-call-btn">
+              Call Now
+            </a>
+          </div>
+        </div>
+
+        {/* =====================================
+            COPYRIGHT SECTION
+        ====================================== */}
         <div className="footer-bottom">
+          <p>© {currentYear} Teeth &amp; Gums Care. All Rights Reserved.</p>
 
-          <p>
-            © {new Date().getFullYear()} Teeth & Gums Care.
-            All Rights Reserved.
-          </p>
-
-          <p>
-            Designed & Developed by Teeth & Gums Care
-          </p>
-
+          <p>Designed & Developed by Shahzad Khan</p>
         </div>
-
       </div>
     </footer>
   );

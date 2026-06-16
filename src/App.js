@@ -6,6 +6,8 @@ import {
   useLocation,
 } from "react-router-dom";
 import { useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 import Navbar from "./Components/Navbar/Navbar";
 import Footer from "./Components/Footer/Footer";
@@ -31,16 +33,25 @@ function AppLayout() {
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   useEffect(() => {
-  if (isAdminRoute) {
-    document.body.classList.add("admin-page");
-  } else {
-    document.body.classList.remove("admin-page");
-  }
+  AOS.init({
+    duration: 900,
+    easing: "ease-out-cubic",
+    once: true,
+    offset: 80,
+  });
+}, []);
 
-  return () => {
-    document.body.classList.remove("admin-page");
-  };
-}, [isAdminRoute]);
+  useEffect(() => {
+    if (isAdminRoute) {
+      document.body.classList.add("admin-page");
+    } else {
+      document.body.classList.remove("admin-page");
+    }
+
+    return () => {
+      document.body.classList.remove("admin-page");
+    };
+  }, [isAdminRoute]);
 
   return (
     <>
@@ -73,15 +84,12 @@ function AppLayout() {
             }
           />
 
-          <Route
-  path="/admin/forgot-password"
-  element={<ForgotPassword />}
-/>
+          <Route path="/admin/forgot-password" element={<ForgotPassword />} />
 
-<Route
-  path="/admin/reset-password/:token"
-  element={<ResetPassword />}
-/>
+          <Route
+            path="/admin/reset-password/:token"
+            element={<ResetPassword />}
+          />
         </Routes>
       </div>
 

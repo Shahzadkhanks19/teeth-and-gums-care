@@ -1,33 +1,41 @@
+/* =====================================
+   IMPORTS
+===================================== */
+
 import React, { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 import "./Navbar.css";
 import navlogo from "./Assets/logo.png";
-import { Link, NavLink } from "react-router-dom";
+
+/* =====================================
+   NAVBAR COMPONENT
+===================================== */
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  // const [servicesOpen, setServicesOpen] = useState(false);
 
   return (
     <>
-      {/* TOP BAR */}
+      {/* =====================================
+          TOP HEADER BAR
+      ====================================== */}
       <div className="top-bar">
         <div className="header-container">
           <div className="top-bar-inner">
-            {/* LEFT INFO */}
             <div className="top-bar-left">
               <div className="info-item">
                 <i className="fa-solid fa-location-dot"></i>
                 <span>Pal Road, Jodhpur, Rajasthan</span>
               </div>
 
-              <div className="vr top-bar-divider"></div>
+              <div className="top-bar-divider"></div>
 
               <div className="info-item top-bar-timing">
                 <i className="fa-solid fa-clock"></i>
                 <span>Mon–Sat 10am–3pm & 5:30pm–8:30pm | Sun 10am–3pm</span>
               </div>
 
-              <div className="vr top-bar-divider top-bar-timing"></div>
+              <div className="top-bar-divider top-bar-timing"></div>
 
               <div className="info-item">
                 <i className="fa-solid fa-phone"></i>
@@ -35,23 +43,22 @@ function Navbar() {
               </div>
             </div>
 
-            {/* RIGHT INFO */}
             <div className="top-bar-right">
               <div className="info-item top-bar-email">
                 <i className="fa-solid fa-envelope"></i>
-                <a href="mailto:info@teethandgumscare.com">
-                  info@teethandgumscare.com
+                <a href="mailto:info@teethandgumscare.in">
+                  info@teethandgumscare.in
                 </a>
               </div>
 
-              <div className="vr top-bar-divider top-bar-email"></div>
+              <div className="top-bar-divider top-bar-email"></div>
 
               <div className="top-bar-socials">
-                <a href="#!" className="soc-btn">
+                <a href="#!" className="soc-btn" aria-label="Facebook">
                   <i className="fa-brands fa-facebook-f"></i>
                 </a>
 
-                <a href="#!" className="soc-btn">
+                <a href="#!" className="soc-btn" aria-label="Instagram">
                   <i className="fa-brands fa-instagram"></i>
                 </a>
 
@@ -60,6 +67,7 @@ function Navbar() {
                   className="soc-btn"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="WhatsApp"
                 >
                   <i className="fa-brands fa-whatsapp"></i>
                 </a>
@@ -69,7 +77,9 @@ function Navbar() {
         </div>
       </div>
 
-      {/* NAVBAR */}
+      {/* =====================================
+          MAIN NAVBAR
+      ====================================== */}
       <nav className="main-navbar">
         <div className="header-container">
           <div className="nav-inner">
@@ -87,27 +97,26 @@ function Navbar() {
                 />
               </div>
 
-              <div>
+              <div className="logo-content">
                 <div className="logo-name">Teeth & Gums Care</div>
-
                 <div className="logo-tagline">Dental Clinic · Jodhpur</div>
               </div>
             </Link>
 
-            {/* TOGGLER */}
+            {/* MOBILE MENU BUTTON */}
             <button
               className={`nav-toggler${menuOpen ? " open" : ""}`}
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle navigation"
+              type="button"
             >
               <span></span>
               <span></span>
               <span></span>
             </button>
 
-            {/* COLLAPSE */}
+            {/* NAV LINKS + CTA BUTTONS */}
             <div className={`nav-collapse${menuOpen ? " show" : ""}`}>
-              {/* MENU */}
               <ul className="nav-menu">
                 <li>
                   <NavLink
@@ -134,7 +143,6 @@ function Navbar() {
                   </NavLink>
                 </li>
 
-                {/* SERVICES */}
                 <li>
                   <NavLink
                     to="/services"
@@ -172,7 +180,6 @@ function Navbar() {
                 </li>
               </ul>
 
-              {/* CTA BUTTONS */}
               <div className="nav-ctas">
                 <a
                   href="https://wa.me/919829824356"

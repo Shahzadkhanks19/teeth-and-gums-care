@@ -1,7 +1,19 @@
-import React from "react";
+/* =====================================
+   SERVICE DETAILS PAGE IMPORTS
+===================================== */
+
+// React Router
 import { useParams, Link, useNavigate } from "react-router-dom";
+
+// Services data
 import servicesData from "../../data/serviceData";
+
+// Page styles
 import "./ServiceDetails.css";
+
+/* =====================================
+   SERVICE DETAILS PAGE COMPONENT
+===================================== */
 
 function ServiceDetails() {
   const { slug } = useParams();
@@ -9,69 +21,110 @@ function ServiceDetails() {
 
   const service = servicesData.find((item) => item.slug === slug);
 
+  /* =====================================
+     SERVICE NOT FOUND STATE
+  ====================================== */
+
   if (!service) {
     return (
-      <div className="container py-5 text-center">
-        <h2>Service Not Found</h2>
-      </div>
+      <section className="service-not-found">
+        <div className="container text-center">
+          <h2>Service Not Found</h2>
+
+          <button onClick={() => navigate("/services")}>
+            Back to Services
+          </button>
+        </div>
+      </section>
     );
   }
 
   return (
     <>
-      {/* HERO */}
+      {/* =====================================
+          HERO SECTION
+      ====================================== */}
       <section className="service-hero">
-        <div className="service-hero-overlay"></div>
-
         <img
           src={service.image}
           alt={service.title}
           className="service-hero-img"
         />
 
-        <div className="service-hero-content">
+        <div className="service-hero-overlay"></div>
+
+        <div className="service-hero-content" data-aos="fade-up">
           <span className="service-hero-tag">Teeth & Gums Care</span>
+
           <h1>{service.title}</h1>
+
           <p>{service.shortDesc}</p>
+
+          <div className="service-hero-actions">
+            <Link to="/book-appointment" className="service-hero-btn">
+              Book Appointment
+            </Link>
+
+            <button
+              className="service-hero-outline-btn"
+              onClick={() => navigate("/services")}
+            >
+              View All Services
+            </button>
+          </div>
         </div>
       </section>
 
-      <div className="container service-back-container mt-4 mb-4">
+      {/* =====================================
+          BACK BUTTON SECTION
+      ====================================== */}
+      <div className="container service-back-container" data-aos="fade-up">
         <button
           className="back-to-services-btn"
           onClick={() => navigate("/services")}
         >
-          <i className="fa-solid fa-arrow-left me-2"></i>
+          <i className="fa-solid fa-arrow-left"></i>
           Back to Services
         </button>
       </div>
 
-      {/* ABOUT */}
+      {/* =====================================
+          ABOUT TREATMENT SECTION
+      ====================================== */}
       <section className="service-about">
         <div className="container">
-          <div className="row align-items-center g-5">
-            <div className="col-lg-6">
-              <img
-                src={service.image}
-                alt={service.title}
-                className="service-main-img"
-              />
+          <div className="row align-items-center g-4 g-lg-5">
+            <div className="col-lg-6" data-aos="fade-right">
+              <div className="service-main-image-wrap">
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="service-main-img"
+                />
+
+                <div className="service-image-badge" data-aos="zoom-in">
+                  <i className="fa-solid fa-tooth"></i>
+                  <span>Advanced Dental Care</span>
+                </div>
+              </div>
             </div>
 
-            <div className="col-lg-6">
-              <span className="service-tag">Advanced Dental Care</span>
+            <div className="col-lg-6" data-aos="fade-left">
+              <span className="service-tag">About Treatment</span>
 
               <h2>About {service.title}</h2>
 
               <p>{service.description}</p>
 
-              <h4 className="service-small-heading">What is it?</h4>
-              <p>{service.definition}</p>
+              <div className="service-definition-box">
+                <h4>What is it?</h4>
+                <p>{service.definition}</p>
+              </div>
 
               <ul className="service-benefit-list">
                 {service.benefits.map((benefit, index) => (
                   <li key={index}>
-                    <i className="fa-solid fa-check"></i>
+                    <i className="fa-solid fa-circle-check"></i>
                     {benefit}
                   </li>
                 ))}
@@ -81,12 +134,14 @@ function ServiceDetails() {
         </div>
       </section>
 
-      {/* CAUSES + WHEN REQUIRED */}
+      {/* =====================================
+          CAUSES + REQUIRED SECTION
+      ====================================== */}
       <section className="service-info-section">
         <div className="container">
           <div className="row g-4">
-            <div className="col-lg-6">
-              <div className="service-info-card">
+            <div className="col-lg-6" data-aos="fade-right">
+              <div className="service-info-card causes-card">
                 <div className="service-info-icon">
                   <i className="fa-solid fa-triangle-exclamation"></i>
                 </div>
@@ -95,14 +150,17 @@ function ServiceDetails() {
 
                 <ul>
                   {service.causes.map((cause, index) => (
-                    <li key={index}>{cause}</li>
+                    <li key={index}>
+                      <i className="fa-solid fa-angle-right"></i>
+                      {cause}
+                    </li>
                   ))}
                 </ul>
               </div>
             </div>
 
-            <div className="col-lg-6">
-              <div className="service-info-card">
+            <div className="col-lg-6" data-aos="fade-left">
+              <div className="service-info-card required-card">
                 <div className="service-info-icon">
                   <i className="fa-solid fa-notes-medical"></i>
                 </div>
@@ -111,7 +169,10 @@ function ServiceDetails() {
 
                 <ul>
                   {service.whenRequired.map((item, index) => (
-                    <li key={index}>{item}</li>
+                    <li key={index}>
+                      <i className="fa-solid fa-angle-right"></i>
+                      {item}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -120,32 +181,45 @@ function ServiceDetails() {
         </div>
       </section>
 
-      {/* PROCESS */}
+      {/* =====================================
+          TREATMENT PROCESS SECTION
+      ====================================== */}
       <section className="service-process">
         <div className="container">
-          <div className="text-center mb-5">
+          <div className="text-center section-heading" data-aos="fade-up">
             <span className="service-tag">Treatment Journey</span>
+
             <h2>Treatment Process</h2>
+
+            <p className="service-section-subtitle">
+              A simple, comfortable, and guided treatment experience from
+              consultation to care.
+            </p>
           </div>
 
-          <div className="row g-4">
+          <div className="service-process-grid">
             {service.procedure.map((step, index) => (
-              <div className="col-lg-4 col-md-6" key={index}>
-                <div className="process-card">
-                  <div className="step-number">{index + 1}</div>
-                  <p>{step}</p>
-                </div>
+              <div
+                className="process-card"
+                key={index}
+                data-aos="fade-up"
+                data-aos-delay={index % 3 * 100}
+              >
+                <div className="step-number">{index + 1}</div>
+                <p>{step}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* PRECAUTIONS + PREVENTION */}
+      {/* =====================================
+          AFTER CARE + PREVENTION SECTION
+      ====================================== */}
       <section className="service-care-section">
         <div className="container">
           <div className="row g-4">
-            <div className="col-lg-6">
+            <div className="col-lg-6" data-aos="fade-right">
               <div className="care-card">
                 <div className="care-icon">
                   <i className="fa-solid fa-shield-heart"></i>
@@ -155,14 +229,17 @@ function ServiceDetails() {
 
                 <ul>
                   {service.precautions.map((item, index) => (
-                    <li key={index}>{item}</li>
+                    <li key={index}>
+                      <i className="fa-solid fa-check"></i>
+                      {item}
+                    </li>
                   ))}
                 </ul>
               </div>
             </div>
 
-            <div className="col-lg-6">
-              <div className="care-card">
+            <div className="col-lg-6" data-aos="fade-left">
+              <div className="care-card prevention-card">
                 <div className="care-icon">
                   <i className="fa-solid fa-heart-circle-check"></i>
                 </div>
@@ -171,7 +248,10 @@ function ServiceDetails() {
 
                 <ul>
                   {service.prevention.map((item, index) => (
-                    <li key={index}>{item}</li>
+                    <li key={index}>
+                      <i className="fa-solid fa-check"></i>
+                      {item}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -180,11 +260,16 @@ function ServiceDetails() {
         </div>
       </section>
 
-      {/* WHY CHOOSE US */}
+      {/* =====================================
+          WHY CHOOSE US SECTION
+      ====================================== */}
       <section className="service-why">
         <div className="container">
-          <div className="text-center mb-5">
+          <div className="text-center section-heading" data-aos="fade-up">
+            <span className="service-tag">Why Choose Us</span>
+
             <h2>Why Choose Teeth & Gums Care?</h2>
+
             <p>
               We combine expert dental care, modern technology, and a
               patient-first approach.
@@ -192,28 +277,28 @@ function ServiceDetails() {
           </div>
 
           <div className="row g-4">
-            <div className="col-md-3 col-6">
+            <div className="col-md-3 col-6" data-aos="zoom-in">
               <div className="why-service-card">
                 <i className="fa-solid fa-user-doctor"></i>
                 <h5>Expert Dentists</h5>
               </div>
             </div>
 
-            <div className="col-md-3 col-6">
+            <div className="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="100">
               <div className="why-service-card">
                 <i className="fa-solid fa-microscope"></i>
                 <h5>Modern Equipment</h5>
               </div>
             </div>
 
-            <div className="col-md-3 col-6">
+            <div className="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="200">
               <div className="why-service-card">
                 <i className="fa-solid fa-heart"></i>
                 <h5>Comfort Care</h5>
               </div>
             </div>
 
-            <div className="col-md-3 col-6">
+            <div className="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="300">
               <div className="why-service-card">
                 <i className="fa-solid fa-tooth"></i>
                 <h5>Personalized Plans</h5>
@@ -223,15 +308,22 @@ function ServiceDetails() {
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* =====================================
+          FAQ SECTION
+      ====================================== */}
       <section className="service-faq">
         <div className="container">
-          <div className="text-center mb-5">
+          <div className="text-center section-heading" data-aos="fade-up">
             <span className="service-tag">Questions & Answers</span>
+
             <h2>Frequently Asked Questions</h2>
           </div>
 
-          <div className="accordion" id="serviceFaqAccordion">
+          <div
+            className="accordion service-faq-box"
+            id="serviceFaqAccordion"
+            data-aos="fade-up"
+          >
             {service.faqs.map((faq, index) => (
               <div className="accordion-item" key={index}>
                 <h2 className="accordion-header">
@@ -262,16 +354,23 @@ function ServiceDetails() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* =====================================
+          CTA SECTION
+      ====================================== */}
       <section className="service-cta">
         <div className="container text-center">
-          <h2>Ready To Improve Your Smile?</h2>
+          <div className="service-cta-box" data-aos="zoom-in">
+            <span>Book Your Consultation</span>
 
-          <p>Schedule your consultation today with Teeth & Gums Care.</p>
+            <h2>Ready To Improve Your Smile?</h2>
 
-          <Link to="/book-appointment" className="service-cta-btn">
-            Book Appointment
-          </Link>
+            <p>Schedule your consultation today with Teeth & Gums Care.</p>
+
+            <Link to="/book-appointment" className="service-cta-btn">
+              Book Appointment
+              <i className="fa-solid fa-calendar-check"></i>
+            </Link>
+          </div>
         </div>
       </section>
     </>

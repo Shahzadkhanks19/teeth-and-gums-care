@@ -1,177 +1,541 @@
-.about-hero {
-  background: linear-gradient(135deg, #0d6efd, #0b3c91);
-  color: white;
-  padding: 120px 20px;
-}
-
-.about-hero h1 {
-  font-size: 3rem;
-  font-weight: 700;
-}
-
-.about-hero p {
-  max-width: 700px;
-  margin: 20px auto;
-  font-size: 1.1rem;
-  line-height: 1.8;
-}
-
 /* =====================================
-   SECTION SPACING
+   ABOUT PAGE GLOBAL HELPERS
 ===================================== */
 
-.about-story,
-.doctor-section,
-.mission-section,
-.about-choose,
-.gallery-preview {
-  padding: 90px 0;
+section {
+  overflow: hidden;
 }
 
-.about-story {
-  background: #fff;
-}
-
-.doctor-section {
-  background: #f8fbff;
+.section-heading {
+  max-width: 780px;
+  margin: 0 auto 50px;
 }
 
 .section-tag {
+  display: inline-block;
+  padding: 10px 18px;
+  background: rgba(13,110,253,.1);
   color: #0d6efd;
-  font-weight: 600;
+  border-radius: 50px;
+  font-size: .85rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.about-story h2,
-.doctor-section h2,
-.mission-section h2,
-.about-choose h2,
-.gallery-preview h2 {
-  font-weight: 700;
-  color: #0d47a1;
-  margin-bottom: 20px;
+  letter-spacing: .5px;
+  margin-bottom: 15px;
 }
 
 /* =====================================
-   STORY IMAGE
+   ABOUT HERO
 ===================================== */
+
+.about-hero {
+  position: relative;
+  background: linear-gradient(135deg,#0d6efd,#0b3c91);
+  color: white;
+  padding: 120px 20px;
+  overflow: hidden;
+}
+
+.about-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top right,
+    rgba(255,255,255,.12),
+    transparent 30%),
+    radial-gradient(circle at bottom left,
+    rgba(255,255,255,.08),
+    transparent 35%);
+}
+
+.about-hero .container {
+  position: relative;
+  z-index: 2;
+}
+
+.about-hero-badge {
+  display: inline-block;
+  background: rgba(255,255,255,.15);
+  color: white;
+  padding: 10px 22px;
+  border-radius: 50px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.about-hero h1 {
+  font-size: 3.5rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+}
+
+.about-hero p {
+  max-width: 760px;
+  margin: auto;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: rgba(255,255,255,.9);
+}
+
+.about-hero-points {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.about-hero-points div {
+  background: rgba(255,255,255,.15);
+  padding: 12px 18px;
+  border-radius: 50px;
+  font-weight: 700;
+}
+
+.about-hero-points i {
+  margin-right: 8px;
+}
+
+/* =====================================
+   STORY SECTION
+===================================== */
+
+.about-story {
+  padding: 90px 0;
+  background: #f8fbff;
+}
+
+.story-image-wrap {
+  position: relative;
+}
 
 .story-img {
   width: 100%;
-  box-shadow: 0 15px 35px rgba(13, 110, 253, 0.12);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(13,110,253,.15);
+  transition: .5s;
+}
+
+.story-img:hover {
+  transform: scale(1.02);
+}
+
+.story-experience-card {
+  position: absolute;
+  right: -20px;
+  bottom: 25px;
+  background: linear-gradient(135deg,#0d6efd,#0b3c91);
+  color: white;
+  padding: 22px;
+  border-radius: 22px;
+  text-align: center;
+  min-width: 180px;
+  box-shadow: 0 15px 40px rgba(13,110,253,.35);
+  animation: floating 4s ease-in-out infinite;
+}
+
+.story-experience-card h3 {
+  font-size: 2.4rem;
+  font-weight: 900;
+  margin: 0;
+}
+
+.story-experience-card p {
+  margin: 0;
+  font-size: .9rem;
+}
+
+.story-content h2 {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 20px;
+}
+
+.story-content p {
+  color: #64748b;
+  line-height: 1.9;
+}
+
+.story-highlight-box {
+  display: flex;
+  gap: 18px;
+  margin: 25px 0;
+  padding: 25px;
+  background: white;
+  border-radius: 20px;
+  border-left: 4px solid #0d6efd;
+  box-shadow: 0 15px 35px rgba(0,0,0,.05);
+}
+
+.story-highlight-box i {
+  width: 55px;
+  height: 55px;
+  background: linear-gradient(135deg,#0d6efd,#0b3c91);
+  color: white;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.story-highlight-box h5 {
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.story-highlight-box p {
+  margin: 0;
+}
+
+.story-points {
+  display: grid;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.story-points div {
+  font-weight: 700;
+  color: #334155;
+}
+
+.story-points i {
+  color: #0d6efd;
+  margin-right: 10px;
 }
 
 /* =====================================
    DOCTOR SECTION
 ===================================== */
 
+.doctor-section {
+  padding: 90px 0;
+  background: linear-gradient(180deg, #f8fbff, #ffffff);
+}
+
 .doctor-subtitle {
-  max-width: 700px;
-  margin: 15px auto 0;
-  color: #666;
+  max-width: 720px;
+  margin: 0 auto;
+  color: #64748b;
   line-height: 1.8;
 }
 
 .doctor-card {
-  background: #fff;
+  display: grid;
+  grid-template-columns: 38% 62%;
+  background: white;
+  border-radius: 30px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(13, 110, 253, 0.12);
-  height: 100%;
-  transition: all 0.3s ease;
+  box-shadow: 0 22px 60px rgba(13, 110, 253, 0.13);
+  border: 1px solid rgba(13, 110, 253, 0.08);
 }
 
 .doctor-card:hover {
   transform: translateY(-8px);
+  box-shadow: 0 30px 80px rgba(13, 110, 253, 0.18);
+}
+
+.doctor-image-wrapper {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
 }
 
 .doctor-img {
   width: 100%;
-  height: auto;
-  display: block;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.doctor-badge {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  background: linear-gradient(135deg, #0d6efd, #0b3c91);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 50px;
+  font-weight: 800;
+  z-index: 2;
 }
 
 .doctor-content {
-  padding: 30px;
+  padding: 40px;
+}
+
+.doctor-label {
+  display: inline-block;
+  background: rgba(13, 110, 253, 0.1);
+  color: #0d6efd;
+  padding: 8px 15px;
+  border-radius: 50px;
+  font-weight: 900;
+  margin-bottom: 14px;
 }
 
 .doctor-content h3 {
-  color: #0d47a1;
-  font-weight: 700;
-  margin-bottom: 10px;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #0f172a;
 }
 
-.doctor-content h6 {
-  color: #0d6efd;
-  margin-bottom: 20px;
-  font-weight: 600;
+.doctor-qualification {
+  font-weight: 800;
+  color: #334155;
 }
 
 .doctor-content p {
-  color: #555;
+  color: #64748b;
   line-height: 1.8;
+}
+
+.doctor-specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.doctor-specialties span {
+  background: #eef5ff;
+  color: #0d6efd;
+  padding: 8px 14px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.doctor-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.doctor-socials {
+  display: flex;
+  gap: 12px;
+}
+
+.doctor-socials a {
+  width: 42px;
+  height: 42px;
+  background: #f1f5f9;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #0d6efd;
+  text-decoration: none;
+}
+
+.doctor-socials a:hover {
+  background: #0d6efd;
+  color: white;
+}
+
+.doctor-btn {
+  background: linear-gradient(135deg, #0d6efd, #0b3c91);
+  color: white;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-weight: 800;
+}
+
+.doctor-btn:hover {
+  color: white;
+  transform: translateY(-3px);
 }
 
 /* =====================================
    MISSION & VISION
 ===================================== */
 
+.mission-section {
+  padding: 90px 0;
+  background: white;
+}
+
+.mission-subtitle {
+  max-width: 720px;
+  margin: 0 auto;
+  color: #64748b;
+  line-height: 1.8;
+}
+
 .mission-card {
   background: white;
-  text-align: center;
-  padding: 45px 30px;
-  box-shadow: 0 10px 25px rgba(13, 110, 253, 0.12);
+  padding: 42px 36px;
+  border-radius: 30px;
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.08);
   height: 100%;
-  transition: 0.3s;
+  border: 1px solid rgba(13, 110, 253, 0.09);
+  overflow: hidden;
 }
 
 .mission-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-10px);
+  box-shadow: 0 32px 75px rgba(13, 110, 253, 0.16);
 }
 
-.mission-card i {
-  font-size: 50px;
-  color: #0d6efd;
-  margin-bottom: 20px;
+.mission-icon {
+  width: 78px;
+  height: 78px;
+  display: grid;
+  place-items: center;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #0d6efd, #0b3c91);
+  color: white;
+  font-size: 2rem;
+  margin-bottom: 24px;
 }
 
 .mission-card h3 {
-  color: #0d47a1;
-  font-weight: 700;
-  margin-bottom: 15px;
+  color: #0f172a;
+  font-weight: 900;
+}
+
+.mission-card p {
+  color: #64748b;
+  line-height: 1.8;
+}
+
+.mission-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mission-card li {
+  color: #334155;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.mission-card li::before {
+  content: "✓";
+  color: #0d6efd;
+  margin-right: 10px;
+}
+
+/* =====================================
+   VALUES SECTION
+===================================== */
+
+.about-values-section {
+  padding: 90px 0;
+  background: linear-gradient(135deg, #0b3c91, #0d6efd);
+  color: white;
+}
+
+.about-values-section .section-tag {
+  background: rgba(255, 255, 255, 0.16);
+  color: white;
+}
+
+.about-values-section h2 {
+  color: white;
+  font-size: 2.8rem;
+  font-weight: 900;
+}
+
+.about-values-section p {
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.9;
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.value-card {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 28px;
+  border-radius: 26px;
+}
+
+.value-card:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.value-card i {
+  width: 58px;
+  height: 58px;
+  background: white;
+  color: #0d6efd;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  font-size: 1.45rem;
+  margin-bottom: 18px;
+}
+
+.value-card h5 {
+  color: white;
+  font-weight: 900;
 }
 
 /* =====================================
    WHY CHOOSE US
 ===================================== */
 
+.about-choose {
+  padding: 90px 0;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.choose-subtitle {
+  max-width: 720px;
+  margin: 0 auto;
+  color: #64748b;
+  line-height: 1.8;
+}
+
 .choose-card {
   background: white;
   text-align: center;
-  padding: 40px 25px;
-  box-shadow: 0 10px 25px rgba(13, 110, 253, 0.12);
-  transition: 0.3s;
+  padding: 36px 24px;
+  border-radius: 28px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.07);
   height: 100%;
+  border: 1px solid rgba(13, 110, 253, 0.08);
 }
 
 .choose-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-10px);
+  box-shadow: 0 28px 65px rgba(13, 110, 253, 0.16);
 }
 
 .choose-card i {
-  font-size: 45px;
-  color: #0d6efd;
-  margin-bottom: 20px;
+  width: 76px;
+  height: 76px;
+  background: linear-gradient(135deg, #0d6efd, #0b3c91);
+  color: white;
+  border-radius: 24px;
+  display: grid;
+  place-items: center;
+  font-size: 1.9rem;
+  margin: 0 auto 22px;
 }
 
 .choose-card h5 {
-  color: #0d47a1;
-  font-weight: 600;
+  color: #0f172a;
+  font-weight: 900;
+  margin-bottom: 12px;
 }
 
-/* =====================================
-   ACHIEVEMENTS
-===================================== */
+.choose-card p {
+  color: #64748b;
+  line-height: 1.7;
+  margin: 0;
+}
 
 /* =====================================
    ACHIEVEMENTS
@@ -180,7 +544,7 @@
 .about-achievements {
   background: linear-gradient(135deg, #0d6efd, #0b3c91);
   color: white;
-  padding: 100px 0;
+  padding: 95px 0;
   position: relative;
   overflow: hidden;
 }
@@ -212,88 +576,126 @@
   z-index: 2;
 }
 
+.achievement-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.16);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 50px;
+  font-weight: 900;
+  margin-bottom: 18px;
+}
+
 .about-achievements h2 {
   font-size: 3rem;
-  font-weight: 700;
-  margin-bottom: 10px;
+  font-weight: 900;
 }
 
 .about-achievements p {
-  font-size: 1rem;
-  opacity: 0.95;
+  color: rgba(255, 255, 255, 0.92);
   margin: 0;
 }
 
 .about-achievement-card {
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   padding: 35px 20px;
   text-align: center;
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
+  border-radius: 28px;
   height: 100%;
 }
 
 .about-achievement-card:hover {
   transform: translateY(-8px);
-  background: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.24);
 }
 
 .about-achievement-card i {
-  font-size: 50px;
-  margin-bottom: 20px;
-  color: #ffffff;
+  width: 72px;
+  height: 72px;
+  background: white;
+  color: #0d6efd;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  margin: 0 auto 20px;
 }
 
 .about-achievement-card h2 {
+  color: white;
   font-size: 3rem;
-  font-weight: 700;
-  color: #ffffff;
   margin-bottom: 10px;
 }
 
 .about-achievement-card p {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.95);
-  margin: 0;
+  font-weight: 800;
 }
 
-@media (max-width: 768px) {
-  .about-achievement-card {
-    padding: 25px 15px;
-  }
-
-  .about-achievement-card h2 {
-    font-size: 2rem;
-  }
-
-  .about-achievement-card i {
-    font-size: 38px;
-  }
-}
 /* =====================================
    GALLERY
 ===================================== */
 
 .gallery-preview {
-  background: #fff;
+  padding: 90px 0;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
 }
 
-.gallery-placeholder {
-  height: 250px;
-  background: #eef5ff;
-  border: 2px dashed #0d6efd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0d47a1;
-  font-weight: 600;
-  transition: 0.3s;
+.gallery-subtitle {
+  max-width: 680px;
+  margin: 0 auto;
+  color: #64748b;
+  line-height: 1.8;
 }
 
-.gallery-placeholder:hover {
-  background: #dcecff;
+.clinic-gallery-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  grid-auto-rows: 260px;
+  gap: 22px;
+}
+
+.clinic-gallery-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  box-shadow: 0 18px 45px rgba(13, 110, 253, 0.12);
+}
+
+.clinic-gallery-card.large {
+  grid-row: span 2;
+}
+
+.clinic-gallery-card.wide {
+  grid-column: span 2;
+}
+
+.clinic-gallery-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.55s ease;
+}
+
+.clinic-gallery-card:hover img {
+  transform: scale(1.08);
+}
+
+.gallery-overlay {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #0b3c91;
+  padding: 10px 16px;
+  border-radius: 50px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.18);
+}
+
+.gallery-overlay span {
+  font-size: 0.95rem;
+  font-weight: 900;
 }
 
 /* =====================================
@@ -301,39 +703,96 @@
 ===================================== */
 
 .about-cta {
-  padding: 100px 20px;
+  padding: 70px 0;
   background: #f8fbff;
-  text-align: center;
+}
+
+.about-cta-box {
+  background: linear-gradient(135deg, #0b3c91, #0d6efd);
+  color: white;
+  padding: 55px;
+  border-radius: 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 35px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 28px 70px rgba(13, 110, 253, 0.22);
+}
+
+.about-cta-box::before {
+  content: "";
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  border: 28px solid rgba(255, 255, 255, 0.08);
+  top: -100px;
+  right: -90px;
+}
+
+.about-cta-box > * {
+  position: relative;
+  z-index: 2;
+}
+
+.about-cta-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.16);
+  padding: 9px 16px;
+  border-radius: 50px;
+  font-weight: 900;
+  margin-bottom: 18px;
 }
 
 .about-cta h2 {
-  color: #0d47a1;
-  font-weight: 700;
+  color: white;
+  font-weight: 900;
   margin-bottom: 15px;
+  font-size: 2.5rem;
 }
 
 .about-cta p {
   max-width: 650px;
-  margin: auto;
-  color: #555;
+  color: rgba(255, 255, 255, 0.88);
   line-height: 1.8;
+  margin: 0;
 }
 
 .about-cta-btn {
   display: inline-block;
-  margin-top: 30px;
-  padding: 15px 40px;
-  background: linear-gradient(135deg, #0d6efd, #0b5ed7);
-  color: white;
+  padding: 15px 34px;
+  background: white;
+  color: #0d6efd;
   text-decoration: none;
-  font-weight: 600;
-  transition: 0.3s;
+  font-weight: 900;
+  border-radius: 50px;
+  white-space: nowrap;
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.16);
 }
 
 .about-cta-btn:hover {
   transform: translateY(-3px);
-  color: white;
-  box-shadow: 0 10px 25px rgba(13, 110, 253, 0.25);
+  color: #0d6efd;
+}
+
+/* =====================================
+   ANIMATIONS
+===================================== */
+
+@keyframes floating {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
 }
 
 /* =====================================
@@ -341,16 +800,46 @@
 ===================================== */
 
 @media (max-width: 991px) {
-  .about-hero h1 {
-    font-size: 2.4rem;
-  }
-
-  .doctor-img {
-    height: 350px;
-  }
-
+  .about-hero h1,
+  .story-content h2,
+  .about-values-section h2,
   .about-achievements h2 {
-    font-size: 2.2rem;
+    font-size: 2.25rem;
+  }
+
+  .doctor-card {
+    grid-template-columns: 1fr;
+  }
+
+  .doctor-image-wrapper {
+    min-height: 350px;
+  }
+
+  .doctor-content {
+    padding: 30px;
+  }
+
+  .story-content {
+    padding-left: 0;
+    margin-top: 30px;
+  }
+
+  .clinic-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 240px;
+  }
+
+  .clinic-gallery-card.large {
+    grid-row: span 1;
+  }
+
+  .clinic-gallery-card.wide {
+    grid-column: span 2;
+  }
+
+  .about-cta-box {
+    flex-direction: column;
+    text-align: center;
   }
 }
 
@@ -362,16 +851,90 @@
   .about-story,
   .doctor-section,
   .mission-section,
+  .about-values-section,
   .about-choose,
+  .about-achievements,
   .gallery-preview {
-    padding: 70px 0;
+    padding: 60px 0;
   }
 
-  .doctor-img {
-    height: 300px;
+  .section-heading {
+    margin-bottom: 34px;
   }
 
+  .about-hero-points {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .story-experience-card {
+    position: static;
+    width: 100%;
+    margin-top: 16px;
+  }
+
+  .story-highlight-box {
+    flex-direction: column;
+  }
+
+  .values-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .doctor-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .doctor-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .about-cta-box {
+    padding: 42px 24px;
+  }
+
+  .about-cta h2 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .about-hero h1 {
+    font-size: 2rem;
+  }
+
+  .story-content h2,
+  .about-values-section h2,
   .about-achievements h2 {
+    font-size: 1.85rem;
+  }
+
+  .story-img {
+    border-radius: 20px;
+  }
+
+  .doctor-image-wrapper {
+    min-height: 300px;
+  }
+
+  .doctor-content h3 {
+    font-size: 1.55rem;
+  }
+
+  .clinic-gallery-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 230px;
+  }
+
+  .clinic-gallery-card.large,
+  .clinic-gallery-card.wide {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .about-achievement-card h2 {
     font-size: 2rem;
   }
 }

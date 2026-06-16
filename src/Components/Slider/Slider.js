@@ -1,8 +1,18 @@
+/* =====================================
+   IMPORTS
+===================================== */
+
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Link } from "react-router-dom";
 import "../Slider/Slider.css";
+
 import sliderImage1 from "./Assets/slider1.jpg";
 import sliderImage2 from "./Assets/slider2.jpg";
 import sliderImage3 from "./Assets/slider3.jpg";
+
+/* =====================================
+   HERO SLIDES DATA
+===================================== */
 
 const DEFAULT_SLIDES = [
   {
@@ -19,7 +29,8 @@ const DEFAULT_SLIDES = [
     image: sliderImage2,
     eyebrow: "Advanced Dental Treatments",
     headline: "Modern Dentistry You Can Trust",
-    subHeadline: "From routine check-ups to smile makeovers — all under one roof.",
+    subHeadline:
+      "From routine check-ups to smile makeovers — all under one roof.",
     ctaText: "Book Appointment",
     ctaLink: "/book-appointment",
   },
@@ -28,81 +39,122 @@ const DEFAULT_SLIDES = [
     image: sliderImage3,
     eyebrow: "Our Clinic",
     headline: "Treated in the Best Hands, in the Best Space",
-    bullets: ["Fully Sterilised Equipment", "Modern Treatment Chairs", "Relaxing Environment"],
+    bullets: [
+      "Fully Sterilised Equipment",
+      "Modern Treatment Chairs",
+      "Relaxing Environment",
+    ],
     ctaText: "Book Appointment",
     ctaLink: "/book-appointment",
   },
 ];
 
-export default function HeroSlider({ slides = DEFAULT_SLIDES, autoPlayInterval = 5000 }) {
+/* =====================================
+   HERO SLIDER COMPONENT
+===================================== */
+
+export default function HeroSlider({
+  slides = DEFAULT_SLIDES,
+  autoPlayInterval = 5000,
+}) {
   const [current, setCurrent] = useState(0);
-  const [animating, setAnimating] = useState(false);
   const [textVisible, setTextVisible] = useState(true);
+
   const timerRef = useRef(null);
   const total = slides.length;
 
+  /* =====================================
+     CHANGE SLIDE
+  ====================================== */
+
   const goTo = useCallback(
     (index) => {
-      if (animating) return;
-      setAnimating(true);
       setTextVisible(false);
+
       setTimeout(() => {
         setCurrent((index + total) % total);
-        setAnimating(false);
         setTextVisible(true);
-      }, 600);
+      }, 450);
     },
-    [animating, total]
+    [total]
   );
 
-  const next = useCallback(() => goTo(current + 1), [current, goTo]);
+  const next = useCallback(() => {
+    goTo(current + 1);
+  }, [current, goTo]);
+
+  /* =====================================
+     AUTO PLAY
+  ====================================== */
 
   useEffect(() => {
     timerRef.current = setInterval(next, autoPlayInterval);
+
     return () => clearInterval(timerRef.current);
   }, [next, autoPlayInterval]);
+
+  /* =====================================
+     RESET TIMER AFTER MANUAL ACTION
+  ====================================== */
 
   const resetTimer = () => {
     clearInterval(timerRef.current);
     timerRef.current = setInterval(next, autoPlayInterval);
   };
 
-  const handlePrev = () => { resetTimer(); goTo(current - 1); };
-  const handleNext = () => { resetTimer(); next(); };
-  const handleDot  = (i) => { resetTimer(); goTo(i); };
+  /* =====================================
+     SLIDER CONTROLS
+  ====================================== */
+
+  const handlePrev = () => {
+    resetTimer();
+    goTo(current - 1);
+  };
+
+  const handleNext = () => {
+    resetTimer();
+    next();
+  };
+
+  const handleDot = (index) => {
+    resetTimer();
+    goTo(index);
+  };
 
   const slide = slides[current];
 
   return (
     <section className="hero-slider">
-
-      {/* Slides — opacity on wrapper, scale/zoom on the img itself */}
-      {slides.map((s, i) => (
+      {/* =====================================
+          BACKGROUND SLIDES
+      ====================================== */}
+      {slides.map((item, index) => (
         <div
-          key={s.id}
+          key={item.id}
           className="hero-slide"
           style={{
-            opacity: i === current ? 1 : 0,
-            zIndex: i === current ? 1 : 0,
+            opacity: index === current ? 1 : 0,
+            zIndex: index === current ? 1 : 0,
             transition: "opacity 0.7s ease",
           }}
         >
-          {/* Scale lives on the img so it works on all screen sizes */}
           <img
-            src={s.image}
-            alt={s.headline}
+            src={item.image}
+            alt={item.headline}
             style={{
-              transform: i === current ? "scale(1.06)" : "scale(1)",
-              transition: i === current
-                ? "transform 6s ease"
-                : "transform 0.7s ease",
+              transform: index === current ? "scale(1.06)" : "scale(1)",
+              transition:
+                index === current ? "transform 6s ease" : "transform 0.7s ease",
             }}
           />
+
           <div className="hero-overlay" />
         </div>
       ))}
 
-      {/* Text content */}
+      {/* =====================================
+          HERO TEXT CONTENT
+      ====================================== */}
       <div
         className="hero-content"
         style={{
@@ -122,44 +174,81 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, autoPlayInterval =
 
         {slide.bullets && slide.bullets.length > 0 && (
           <ul className="hero-bullets">
-            {slide.bullets.map((b, idx) => (
-              <li key={idx} className="hero-bullet">
+            {slide.bullets.map((bullet, index) => (
+              <li key={index} className="hero-bullet">
                 <span className="hero-bullet-dot" />
-                {b}
+                {bullet}
               </li>
             ))}
           </ul>
         )}
 
-        <a href={slide.ctaLink} className="hero-cta">
+        <Link to={slide.ctaLink} className="hero-cta">
           {slide.ctaText}
-        </a>
+        </Link>
       </div>
 
-      {/* Arrows */}
-      <button onClick={handlePrev} className="hero-arrow hero-arrow-prev" aria-label="Previous">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      {/* =====================================
+          ARROW CONTROLS
+      ====================================== */}
+      <button
+        onClick={handlePrev}
+        className="hero-arrow hero-arrow-prev"
+        aria-label="Previous slide"
+      >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <polyline points="15 18 9 12 15 6" />
         </svg>
       </button>
-      <button onClick={handleNext} className="hero-arrow hero-arrow-next" aria-label="Next">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+
+      <button
+        onClick={handleNext}
+        className="hero-arrow hero-arrow-next"
+        aria-label="Next slide"
+      >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <polyline points="9 18 15 12 9 6" />
         </svg>
       </button>
 
-      {/* Dots */}
+      {/* =====================================
+          DOT CONTROLS
+      ====================================== */}
       <div className="hero-dots">
-        {slides.map((_, i) => (
+        {slides.map((_, index) => (
           <button
-            key={i}
-            onClick={() => handleDot(i)}
-            className={`hero-dot${i === current ? " active" : ""}`}
-            aria-label={`Slide ${i + 1}`}
+            key={index}
+            onClick={() => handleDot(index)}
+            className={`hero-dot${index === current ? " active" : ""}`}
+            aria-label={`Go to slide ${index + 1}`}
           />
         ))}
       </div>
 
+      {/* =====================================
+          SCROLL INDICATOR
+      ====================================== */}
+      <div className="hero-scroll-indicator">
+        <span></span>
+      </div>
     </section>
   );
 }

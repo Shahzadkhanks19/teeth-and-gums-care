@@ -1,7 +1,22 @@
+/* =====================================
+   CONTACT PAGE IMPORTS
+===================================== */
+
+// React hooks
 import React, { useState } from "react";
+
+// Page styles
 import "./Contact.css";
+
+// API base URL
 import API_BASE_URL from "../../api/api";
+
+// Toast notifications
 import toast from "react-hot-toast";
+
+/* =====================================
+   CONTACT PAGE COMPONENT
+===================================== */
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -13,6 +28,10 @@ function Contact() {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+
+  /* =====================================
+     FORM VALIDATION
+  ====================================== */
 
   const validateForm = () => {
     const newErrors = {};
@@ -46,6 +65,10 @@ function Contact() {
     return Object.keys(newErrors).length === 0;
   };
 
+  /* =====================================
+     HANDLE INPUT CHANGE
+  ====================================== */
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -58,6 +81,10 @@ function Contact() {
 
     setErrors({ ...errors, [name]: "" });
   };
+
+  /* =====================================
+     HANDLE FORM SUBMIT
+  ====================================== */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -109,22 +136,33 @@ function Contact() {
 
   return (
     <>
+      {/* =====================================
+          HERO SECTION
+      ====================================== */}
       <section className="contact-hero">
-        <div className="container text-center">
+        <div className="container text-center" data-aos="fade-up">
+          <span className="contact-hero-badge">Teeth & Gums Care</span>
+
           <h1>Contact Us</h1>
+
           <p>We're here to help you achieve a healthy, confident smile.</p>
         </div>
       </section>
 
+      {/* =====================================
+          CONTACT FORM + INFO SECTION
+      ====================================== */}
       <section className="contact-section">
         <div className="container">
           <div className="row g-4">
-            <div className="col-lg-5">
+            {/* Contact Info */}
+            <div className="col-lg-5" data-aos="fade-right">
               <div className="contact-info-card">
                 <h2>Get In Touch</h2>
 
                 <div className="contact-item">
                   <i className="fa-solid fa-location-dot"></i>
+
                   <div>
                     <h6>Address</h6>
                     <p>
@@ -137,6 +175,7 @@ function Contact() {
 
                 <div className="contact-item">
                   <i className="fa-solid fa-phone"></i>
+
                   <div>
                     <h6>Phone</h6>
                     <p>+91 98298 24356</p>
@@ -145,6 +184,7 @@ function Contact() {
 
                 <div className="contact-item">
                   <i className="fa-solid fa-envelope"></i>
+
                   <div>
                     <h6>Email</h6>
                     <p>info@teethandgumscare.in</p>
@@ -153,6 +193,7 @@ function Contact() {
 
                 <div className="contact-item">
                   <i className="fa-solid fa-clock"></i>
+
                   <div>
                     <h6>Clinic Hours</h6>
                     <p>
@@ -165,7 +206,8 @@ function Contact() {
               </div>
             </div>
 
-            <div className="col-lg-7">
+            {/* Contact Form */}
+            <div className="col-lg-7" data-aos="fade-left">
               <div className="contact-form-card">
                 <div className="response-badge">
                   <i className="fa-solid fa-clock me-2"></i>
@@ -183,6 +225,7 @@ function Contact() {
                 <form onSubmit={handleSubmit}>
                   <div className="input-group-custom">
                     <i className="fa-solid fa-user"></i>
+
                     <input
                       type="text"
                       name="name"
@@ -190,6 +233,7 @@ function Contact() {
                       value={formData.name}
                       onChange={handleChange}
                     />
+
                     {errors.name && (
                       <small className="form-error">{errors.name}</small>
                     )}
@@ -197,6 +241,7 @@ function Contact() {
 
                   <div className="input-group-custom">
                     <i className="fa-solid fa-phone"></i>
+
                     <input
                       type="tel"
                       name="phone"
@@ -204,6 +249,7 @@ function Contact() {
                       value={formData.phone}
                       onChange={handleChange}
                     />
+
                     {errors.phone && (
                       <small className="form-error">{errors.phone}</small>
                     )}
@@ -211,6 +257,7 @@ function Contact() {
 
                   <div className="input-group-custom">
                     <i className="fa-solid fa-envelope"></i>
+
                     <input
                       type="email"
                       name="email"
@@ -218,6 +265,7 @@ function Contact() {
                       value={formData.email}
                       onChange={handleChange}
                     />
+
                     {errors.email && (
                       <small className="form-error">{errors.email}</small>
                     )}
@@ -225,6 +273,7 @@ function Contact() {
 
                   <div className="input-group-custom">
                     <i className="fa-solid fa-comment-medical"></i>
+
                     <textarea
                       rows="5"
                       name="message"
@@ -232,6 +281,7 @@ function Contact() {
                       value={formData.message}
                       onChange={handleChange}
                     ></textarea>
+
                     {errors.message && (
                       <small className="form-error">{errors.message}</small>
                     )}
@@ -252,36 +302,42 @@ function Contact() {
         </div>
       </section>
 
+      {/* =====================================
+          WHY VISIT SECTION
+      ====================================== */}
       <section className="why-visit">
         <div className="container">
-          <div className="text-center mb-5">
+          <div className="text-center section-heading" data-aos="fade-up">
+            <span className="contact-section-badge">Why Visit Us</span>
+
             <h2>Why Visit Teeth & Gums Care?</h2>
+
             <p>Trusted dental solutions for every smile.</p>
           </div>
 
           <div className="row g-4">
-            <div className="col-md-3">
+            <div className="col-md-3 col-6" data-aos="zoom-in">
               <div className="visit-card">
                 <i className="fa-solid fa-user-doctor"></i>
                 <h5>Experienced Dentists</h5>
               </div>
             </div>
 
-            <div className="col-md-3">
+            <div className="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="100">
               <div className="visit-card">
                 <i className="fa-solid fa-tooth"></i>
                 <h5>Advanced Treatments</h5>
               </div>
             </div>
 
-            <div className="col-md-3">
+            <div className="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="200">
               <div className="visit-card">
                 <i className="fa-solid fa-heart"></i>
                 <h5>Patient-Centered Care</h5>
               </div>
             </div>
 
-            <div className="col-md-3">
+            <div className="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="300">
               <div className="visit-card">
                 <i className="fa-solid fa-shield-heart"></i>
                 <h5>Comfort & Safety</h5>
@@ -291,7 +347,10 @@ function Contact() {
         </div>
       </section>
 
-      <section className="map-section">
+      {/* =====================================
+          MAP SECTION
+      ====================================== */}
+      <section className="map-section" data-aos="fade-up">
         <iframe
           title="Teeth & Gums Care Location"
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3577.637792058533!2d73.0042884!3d26.2734165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39418d34fadbdd11%3A0x664ab9eb47182845!2sTeeth%20and%20Gums%20Care%20Dental%20Clinic%20in%20jodhpur!5e0!3m2!1sen!2sin!4v1781185522279!5m2!1sen!2sin"
@@ -301,8 +360,13 @@ function Contact() {
         />
       </section>
 
+      {/* =====================================
+          CTA SECTION
+      ====================================== */}
       <section className="contact-cta">
-        <div className="container text-center">
+        <div className="container text-center" data-aos="zoom-in">
+          <span className="contact-cta-badge">Book Your Visit Today</span>
+
           <h2>Ready To Book Your Appointment?</h2>
 
           <p>
@@ -316,7 +380,12 @@ function Contact() {
               Call Now
             </a>
 
-            <a href="https://wa.me/919829824356" className="cta-whatsapp">
+            <a
+              href="https://wa.me/919829824356"
+              className="cta-whatsapp"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <i className="fa-brands fa-whatsapp me-2"></i>
               WhatsApp Us
             </a>

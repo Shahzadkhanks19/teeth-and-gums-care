@@ -1,122 +1,211 @@
+/* ======================================================
+   TESTIMONIALS SECTION
+====================================================== */
+
 .testimonials-section {
-  padding: 100px 0;
+  position: relative;
+  padding: 90px 0;
   background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
   overflow: hidden;
 }
 
+.testimonials-section::before {
+  content: "";
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  background: rgba(13, 110, 253, 0.045);
+  border-radius: 50%;
+  top: -210px;
+  right: -120px;
+}
+
+.testimonials-section::after {
+  content: "";
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  background: rgba(13, 110, 253, 0.035);
+  border-radius: 50%;
+  bottom: -170px;
+  left: -100px;
+}
+
+.testimonials-section .container {
+  position: relative;
+  z-index: 2;
+}
+
+/* ======================================================
+   SECTION HEADING
+====================================================== */
+
 .testimonial-heading {
-  margin-bottom: 50px;
+  max-width: 820px;
+  margin: 0 auto 50px;
 }
 
 .testimonial-tag {
+  display: inline-block;
+  background: rgba(13, 110, 253, 0.1);
   color: #0d6efd;
-  font-weight: 800;
+  padding: 9px 20px;
+  border-radius: 50px;
+  font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 1px;
+  font-size: 0.85rem;
 }
 
 .testimonial-heading h2 {
-  color: #0d47a1;
-  font-weight: 800;
-  margin: 15px 0;
+  color: #0f172a;
+  font-size: 2.7rem;
+  font-weight: 900;
+  margin: 18px 0 14px;
 }
 
 .testimonial-heading p {
   max-width: 720px;
-  margin: auto;
-  color: #666;
+  margin: 0 auto;
+  color: #64748b;
   line-height: 1.8;
+  font-size: 1.05rem;
 }
 
+/* ======================================================
+   GOOGLE RATING BANNER
+====================================================== */
+
 .google-rating-banner {
-  margin: 25px auto 0;
-  background: white;
+  margin: 28px auto 0;
+  background: #ffffff;
   display: inline-flex;
   align-items: center;
-  gap: 15px;
-  padding: 16px 28px;
-  box-shadow: 0 12px 30px rgba(13, 110, 253, 0.12);
+  gap: 16px;
+  padding: 18px 30px;
+  border-radius: 22px;
+  box-shadow: 0 18px 45px rgba(13, 110, 253, 0.13);
+  border: 1px solid rgba(13, 110, 253, 0.08);
+  transition: all 0.35s ease;
+}
+
+.google-rating-banner:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 26px 65px rgba(13, 110, 253, 0.18);
 }
 
 .google-g,
 .google-icon-box {
-  background: white;
+  background: #ffffff;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-}
-
-.google-g {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.google-icon-box {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
 }
 
-.google-g i,
-.google-icon-box i {
-  color: #4285f4;
+.google-g {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
-.google-g i {
-  font-size: 24px;
+.google-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
 }
 
-.google-icon-box i {
-  font-size: 21px;
+.google-g img,
+.google-icon-box img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
 }
 
 .google-rating-banner h4 {
-  color: #0d47a1;
-  font-weight: 800;
+  color: #0f172a;
+  font-weight: 900;
   margin: 0;
   font-size: 1.15rem;
 }
 
 .google-rating-banner span {
-  color: #666;
+  color: #64748b;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
 }
+
+/* ======================================================
+   SLIDER SPACING
+====================================================== */
 
 .testimonial-slide {
   padding: 18px;
+  box-sizing: border-box;
 }
 
+.testimonials-section .slick-slide > div {
+  height: 100%;
+}
+
+/* ======================================================
+   REVIEW CARD
+====================================================== */
+
 .google-review-card {
-  display: block;
-  background: white;
-  padding: 30px;
-  min-height: 360px;
-  box-shadow: 0 15px 35px rgba(13, 110, 253, 0.12);
-  border: 1px solid #eef4ff;
-  transition: 0.35s ease;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  padding: 32px 30px 72px;
+  min-height: 375px;
+  width: 100%;
+  box-sizing: border-box;
   text-decoration: none;
+  border-radius: 28px;
+  border: 1px solid rgba(13, 110, 253, 0.08);
+  box-shadow: 0 18px 45px rgba(13, 110, 253, 0.11);
+  transition: all 0.35s ease;
+  overflow: hidden;
+}
+
+.google-review-card::before {
+  content: "“";
+  position: absolute;
+  right: 24px;
+  bottom: -25px;
+  font-size: 9rem;
+  line-height: 1;
+  font-family: Georgia, serif;
+  color: rgba(13, 110, 253, 0.06);
+  pointer-events: none;
+}
+
+.google-review-card::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 5px;
+  background: linear-gradient(90deg, #0d6efd, #0b3c91);
 }
 
 .google-review-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 25px 50px rgba(13, 110, 253, 0.18);
+  box-shadow: 0 28px 70px rgba(13, 110, 253, 0.18);
 }
+
+/* ======================================================
+   REVIEW TOP
+====================================================== */
 
 .review-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 18px;
-  gap: 12px;
+  gap: 14px;
 }
 
 .review-user {
@@ -126,37 +215,42 @@
 }
 
 .review-avatar {
-  width: 56px;
-  height: 56px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   background: linear-gradient(135deg, #0d6efd, #0b3c91);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 900;
   flex-shrink: 0;
+  box-shadow: 0 12px 28px rgba(13, 110, 253, 0.24);
 }
 
 .review-user h5 {
   margin: 0;
-  color: #202124;
+  color: #0f172a;
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .review-user span {
-  color: #5f6368;
+  color: #64748b;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
 }
+
+/* ======================================================
+   REVIEW STARS
+====================================================== */
 
 .review-stars {
   display: flex;
   align-items: center;
   gap: 4px;
   margin-bottom: 18px;
+  flex-wrap: wrap;
 }
 
 .review-stars i {
@@ -165,35 +259,49 @@
 }
 
 .review-stars span {
-  color: #70757a;
+  color: #64748b;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   margin-left: 8px;
 }
 
+/* ======================================================
+   REVIEW TEXT
+====================================================== */
+
 .review-text {
-  color: #444;
+  color: #475569;
   line-height: 1.85;
   margin-bottom: 25px;
   font-size: 15.5px;
+  flex-grow: 1;
+  overflow-wrap: break-word;
 }
+
+/* ======================================================
+   VERIFIED REVIEW
+====================================================== */
 
 .verified-review {
   position: absolute;
-  bottom: 25px;
+  bottom: 26px;
   left: 30px;
   color: #0d6efd;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .verified-review i {
   margin-right: 7px;
 }
 
+/* ======================================================
+   REVIEWS FOOTER BUTTON
+====================================================== */
+
 .reviews-footer {
   text-align: center;
-  margin-top: 55px;
+  margin-top: 58px;
 }
 
 .view-google-reviews-btn {
@@ -201,22 +309,27 @@
   align-items: center;
   gap: 10px;
   background: linear-gradient(135deg, #0d6efd, #0b3c91);
-  color: white;
+  color: #ffffff;
   text-decoration: none;
-  padding: 14px 30px;
-  font-weight: 800;
-  border-radius: 50px;
-  transition: 0.3s ease;
+  padding: 15px 34px;
+  font-weight: 900;
+  border-radius: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 14px 34px rgba(13, 110, 253, 0.25);
 }
 
 .view-google-reviews-btn:hover {
-  color: white;
+  color: #ffffff;
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(13, 110, 253, 0.25);
+  box-shadow: 0 20px 45px rgba(13, 110, 253, 0.34);
 }
 
+/* ======================================================
+   SLICK DOTS
+====================================================== */
+
 .testimonials-section .slick-dots {
-  bottom: -45px;
+  bottom: -44px;
 }
 
 .testimonials-section .slick-dots li button:before {
@@ -226,66 +339,87 @@
 }
 
 .testimonials-section .slick-dots li.slick-active button:before {
-  color: #0d47a1;
+  color: #0b3c91;
   opacity: 1;
 }
 
+/* ======================================================
+   SLICK ARROWS
+====================================================== */
+
 .testimonials-section .slick-prev,
 .testimonials-section .slick-next {
-  width: 45px;
-  height: 45px;
+  width: 48px;
+  height: 48px;
   z-index: 5;
+  border-radius: 50%;
+  background: #ffffff !important;
+  box-shadow: 0 14px 32px rgba(13, 110, 253, 0.16);
+}
+
+.testimonials-section .slick-prev {
+  left: -45px;
+}
+
+.testimonials-section .slick-next {
+  right: -45px;
 }
 
 .testimonials-section .slick-prev:before,
 .testimonials-section .slick-next:before {
-  color: #0d47a1;
-  font-size: 34px;
+  color: #0d6efd;
+  font-size: 24px;
+  opacity: 1;
 }
+
+/* ======================================================
+   RESPONSIVE TABLET
+====================================================== */
+
+@media (max-width: 1200px) {
+  .testimonials-section .slick-prev {
+    left: -25px;
+  }
+
+  .testimonials-section .slick-next {
+    right: -25px;
+  }
+}
+
+/* ======================================================
+   RESPONSIVE MOBILE
+====================================================== */
 
 @media (max-width: 768px) {
   .testimonials-section {
-    padding: 70px 0;
+    padding: 65px 0;
+  }
+
+  .testimonial-heading {
+    margin-bottom: 36px;
+  }
+
+  .testimonial-heading h2 {
+    font-size: 2rem;
+  }
+
+  .testimonial-heading p {
+    font-size: 1rem;
   }
 
   .google-rating-banner {
-    padding: 14px 20px;
+    padding: 15px 20px;
+    border-radius: 18px;
   }
 
-  .google-review-card {
-    min-height: auto;
-    padding: 26px 22px 65px;
-  }
-
-  .verified-review {
-    left: 22px;
-    bottom: 22px;
-  }
-}
-
-.testimonials-section .slick-slide > div {
-  height: 100%;
-}
-
-.testimonial-slide {
-  padding: 18px;
-  box-sizing: border-box;
-}
-
-.google-review-card {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-@media (max-width: 768px) {
   .testimonial-slide {
     padding: 10px;
   }
 
   .google-review-card {
-    width: 100%;
     min-height: 360px;
-    padding: 26px 22px 70px;
+    padding: 28px 22px 70px;
+    border-radius: 22px;
   }
 
   .review-top {
@@ -294,11 +428,51 @@
 
   .review-text {
     font-size: 15px;
-    line-height: 1.7;
-    overflow-wrap: break-word;
+    line-height: 1.75;
   }
 
-  .review-stars {
-    flex-wrap: wrap;
+  .verified-review {
+    left: 22px;
+    bottom: 22px;
+  }
+
+  .reviews-footer {
+    margin-top: 52px;
+  }
+}
+
+/* ======================================================
+   SMALL MOBILE
+====================================================== */
+
+@media (max-width: 480px) {
+  .testimonial-tag {
+    font-size: 12px;
+    padding: 8px 14px;
+  }
+
+  .testimonial-heading h2 {
+    font-size: 1.8rem;
+  }
+
+  .google-rating-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .review-avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
+  }
+
+  .google-icon-box {
+    width: 36px;
+    height: 36px;
+  }
+
+  .view-google-reviews-btn {
+    width: 100%;
+    justify-content: center;
   }
 }

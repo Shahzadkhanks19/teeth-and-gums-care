@@ -1,7 +1,22 @@
+/* =====================================
+   BOOK APPOINTMENT PAGE IMPORTS
+===================================== */
+
+// React hooks
 import React, { useEffect, useState } from "react";
+
+// Page styles
 import "./BookAppointment.css";
+
+// API base URL
 import API_BASE_URL from "../../api/api";
+
+// Toast notifications
 import toast from "react-hot-toast";
+
+/* =====================================
+   BOOK APPOINTMENT PAGE COMPONENT
+===================================== */
 
 function BookAppointment() {
   const [selectedSlot, setSelectedSlot] = useState("");
@@ -24,6 +39,10 @@ function BookAppointment() {
   });
 
   const [errors, setErrors] = useState({});
+
+  /* =====================================
+     AVAILABLE CLINIC TIME SLOTS
+  ====================================== */
 
   const morningSlots = [
     "10:00 AM",
@@ -51,6 +70,10 @@ function BookAppointment() {
     ? new Date(formData.date).getDay() === 0
     : false;
 
+  /* =====================================
+     DATE + SLOT HELPERS
+  ====================================== */
+
   const getTodayDate = () => {
     const today = new Date();
     return today.toISOString().split("T")[0];
@@ -75,11 +98,13 @@ function BookAppointment() {
 
   const isPastSlot = (slot) => {
     if (!formData.date) return false;
-
     const slotDateTime = convertSlotToDateTime(formData.date, slot);
-
     return slotDateTime && slotDateTime <= new Date();
   };
+
+  /* =====================================
+     FETCH UNAVAILABLE SLOTS
+  ====================================== */
 
   const fetchUnavailableSlots = async (date) => {
     if (!date) return;
@@ -129,6 +154,7 @@ function BookAppointment() {
       setBlockedReason("");
       setBlockedSlotReasons({});
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.date]);
 
@@ -137,6 +163,10 @@ function BookAppointment() {
       isFullDayBlocked || unavailableSlots.includes(slot) || isPastSlot(slot)
     );
   };
+
+  /* =====================================
+     FORM VALIDATION
+  ====================================== */
 
   const validateForm = () => {
     const newErrors = {};
@@ -182,6 +212,10 @@ function BookAppointment() {
     return Object.keys(newErrors).length === 0;
   };
 
+  /* =====================================
+     FORM CHANGE HANDLERS
+  ====================================== */
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -203,12 +237,21 @@ function BookAppointment() {
     setErrors({ ...errors, [name]: "" });
   };
 
+  const handleDoctorSelect = (doctor) => {
+    setFormData({ ...formData, doctor });
+    setErrors({ ...errors, doctor: "" });
+  };
+
   const handleSlotClick = (slot) => {
     if (isSlotUnavailable(slot)) return;
 
     setSelectedSlot(slot);
     setErrors({ ...errors, slot: "" });
   };
+
+  /* =====================================
+     SUBMIT APPOINTMENT REQUEST
+  ====================================== */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -266,6 +309,10 @@ function BookAppointment() {
     }
   };
 
+  /* =====================================
+     SLOT BUTTON RENDERER
+  ====================================== */
+
   const renderSlotButton = (slot) => {
     const unavailable = isSlotUnavailable(slot);
     const blockedReasonForSlot = blockedSlotReasons[slot];
@@ -286,14 +333,16 @@ function BookAppointment() {
       >
         <span>{slot}</span>
 
-        {unavailable && (
+        {unavailable ? (
           <small>
             {isPastSlot(slot)
               ? "Time passed"
               : blockedReasonForSlot
-              ? `Blocked: ${blockedReasonForSlot}`
+              ? "Blocked"
               : "Booked"}
           </small>
+        ) : (
+          <small>Available</small>
         )}
       </button>
     );
@@ -301,26 +350,87 @@ function BookAppointment() {
 
   return (
     <>
+      {/* =====================================
+          HERO SECTION
+      ====================================== */}
       <section className="appointment-hero">
-        <div className="container text-center">
+        <div className="appointment-hero-shape shape-one"></div>
+        <div className="appointment-hero-shape shape-two"></div>
+
+        <div className="container text-center" data-aos="fade-up">
           <span>Teeth & Gums Care</span>
+
           <h1>Book Appointment</h1>
+
           <p>
-            Schedule your visit with our dental experts for comfortable and
-            personalized care.
+            Schedule your visit with our dental experts for comfortable,
+            advanced, and personalized dental care.
           </p>
+
+          <div className="appointment-hero-points">
+            <div>
+              <i className="fa-solid fa-circle-check"></i>
+              Experienced Dentists
+            </div>
+
+            <div>
+              <i className="fa-solid fa-circle-check"></i>
+              Easy Slot Booking
+            </div>
+
+            <div>
+              <i className="fa-solid fa-circle-check"></i>
+              Patient First Care
+            </div>
+          </div>
         </div>
       </section>
 
+      {/* =====================================
+          APPOINTMENT STEPS
+      ====================================== */}
+      <section className="appointment-steps">
+        <div className="container">
+          <div className="steps-wrapper" data-aos="fade-up">
+            <div className="step-item">
+              <span>01</span>
+              <p>Fill Details</p>
+            </div>
+
+            <div className="step-item">
+              <span>02</span>
+              <p>Choose Date</p>
+            </div>
+
+            <div className="step-item">
+              <span>03</span>
+              <p>Select Slot</p>
+            </div>
+
+            <div className="step-item">
+              <span>04</span>
+              <p>Submit Request</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================
+          APPOINTMENT FORM SECTION
+      ====================================== */}
       <section className="appointment-section">
         <div className="container">
-          <div className="row g-4 align-items-stretch">
-            <div className="col-lg-5">
+          <div className="row g-4 align-items-start">
+            {/* Left Info Column */}
+            <div className="col-lg-5" data-aos="fade-right">
               <div className="appointment-info-card">
+                <span className="appointment-badge">Clinic Information</span>
+
                 <h2>Clinic Details</h2>
 
                 <div className="appointment-info-item">
                   <i className="fa-solid fa-location-dot"></i>
+
                   <div>
                     <h5>Address</h5>
                     <p>Pal Road, Jodhpur, Rajasthan</p>
@@ -329,6 +439,7 @@ function BookAppointment() {
 
                 <div className="appointment-info-item">
                   <i className="fa-solid fa-phone"></i>
+
                   <div>
                     <h5>Phone</h5>
                     <p>+91 98298 24356</p>
@@ -337,6 +448,7 @@ function BookAppointment() {
 
                 <div className="appointment-info-item">
                   <i className="fa-solid fa-clock"></i>
+
                   <div>
                     <h5>Clinic Hours</h5>
                     <p>
@@ -346,6 +458,18 @@ function BookAppointment() {
                       <br />
                       Sun: 10:00 AM – 3:00 PM
                     </p>
+                  </div>
+                </div>
+
+                <div className="appointment-stats">
+                  <div>
+                    <h4>5000+</h4>
+                    <p>Patients</p>
+                  </div>
+
+                  <div>
+                    <h4>15+</h4>
+                    <p>Services</p>
                   </div>
                 </div>
 
@@ -359,9 +483,32 @@ function BookAppointment() {
                   Chat on WhatsApp
                 </a>
               </div>
+
+              <div className="appointment-summary-card" data-aos="fade-up">
+                <h3>Appointment Summary</h3>
+
+                <p>
+                  <strong>Service:</strong>{" "}
+                  {formData.service || "Not selected yet"}
+                </p>
+
+                <p>
+                  <strong>Date:</strong> {formData.date || "Not selected yet"}
+                </p>
+
+                <p>
+                  <strong>Time:</strong> {selectedSlot || "Not selected yet"}
+                </p>
+
+                <p>
+                  <strong>Doctor:</strong>{" "}
+                  {formData.doctor || "Not selected yet"}
+                </p>
+              </div>
             </div>
 
-            <div className="col-lg-7">
+            {/* Right Form Column */}
+            <div className="col-lg-7" data-aos="fade-left">
               <div className="appointment-form-card">
                 <span className="appointment-badge">
                   <i className="fa-solid fa-calendar-check me-2"></i>
@@ -380,6 +527,7 @@ function BookAppointment() {
                         value={formData.name}
                         onChange={handleChange}
                       />
+
                       {errors.name && (
                         <small className="form-error">{errors.name}</small>
                       )}
@@ -393,6 +541,7 @@ function BookAppointment() {
                         value={formData.phone}
                         onChange={handleChange}
                       />
+
                       {errors.phone && (
                         <small className="form-error">{errors.phone}</small>
                       )}
@@ -406,6 +555,7 @@ function BookAppointment() {
                         value={formData.email}
                         onChange={handleChange}
                       />
+
                       {errors.email && (
                         <small className="form-error">{errors.email}</small>
                       )}
@@ -427,6 +577,7 @@ function BookAppointment() {
                         <option>Dental Veneers</option>
                         <option>Tooth Extraction</option>
                       </select>
+
                       {errors.service && (
                         <small className="form-error">{errors.service}</small>
                       )}
@@ -436,6 +587,7 @@ function BookAppointment() {
                       <label className="appointment-field-label">
                         Select Appointment Date
                       </label>
+
                       <input
                         type="date"
                         name="date"
@@ -443,22 +595,39 @@ function BookAppointment() {
                         value={formData.date}
                         onChange={handleChange}
                       />
+
                       {errors.date && (
                         <small className="form-error">{errors.date}</small>
                       )}
                     </div>
 
-                    <div className="col-md-6 mb-3">
-                      <select
-                        name="doctor"
-                        value={formData.doctor}
-                        onChange={handleChange}
-                      >
-                        <option value="">Preferred Doctor</option>
-                        <option>Dr. Sunita Khetani</option>
-                        <option>Dr. Vishal Khetani</option>
-                        <option>No Preference</option>
-                      </select>
+                    <div className="col-12 mb-4">
+                      <label className="appointment-field-label">
+                        Preferred Doctor
+                      </label>
+
+                      <div className="doctor-select-grid">
+                        {[
+                          "Dr. Sunita Khetani",
+                          "Dr. Vishal Khetani",
+                          "No Preference",
+                        ].map((doctor) => (
+                          <button
+                            type="button"
+                            key={doctor}
+                            className={
+                              formData.doctor === doctor
+                                ? "doctor-select-card active-doctor"
+                                : "doctor-select-card"
+                            }
+                            onClick={() => handleDoctorSelect(doctor)}
+                          >
+                            <i className="fa-solid fa-user-doctor"></i>
+                            <span>{doctor}</span>
+                          </button>
+                        ))}
+                      </div>
+
                       {errors.doctor && (
                         <small className="form-error">{errors.doctor}</small>
                       )}
@@ -485,7 +654,7 @@ function BookAppointment() {
                             </strong>
 
                             {blockedReason && (
-                              <div style={{ marginTop: "6px" }}>
+                              <div className="blocked-reason">
                                 Reason: {blockedReason}
                               </div>
                             )}

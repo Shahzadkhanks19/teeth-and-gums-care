@@ -1,9 +1,31 @@
+/* =====================================
+   IMPORTS
+===================================== */
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../Sticky Buttons/StickyButtons.css";
 
+/* =====================================
+   STICKY ACTION BUTTONS
+
+   Features:
+   - Book Appointment Button
+   - WhatsApp Button
+   - Back To Top Button
+===================================== */
+
 function StickyButtons() {
+  
+  /* =====================================
+     SHOW / HIDE TOP BUTTON
+  ====================================== */
+
   const [showTopBtn, setShowTopBtn] = useState(false);
+
+  /* =====================================
+     SCROLL LISTENER
+  ====================================== */
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +39,10 @@ function StickyButtons() {
     };
   }, []);
 
+  /* =====================================
+     SCROLL TO TOP FUNCTION
+  ====================================== */
+
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -27,7 +53,9 @@ function StickyButtons() {
   return (
     <div className="sticky-buttons">
 
-      {/* Book Appointment */}
+      {/* ================================
+          BOOK APPOINTMENT BUTTON
+      ================================= */}
       <Link
         to="/book-appointment"
         className="sticky-btn sticky-book"
@@ -37,7 +65,9 @@ function StickyButtons() {
         <i className="fa-solid fa-calendar-check"></i>
       </Link>
 
-      {/* WhatsApp */}
+      {/* ================================
+          WHATSAPP BUTTON
+      ================================= */}
       <a
         href="https://wa.me/919829824356"
         target="_blank"
@@ -49,7 +79,9 @@ function StickyButtons() {
         <i className="fa-brands fa-whatsapp"></i>
       </a>
 
-      {/* Scroll To Top */}
+      {/* ================================
+          BACK TO TOP BUTTON
+      ================================= */}
       {showTopBtn && (
         <button
           className="sticky-btn sticky-top-btn"
