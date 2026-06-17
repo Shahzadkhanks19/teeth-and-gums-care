@@ -1,10 +1,20 @@
+/* =====================================
+   ADMIN DASHBOARD IMPORTS
+===================================== */
+
+// React hooks
 import React, { useEffect, useState } from "react";
+// Route navigation
 import { useNavigate } from "react-router-dom";
+// API base URL
 import API_BASE_URL from "../../api/api";
+// Export libraries
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+// Dashboard styles
 import "./AdminDashboard.css";
+// Chart components
 import {
   PieChart,
   Pie,
@@ -17,19 +27,30 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
+// Real-time updates and notifications
 import { io } from "socket.io-client";
 import toast from "react-hot-toast";
 
+// Shared UI states
 import LoadingState from "../../Components/UI/LoadingState";
 import EmptyState from "../../Components/UI/EmptyState";
 import ErrorState from "../../Components/UI/ErrorState";
 
-
+/* =====================================
+   SOCKET CONFIG
+===================================== */
 const SOCKET_URL = API_BASE_URL.replace("/api", "");
 
+/* =====================================
+   ADMIN DASHBOARD COMPONENT
+===================================== */
 function AdminDashboard() {
+  // Router navigation for logout redirect
   const navigate = useNavigate();
 
+  /* =====================================
+     DASHBOARD TAB + DATA STATES
+  ===================================== */
   const [blockedSlotsForDate, setBlockedSlotsForDate] = useState([]);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [appointments, setAppointments] = useState([]);
@@ -39,6 +60,9 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  /* =====================================
+     MODAL + ACTION STATES
+  ===================================== */
   const [actionLoading, setActionLoading] = useState(false);
   const [cancelModal, setCancelModal] = useState(null);
   const [deleteModal, setDeleteModal] = useState(null);
@@ -50,6 +74,9 @@ function AdminDashboard() {
 
   const [cancelReason, setCancelReason] = useState("");
 
+  /* =====================================
+     FORM STATES
+  ===================================== */
   const [rescheduleData, setRescheduleData] = useState({
     date: "",
     timeSlot: "",
@@ -75,12 +102,18 @@ function AdminDashboard() {
   });
 
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-const [showNewPassword, setShowNewPassword] = useState(false);
-const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  /* =====================================
+     AUTH DATA
+  ===================================== */
   const token = localStorage.getItem("adminToken");
   const adminEmail = localStorage.getItem("adminEmail");
 
+  /* =====================================
+     CLINIC TIME SLOTS
+  ===================================== */
   const morningSlots = [
     "10:00 AM",
     "10:30 AM",
@@ -103,6 +136,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     "08:00 PM",
   ];
 
+  /* =====================================
+     DATE + TIME HELPERS
+  ===================================== */
   const getTodayDate = () => {
     const today = new Date();
     return today.toISOString().split("T")[0];
@@ -120,11 +156,14 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     return new Date(
       `${date}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(
         2,
-        "0"
-      )}:00`
+        "0",
+      )}:00`,
     );
   };
 
+  /* =====================================
+     NOTIFICATION SOUND
+  ===================================== */
   const playNotificationSound = () => {
     const audio = new Audio("/notification.mp3");
     audio.volume = 0.8;
@@ -134,10 +173,13 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     });
   };
 
+  /* =====================================
+     FETCH DASHBOARD DATA
+  ===================================== */
   const fetchDashboardData = async () => {
     try {
-  setLoading(true);
-  setError("");
+      setLoading(true);
+      setError("");
 
       const [appointmentsRes, contactsRes, blockedRes, activityLogsRes] =
         await Promise.all([
@@ -175,10 +217,10 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
       if (activityLogsData.success) {
         setActivityLogs(activityLogsData.logs);
       }
-    }catch (error) {
-  setError("Failed to load dashboard data");
-  toast.error("Failed to load dashboard data");
-} finally {
+    } catch (error) {
+      setError("Failed to load dashboard data");
+      toast.error("Failed to load dashboard data");
+    } finally {
       setLoading(false);
     }
   };
@@ -196,7 +238,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = await response.json();
@@ -209,6 +251,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     }
   };
 
+  /* =====================================
+     INITIAL DATA LOAD + REAL-TIME SOCKET EVENTS
+  ===================================== */
   useEffect(() => {
     fetchDashboardData();
 
@@ -257,6 +302,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /* =====================================
+     AUTH ACTIONS
+  ===================================== */
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
     localStorage.removeItem("adminEmail");
@@ -264,6 +312,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     navigate("/admin/login");
   };
 
+  /* =====================================
+     APPOINTMENT ACTIONS
+  ===================================== */
   const updateAppointmentStatus = async (id, status, reason = "") => {
     try {
       setActionLoading(true);
@@ -280,7 +331,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
             status,
             cancelReason: reason,
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -323,7 +374,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
             timeSlot: rescheduleData.timeSlot,
             rescheduleReason: rescheduleData.reason,
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -378,6 +429,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     }
   };
 
+  /* =====================================
+     AVAILABILITY ACTIONS
+  ===================================== */
   const blockAvailability = async (e) => {
     e.preventDefault();
 
@@ -459,6 +513,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     }
   };
 
+  /* =====================================
+     CONTACT MESSAGE ACTIONS
+  ===================================== */
   const updateMessageStatus = async (id, status) => {
     try {
       setActionLoading(true);
@@ -516,23 +573,26 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     }
   };
 
+  /* =====================================
+     DASHBOARD ANALYTICS
+  ===================================== */
   const totalAppointments = appointments.length;
 
   const pendingAppointments = appointments.filter(
-    (item) => item.status === "pending"
+    (item) => item.status === "pending",
   ).length;
 
   const confirmedAppointments = appointments.filter(
-    (item) => item.status === "confirmed"
+    (item) => item.status === "confirmed",
   ).length;
 
   const cancelledAppointments = appointments.filter(
-    (item) => item.status === "cancelled"
+    (item) => item.status === "cancelled",
   ).length;
 
   const uniquePatients = [
     ...new Set(
-      appointments.map((item) => item.phone?.trim() || item.email?.trim())
+      appointments.map((item) => item.phone?.trim() || item.email?.trim()),
     ),
   ].filter(Boolean);
 
@@ -553,20 +613,23 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const returningPatients = totalAppointments - totalPatients;
 
   const drSunitaCount = appointments.filter(
-    (item) => item.doctor === "Dr. Sunita Khetani"
+    (item) => item.doctor === "Dr. Sunita Khetani",
   ).length;
 
   const drVishalCount = appointments.filter(
-    (item) => item.doctor === "Dr. Vishal Khetani"
+    (item) => item.doctor === "Dr. Vishal Khetani",
   ).length;
 
   const noPreferenceCount = appointments.filter(
-    (item) => item.doctor === "No Preference"
+    (item) => item.doctor === "No Preference",
   ).length;
 
+  /* =====================================
+     APPOINTMENT FILTERS
+  ===================================== */
   const filteredAppointments = appointments
     .filter((item) =>
-      appointmentFilter === "all" ? true : item.status === appointmentFilter
+      appointmentFilter === "all" ? true : item.status === appointmentFilter,
     )
     .filter((item) => {
       const search = searchTerm.toLowerCase();
@@ -581,9 +644,12 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
       );
     });
 
+  /* =====================================
+     MESSAGE FILTERS
+  ===================================== */
   const filteredContacts = contacts
     .filter((item) =>
-      messageFilter === "all" ? true : item.status === messageFilter
+      messageFilter === "all" ? true : item.status === messageFilter,
     )
     .filter((item) => {
       const search = messageSearchTerm.toLowerCase();
@@ -597,6 +663,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
       );
     });
 
+  /* =====================================
+     APPOINTMENT EXPORTS
+  ===================================== */
   const exportCSV = () => {
     if (filteredAppointments.length === 0) {
       toast.error("No appointments to export");
@@ -619,7 +688,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
       ...rows.map((row) =>
         Object.values(row)
           .map((value) => `"${String(value || "").replace(/"/g, '""')}"`)
-          .join(",")
+          .join(","),
       ),
     ].join("\n");
 
@@ -656,6 +725,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const workbook = XLSX.utils.book_new();
 
     XLSX.utils.book_append_sheet(workbook, worksheet, "Appointments");
+
     XLSX.writeFile(workbook, "appointments.xlsx");
 
     toast.success("Appointments Excel exported");
@@ -686,9 +756,13 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     });
 
     doc.save("appointments.pdf");
+
     toast.success("Appointments PDF exported");
   };
 
+  /* =====================================
+     CONTACT MESSAGE EXPORTS
+  ===================================== */
   const exportContactsCSV = () => {
     if (filteredContacts.length === 0) {
       toast.error("No contact messages to export");
@@ -708,7 +782,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
       ...rows.map((row) =>
         Object.values(row)
           .map((value) => `"${String(value || "").replace(/"/g, '""')}"`)
-          .join(",")
+          .join(","),
       ),
     ].join("\n");
 
@@ -742,6 +816,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const workbook = XLSX.utils.book_new();
 
     XLSX.utils.book_append_sheet(workbook, worksheet, "Contact Messages");
+
     XLSX.writeFile(workbook, "contact-messages.xlsx");
 
     toast.success("Contact messages Excel exported");
@@ -770,9 +845,13 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     });
 
     doc.save("contact-messages.pdf");
+
     toast.success("Contact messages PDF exported");
   };
 
+  /* =====================================
+     AVAILABILITY SLOT CALCULATIONS
+  ===================================== */
   const isAvailabilitySunday = availabilityData.date
     ? new Date(availabilityData.date).getDay() === 0
     : false;
@@ -783,13 +862,17 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const isAdminPastSlot = (slot) => {
     const slotDateTime = convertSlotToDateTime(availabilityData.date, slot);
+
     return slotDateTime && slotDateTime <= new Date();
   };
 
   const availableAdminSlotsFiltered = availableAdminSlots.filter(
-    (slot) => !blockedSlotsForDate.includes(slot) && !isAdminPastSlot(slot)
+    (slot) => !blockedSlotsForDate.includes(slot) && !isAdminPastSlot(slot),
   );
 
+  /* =====================================
+     CHART DATA
+  ===================================== */
   const statusChartData = [
     { name: "Pending", value: pendingAppointments },
     { name: "Confirmed", value: confirmedAppointments },
@@ -818,6 +901,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     month,
     appointments: appointments.filter((item) => {
       const created = new Date(item.createdAt);
+
       return (
         created.getMonth() === index && created.getFullYear() === currentYear
       );
@@ -826,6 +910,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const chartColors = ["#f59e0b", "#16a34a", "#dc2626", "#4f46e5"];
 
+  /* =====================================
+     PASSWORD UPDATE
+  ===================================== */
   const changePassword = async (e) => {
     e.preventDefault();
 
@@ -862,8 +949,14 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     }
   };
 
+  /* =====================================
+     JSX START
+  ===================================== */
   return (
     <div className="admin-dashboard">
+      {/* =====================================
+          SIDEBAR
+      ===================================== */}
       <aside className="admin-sidebar">
         <div className="admin-logo">
           <i className="fa-solid fa-tooth"></i>
@@ -874,6 +967,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
           </div>
         </div>
 
+        {/* Desktop Sidebar Menu */}
         <nav className="admin-menu desktop-menu">
           <button
             className={activeTab === "dashboard" ? "active" : ""}
@@ -924,15 +1018,18 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
           </button>
         </nav>
 
+        {/* Mobile Dropdown Menu */}
         <div className="admin-mobile-nav">
           <button
             className="mobile-nav-toggle"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <i className="fa-solid fa-bars"></i>
+
             <span>
               {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
             </span>
+
             <i
               className={`fa-solid fa-chevron-${
                 mobileMenuOpen ? "up" : "down"
@@ -1011,13 +1108,18 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
           </div>
         </div>
 
+        {/* Logout Button */}
         <button className="admin-logout" onClick={handleLogout}>
           <i className="fa-solid fa-right-from-bracket"></i>
           Logout
         </button>
       </aside>
 
+      {/* =====================================
+          MAIN CONTENT
+      ===================================== */}
       <main className="admin-main">
+        {/* Dashboard Header */}
         <header className="admin-header">
           <div>
             <h1>Dashboard</h1>
@@ -1030,20 +1132,24 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
           </div>
         </header>
 
+        {/* Loading / Error / Content State */}
         {loading ? (
-  <LoadingState
-    title="Loading Dashboard"
-    message="Fetching appointments, messages and reports..."
-  />
-) : error ? (
-  <ErrorState
-    title="Dashboard Error"
-    message={error}
-    buttonText="Retry"
-    onRetry={fetchDashboardData}
-  />
-) : (
+          <LoadingState
+            title="Loading Dashboard"
+            message="Fetching appointments, messages and reports..."
+          />
+        ) : error ? (
+          <ErrorState
+            title="Dashboard Error"
+            message={error}
+            buttonText="Retry"
+            onRetry={fetchDashboardData}
+          />
+        ) : (
           <>
+            {/* =====================================
+                DASHBOARD TAB
+            ===================================== */}
             {activeTab === "dashboard" && (
               <>
                 <section className="admin-stats-grid">
@@ -1114,6 +1220,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                   </div>
                 </section>
 
+                {/* Dashboard Charts */}
                 <section className="admin-charts-grid">
                   <div className="admin-chart-card">
                     <h2>Appointment Status</h2>
@@ -1136,6 +1243,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                             />
                           ))}
                         </Pie>
+
                         <Tooltip />
                       </PieChart>
                     </ResponsiveContainer>
@@ -1156,6 +1264,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                   </div>
                 </section>
 
+                {/* Recent Appointments Table */}
                 <section className="admin-panel-card">
                   <h2>Recent Appointments</h2>
 
@@ -1193,10 +1302,14 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
               </>
             )}
 
+            {/* =====================================
+                APPOINTMENTS TAB
+            ===================================== */}
             {activeTab === "appointments" && (
               <section className="admin-panel-card">
                 <h2>All Appointments</h2>
 
+                {/* Appointment Search + Export Buttons */}
                 <div className="admin-search-export">
                   <input
                     type="text"
@@ -1210,6 +1323,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                   <button onClick={exportPDF}>PDF</button>
                 </div>
 
+                {/* Appointment Status Filter */}
                 <div className="appointment-filter-bar">
                   {[
                     "all",
@@ -1228,6 +1342,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                   ))}
                 </div>
 
+                {/* Appointments Table */}
                 <div className="admin-table-wrapper">
                   <table className="admin-table">
                     <thead>
@@ -1245,110 +1360,119 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                     </thead>
 
                     <tbody>
-  {filteredAppointments.length > 0 ? (
-    filteredAppointments.map((item) => (
-      <tr key={item._id}>
-        <td>{item.name}</td>
-        <td>{item.phone}</td>
-        <td>{item.email}</td>
-        <td>{item.service}</td>
-        <td>{item.date}</td>
-        <td>{item.timeSlot}</td>
-        <td>{item.doctor}</td>
+                      {filteredAppointments.length > 0 ? (
+                        filteredAppointments.map((item) => (
+                          <tr key={item._id}>
+                            <td>{item.name}</td>
+                            <td>{item.phone}</td>
+                            <td>{item.email}</td>
+                            <td>{item.service}</td>
+                            <td>{item.date}</td>
+                            <td>{item.timeSlot}</td>
+                            <td>{item.doctor}</td>
 
-        <td>
-          <span className={`status-badge ${item.status}`}>
-            {item.status}
-          </span>
-        </td>
+                            <td>
+                              <span className={`status-badge ${item.status}`}>
+                                {item.status}
+                              </span>
+                            </td>
 
-        <td>
-          <div className="admin-action-buttons">
-            <button
-              className="view-btn"
-              onClick={() => setViewAppointmentModal(item)}
-            >
-              View
-            </button>
+                            <td>
+                              <div className="admin-action-buttons">
+                                <button
+                                  className="view-btn"
+                                  onClick={() => setViewAppointmentModal(item)}
+                                >
+                                  View
+                                </button>
 
-            {item.status === "pending" && (
-              <button
-                className="confirm-btn"
-                disabled={actionLoading}
-                onClick={() =>
-                  updateAppointmentStatus(item._id, "confirmed")
-                }
-              >
-                Confirm
-              </button>
-            )}
+                                {item.status === "pending" && (
+                                  <button
+                                    className="confirm-btn"
+                                    disabled={actionLoading}
+                                    onClick={() =>
+                                      updateAppointmentStatus(
+                                        item._id,
+                                        "confirmed",
+                                      )
+                                    }
+                                  >
+                                    Confirm
+                                  </button>
+                                )}
 
-            {item.status !== "cancelled" && (
-              <button
-                className="reschedule-btn"
-                disabled={actionLoading}
-                onClick={() => {
-                  setRescheduleModal(item);
-                  setRescheduleData({
-                    date: item.date,
-                    timeSlot: item.timeSlot,
-                    reason: "",
-                  });
-                }}
-              >
-                Reschedule
-              </button>
-            )}
+                                {item.status !== "cancelled" && (
+                                  <button
+                                    className="reschedule-btn"
+                                    disabled={actionLoading}
+                                    onClick={() => {
+                                      setRescheduleModal(item);
+                                      setRescheduleData({
+                                        date: item.date,
+                                        timeSlot: item.timeSlot,
+                                        reason: "",
+                                      });
+                                    }}
+                                  >
+                                    Reschedule
+                                  </button>
+                                )}
 
-            {item.status !== "cancelled" && (
-              <button
-                className="cancel-btn"
-                disabled={actionLoading}
-                onClick={() => {
-                  setCancelModal(item);
-                  setCancelReason("");
-                }}
-              >
-                Cancel
-              </button>
-            )}
+                                {item.status !== "cancelled" && (
+                                  <button
+                                    className="cancel-btn"
+                                    disabled={actionLoading}
+                                    onClick={() => {
+                                      setCancelModal(item);
+                                      setCancelReason("");
+                                    }}
+                                  >
+                                    Cancel
+                                  </button>
+                                )}
 
-            <button
-              className="delete-btn"
-              disabled={actionLoading}
-              onClick={() => setDeleteModal(item)}
-            >
-              Delete
-            </button>
+                                <button
+                                  className="delete-btn"
+                                  disabled={actionLoading}
+                                  onClick={() => setDeleteModal(item)}
+                                >
+                                  Delete
+                                </button>
 
-            {item.status === "cancelled" && (
-              <span className="no-action-text">No actions</span>
-            )}
-          </div>
-        </td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="9">
-        <EmptyState
-          icon="fa-solid fa-calendar-xmark"
-          title="No Appointments Found"
-          message="There are currently no appointments matching your filters."
-        />
-      </td>
-    </tr>
-  )}
-</tbody>
+                                {item.status === "cancelled" && (
+                                  <span className="no-action-text">
+                                    No actions
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="9">
+                            <EmptyState
+                              icon="fa-solid fa-calendar-xmark"
+                              title="No Appointments Found"
+                              message="There are currently no appointments matching your filters."
+                            />
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
                   </table>
                 </div>
               </section>
             )}
 
+            {/* =====================================
+                MESSAGES TAB
+            ===================================== */}
             {activeTab === "messages" && (
               <section className="admin-panel-card">
                 <h2>Contact Messages</h2>
 
+                {/* Message Search + Export Buttons */}
                 <div className="admin-search-export">
                   <input
                     type="text"
@@ -1362,6 +1486,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                   <button onClick={exportContactsPDF}>PDF</button>
                 </div>
 
+                {/* Message Status Filter */}
                 <div className="appointment-filter-bar">
                   {["all", "new", "read", "replied"].map((status) => (
                     <button
@@ -1374,6 +1499,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                   ))}
                 </div>
 
+                {/* Messages Table */}
                 <div className="admin-table-wrapper">
                   <table className="admin-table">
                     <thead>
@@ -1388,81 +1514,85 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                     </thead>
 
                     <tbody>
-  {filteredContacts.length > 0 ? (
-    filteredContacts.map((item) => (
-      <tr key={item._id}>
-        <td>{item.name}</td>
-        <td>{item.phone}</td>
-        <td>{item.email}</td>
+                      {filteredContacts.length > 0 ? (
+                        filteredContacts.map((item) => (
+                          <tr key={item._id}>
+                            <td>{item.name}</td>
+                            <td>{item.phone}</td>
+                            <td>{item.email}</td>
 
-        <td className="message-cell">
-          {item.message}
-        </td>
+                            <td className="message-cell">{item.message}</td>
 
-        <td>
-          <span className={`status-badge ${item.status}`}>
-            {item.status}
-          </span>
-        </td>
+                            <td>
+                              <span className={`status-badge ${item.status}`}>
+                                {item.status}
+                              </span>
+                            </td>
 
-        <td>
-          <div className="admin-action-buttons">
-            <button
-              className="view-btn"
-              onClick={() => setViewMessageModal(item)}
-            >
-              View
-            </button>
+                            <td>
+                              <div className="admin-action-buttons">
+                                <button
+                                  className="view-btn"
+                                  onClick={() => setViewMessageModal(item)}
+                                >
+                                  View
+                                </button>
 
-            {item.status === "new" && (
-              <button
-                className="confirm-btn"
-                onClick={() =>
-                  updateMessageStatus(item._id, "read")
-                }
-              >
-                Mark Read
-              </button>
-            )}
+                                {item.status === "new" && (
+                                  <button
+                                    className="confirm-btn"
+                                    disabled={actionLoading}
+                                    onClick={() =>
+                                      updateMessageStatus(item._id, "read")
+                                    }
+                                  >
+                                    Mark Read
+                                  </button>
+                                )}
 
-            {item.status !== "replied" && (
-              <button
-                className="reschedule-btn"
-                onClick={() =>
-                  updateMessageStatus(item._id, "replied")
-                }
-              >
-                Mark Replied
-              </button>
-            )}
+                                {item.status !== "replied" && (
+                                  <button
+                                    className="reschedule-btn"
+                                    disabled={actionLoading}
+                                    onClick={() =>
+                                      updateMessageStatus(item._id, "replied")
+                                    }
+                                  >
+                                    Mark Replied
+                                  </button>
+                                )}
 
-            <button
-              className="delete-btn"
-              onClick={() => setDeleteMessageModal(item)}
-            >
-              Delete
-            </button>
-          </div>
-        </td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="6">
-        <EmptyState
-          icon="fa-solid fa-envelope-open"
-          title="No Messages Found"
-          message="No contact messages match your current search or filter."
-        />
-      </td>
-    </tr>
-  )}
-</tbody>
+                                <button
+                                  className="delete-btn"
+                                  disabled={actionLoading}
+                                  onClick={() => setDeleteMessageModal(item)}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="6">
+                            <EmptyState
+                              icon="fa-solid fa-envelope-open"
+                              title="No Messages Found"
+                              message="No contact messages match your current search or filter."
+                            />
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
                   </table>
                 </div>
               </section>
             )}
 
+            {/* =====================================
+                ACTIVITY LOGS TAB
+            ===================================== */}
             {activeTab === "activity" && (
               <section className="admin-panel-card">
                 <h2>Activity Logs</h2>
@@ -1479,41 +1609,44 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                     </thead>
 
                     <tbody>
-                      {activityLogs.map((log) => (
-                        <tr key={log._id}>
-                          <td>{log.action}</td>
+                      {activityLogs.length > 0 ? (
+                        activityLogs.map((log) => (
+                          <tr key={log._id}>
+                            <td>{log.action}</td>
+                            <td>{log.details}</td>
 
-                          <td>{log.details}</td>
+                            <td>
+                              <span className="status-badge">{log.type}</span>
+                            </td>
 
-                          <td>
-                            <span className="status-badge">{log.type}</span>
+                            <td>{new Date(log.createdAt).toLocaleString()}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="4">
+                            <EmptyState
+                              icon="fa-solid fa-clock-rotate-left"
+                              title="No Activity Logs"
+                              message="No admin activity has been recorded yet."
+                            />
                           </td>
-
-                          <td>{new Date(log.createdAt).toLocaleString()}</td>
                         </tr>
-                      ))}
-
-                      {activityLogs.length === 0 && (
-  <tr>
-    <td colSpan="4">
-      <EmptyState
-        icon="fa-solid fa-clock-rotate-left"
-        title="No Activity Logs"
-        message="No admin activity has been recorded yet."
-      />
-    </td>
-  </tr>
-)}
+                      )}
                     </tbody>
                   </table>
                 </div>
               </section>
             )}
 
+            {/* =====================================
+                AVAILABILITY TAB
+            ===================================== */}
             {activeTab === "availability" && (
               <section className="admin-panel-card">
                 <h2>Manage Availability</h2>
 
+                {/* Block Availability Form */}
                 <form
                   className="availability-form"
                   onSubmit={blockAvailability}
@@ -1556,6 +1689,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                   {availabilityData.type === "slot" && (
                     <div>
                       <label>Select Slot</label>
+
                       <select
                         value={availabilityData.timeSlot}
                         onChange={(e) =>
@@ -1600,6 +1734,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                   </button>
                 </form>
 
+                {/* Blocked Slots Table */}
                 <div className="admin-table-wrapper mt-4">
                   <table className="admin-table">
                     <thead>
@@ -1613,166 +1748,172 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                     </thead>
 
                     <tbody>
-                      {blockedSlots.map((item) => (
-                        <tr key={item._id}>
-                          <td>{item.date}</td>
-                          <td>
-                            {item.type === "day" ? "Full Day" : "Specific Slot"}
-                          </td>
-                          <td>
-                            {item.type === "day" ? "All Slots" : item.timeSlot}
-                          </td>
-                          <td>{item.reason || "No reason"}</td>
-                          <td>
-                            <button
-                              className="cancel-btn"
-                              disabled={actionLoading}
-                              onClick={() => removeBlockedSlot(item._id)}
-                            >
-                              Remove
-                            </button>
+                      {blockedSlots.length > 0 ? (
+                        blockedSlots.map((item) => (
+                          <tr key={item._id}>
+                            <td>{item.date}</td>
+
+                            <td>
+                              {item.type === "day"
+                                ? "Full Day"
+                                : "Specific Slot"}
+                            </td>
+
+                            <td>
+                              {item.type === "day"
+                                ? "All Slots"
+                                : item.timeSlot}
+                            </td>
+
+                            <td>{item.reason || "No reason"}</td>
+
+                            <td>
+                              <button
+                                className="cancel-btn"
+                                disabled={actionLoading}
+                                onClick={() => removeBlockedSlot(item._id)}
+                              >
+                                Remove
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="5">
+                            <EmptyState
+                              icon="fa-solid fa-calendar-check"
+                              title="No Blocked Slots"
+                              message="All appointment slots are currently available."
+                            />
                           </td>
                         </tr>
-                      ))}
-
-                      {blockedSlots.length === 0 && (
-  <tr>
-    <td colSpan="5">
-      <EmptyState
-        icon="fa-solid fa-calendar-check"
-        title="No Blocked Slots"
-        message="All appointment slots are currently available."
-      />
-    </td>
-  </tr>
-)}
+                      )}
                     </tbody>
                   </table>
                 </div>
               </section>
             )}
 
+            {/* =====================================
+                SETTINGS TAB
+            ===================================== */}
             {activeTab === "settings" && (
               <section className="admin-panel-card">
                 <h2>Change Password</h2>
 
                 <form className="password-form" onSubmit={changePassword}>
+                  {/* Current Password */}
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showCurrentPassword ? "text" : "password"}
+                      placeholder="Current Password"
+                      value={passwordData.currentPassword}
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          currentPassword: e.target.value,
+                        })
+                      }
+                    />
 
-  <div className="password-input-wrapper">
-    <input
-      type={showCurrentPassword ? "text" : "password"}
-      placeholder="Current Password"
-      value={passwordData.currentPassword}
-      onChange={(e) =>
-        setPasswordData({
-          ...passwordData,
-          currentPassword: e.target.value,
-        })
-      }
-    />
+                    <button
+                      type="button"
+                      className="password-toggle-btn"
+                      onClick={() =>
+                        setShowCurrentPassword(!showCurrentPassword)
+                      }
+                    >
+                      <i
+                        className={`fa-solid ${
+                          showCurrentPassword ? "fa-eye-slash" : "fa-eye"
+                        }`}
+                      />
+                    </button>
+                  </div>
 
-    <button
-      type="button"
-      className="password-toggle-btn"
-      onClick={() =>
-        setShowCurrentPassword(!showCurrentPassword)
-      }
-    >
-      <i
-        className={`fa-solid ${
-          showCurrentPassword
-            ? "fa-eye-slash"
-            : "fa-eye"
-        }`}
-      />
-    </button>
-  </div>
+                  {/* New Password */}
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showNewPassword ? "text" : "password"}
+                      placeholder="New Password"
+                      value={passwordData.newPassword}
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          newPassword: e.target.value,
+                        })
+                      }
+                    />
 
-  <div className="password-input-wrapper">
-    <input
-      type={showNewPassword ? "text" : "password"}
-      placeholder="New Password"
-      value={passwordData.newPassword}
-      onChange={(e) =>
-        setPasswordData({
-          ...passwordData,
-          newPassword: e.target.value,
-        })
-      }
-    />
+                    <button
+                      type="button"
+                      className="password-toggle-btn"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                    >
+                      <i
+                        className={`fa-solid ${
+                          showNewPassword ? "fa-eye-slash" : "fa-eye"
+                        }`}
+                      />
+                    </button>
+                  </div>
 
-    <button
-      type="button"
-      className="password-toggle-btn"
-      onClick={() =>
-        setShowNewPassword(!showNewPassword)
-      }
-    >
-      <i
-        className={`fa-solid ${
-          showNewPassword
-            ? "fa-eye-slash"
-            : "fa-eye"
-        }`}
-      />
-    </button>
-  </div>
+                  {/* Confirm Password */}
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm New Password"
+                      value={passwordData.confirmPassword}
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          confirmPassword: e.target.value,
+                        })
+                      }
+                    />
 
-  <div className="password-input-wrapper">
-    <input
-      type={showConfirmPassword ? "text" : "password"}
-      placeholder="Confirm New Password"
-      value={passwordData.confirmPassword}
-      onChange={(e) =>
-        setPasswordData({
-          ...passwordData,
-          confirmPassword: e.target.value,
-        })
-      }
-    />
+                    <button
+                      type="button"
+                      className="password-toggle-btn"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                    >
+                      <i
+                        className={`fa-solid ${
+                          showConfirmPassword ? "fa-eye-slash" : "fa-eye"
+                        }`}
+                      />
+                    </button>
+                  </div>
 
-    <button
-      type="button"
-      className="password-toggle-btn"
-      onClick={() =>
-        setShowConfirmPassword(!showConfirmPassword)
-      }
-    >
-      <i
-        className={`fa-solid ${
-          showConfirmPassword
-            ? "fa-eye-slash"
-            : "fa-eye"
-        }`}
-      />
-    </button>
-  </div>
+                  {/* Password Policy */}
+                  <div className="password-policy">
+                    <strong>Password Requirements</strong>
 
-  <div className="password-policy">
-    <strong>Password Requirements</strong>
+                    <ul>
+                      <li>Minimum 8 characters</li>
+                      <li>1 uppercase letter</li>
+                      <li>1 lowercase letter</li>
+                      <li>1 number</li>
+                      <li>1 special character</li>
+                    </ul>
+                  </div>
 
-    <ul>
-      <li>Minimum 8 characters</li>
-      <li>1 uppercase letter</li>
-      <li>1 lowercase letter</li>
-      <li>1 number</li>
-      <li>1 special character</li>
-    </ul>
-  </div>
-
-  <button type="submit" disabled={actionLoading}>
-    {actionLoading
-      ? "Updating..."
-      : "Update Password"}
-  </button>
-
-</form>
+                  <button type="submit" disabled={actionLoading}>
+                    {actionLoading ? "Updating..." : "Update Password"}
+                  </button>
+                </form>
               </section>
             )}
           </>
         )}
       </main>
 
+      {/* =====================================
+          CANCEL APPOINTMENT MODAL
+      ===================================== */}
       {cancelModal && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">
@@ -1806,7 +1947,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                   updateAppointmentStatus(
                     cancelModal._id,
                     "cancelled",
-                    cancelReason
+                    cancelReason,
                   )
                 }
               >
@@ -1817,6 +1958,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
         </div>
       )}
 
+      {/* =====================================
+          RESCHEDULE APPOINTMENT MODAL
+      ===================================== */}
       {rescheduleModal && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">
@@ -1851,7 +1995,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                     !(
                       convertSlotToDateTime(rescheduleData.date, slot) <=
                       new Date()
-                    )
+                    ),
                 )
                 .map((slot) => (
                   <button
@@ -1883,7 +2027,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
                     !(
                       convertSlotToDateTime(rescheduleData.date, slot) <=
                       new Date()
-                    )
+                    ),
                 ).length === 0 && (
                   <p className="no-slots-text">
                     No available slots for this date.
@@ -1925,6 +2069,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
         </div>
       )}
 
+      {/* =====================================
+          DELETE APPOINTMENT MODAL
+      ===================================== */}
       {deleteModal && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">
@@ -1940,6 +2087,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
             <div className="admin-modal-actions">
               <button
                 className="modal-close-btn"
+                disabled={actionLoading}
                 onClick={() => setDeleteModal(null)}
               >
                 Cancel
@@ -1947,15 +2095,19 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
               <button
                 className="delete-btn"
+                disabled={actionLoading}
                 onClick={() => deleteAppointment(deleteModal._id)}
               >
-                Delete
+                {actionLoading ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>
         </div>
       )}
 
+      {/* =====================================
+          DELETE CONTACT MESSAGE MODAL
+      ===================================== */}
       {deleteMessageModal && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">
@@ -1971,6 +2123,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
             <div className="admin-modal-actions">
               <button
                 className="modal-close-btn"
+                disabled={actionLoading}
                 onClick={() => setDeleteMessageModal(null)}
               >
                 Cancel
@@ -1988,6 +2141,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
         </div>
       )}
 
+      {/* =====================================
+          VIEW APPOINTMENT DETAILS MODAL
+      ===================================== */}
       {viewAppointmentModal && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">
@@ -1997,27 +2153,35 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
               <p>
                 <strong>Name:</strong> {viewAppointmentModal.name}
               </p>
+
               <p>
                 <strong>Phone:</strong> {viewAppointmentModal.phone}
               </p>
+
               <p>
                 <strong>Email:</strong> {viewAppointmentModal.email}
               </p>
+
               <p>
                 <strong>Service:</strong> {viewAppointmentModal.service}
               </p>
+
               <p>
                 <strong>Date:</strong> {viewAppointmentModal.date}
               </p>
+
               <p>
                 <strong>Time:</strong> {viewAppointmentModal.timeSlot}
               </p>
+
               <p>
                 <strong>Doctor:</strong> {viewAppointmentModal.doctor}
               </p>
+
               <p>
                 <strong>Status:</strong> {viewAppointmentModal.status}
               </p>
+
               <p>
                 <strong>Message:</strong>{" "}
                 {viewAppointmentModal.message || "No message"}
@@ -2036,6 +2200,9 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
         </div>
       )}
 
+      {/* =====================================
+          VIEW CONTACT MESSAGE MODAL
+      ===================================== */}
       {viewMessageModal && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">
@@ -2045,18 +2212,23 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
               <p>
                 <strong>Name:</strong> {viewMessageModal.name}
               </p>
+
               <p>
                 <strong>Phone:</strong> {viewMessageModal.phone}
               </p>
+
               <p>
                 <strong>Email:</strong> {viewMessageModal.email}
               </p>
+
               <p>
                 <strong>Status:</strong> {viewMessageModal.status}
               </p>
+
               <p>
                 <strong>Message:</strong>
               </p>
+
               <p>{viewMessageModal.message}</p>
             </div>
 
@@ -2075,4 +2247,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   );
 }
 
+/* =====================================
+   EXPORT COMPONENT
+===================================== */
 export default AdminDashboard;

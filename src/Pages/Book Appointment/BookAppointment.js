@@ -10,6 +10,8 @@ import "./BookAppointment.css";
 
 import SEO from "../../Components/SEO/SEO"
 
+import servicesData from "../../data/serviceData";
+
 // API base URL
 import API_BASE_URL from "../../api/api";
 
@@ -633,21 +635,19 @@ function BookAppointment() {
 
                     <div className="col-md-6 mb-3">
                       <select
-                        name="service"
-                        value={formData.service}
-                        onChange={handleChange}
-                        disabled={loading}
-                      >
-                        <option value="">Select Service</option>
-                        <option>Root Canal Treatment</option>
-                        <option>Dental Implants</option>
-                        <option>Teeth Cleaning</option>
-                        <option>Teeth Whitening</option>
-                        <option>Smile Designing</option>
-                        <option>Gum Treatment</option>
-                        <option>Dental Veneers</option>
-                        <option>Tooth Extraction</option>
-                      </select>
+  name="service"
+  value={formData.service}
+  onChange={handleChange}
+  disabled={loading}
+>
+  <option value="">Select Service</option>
+
+  {servicesData.map((service) => (
+    <option key={service.slug} value={service.title}>
+      {service.title}
+    </option>
+  ))}
+</select>
 
                       {errors.service && (
                         <small className="form-error">{errors.service}</small>

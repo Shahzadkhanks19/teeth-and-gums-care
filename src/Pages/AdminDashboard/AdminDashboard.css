@@ -1,18 +1,29 @@
+/* =====================================
+   ADMIN DASHBOARD BASE LAYOUT
+===================================== */
+
 .admin-dashboard {
   min-height: 100vh;
   display: flex;
+  margin: 0;
+  padding: 0;
   background: #f4f8ff;
   font-family: "DM Sans", sans-serif;
 }
 
-/* =========================
+.AdminApp {
+  margin: 0;
+  padding: 0;
+}
+
+/* =====================================
    SIDEBAR
-========================= */
+===================================== */
 
 .admin-sidebar {
   width: 280px;
   background: linear-gradient(180deg, #073b8e, #0d6efd);
-  color: white;
+  color: #ffffff;
   padding: 30px 20px;
   display: flex;
   flex-direction: column;
@@ -40,8 +51,8 @@
 }
 
 .admin-logo h3 {
-  font-size: 21px;
   margin: 0;
+  font-size: 21px;
   font-weight: 800;
 }
 
@@ -50,6 +61,10 @@
   font-size: 13px;
   opacity: 0.9;
 }
+
+/* =====================================
+   DESKTOP SIDEBAR MENU
+===================================== */
 
 .admin-menu {
   display: flex;
@@ -60,7 +75,7 @@
 .admin-menu button,
 .admin-logout {
   border: none;
-  color: white;
+  color: #ffffff;
   text-align: left;
   padding: 15px 17px;
   font-weight: 800;
@@ -69,6 +84,7 @@
   gap: 12px;
   transition: 0.3s ease;
   border-radius: 14px;
+  cursor: pointer;
 }
 
 .admin-menu button {
@@ -90,18 +106,30 @@
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* =========================
-   MAIN
-========================= */
+/* =====================================
+   MOBILE SIDEBAR MENU
+===================================== */
+
+.admin-mobile-nav {
+  display: none;
+}
+
+/* =====================================
+   MAIN CONTENT AREA
+===================================== */
 
 .admin-main {
-  margin-left: 280px;
   width: calc(100% - 280px);
+  margin-left: 280px;
   padding: 35px;
 }
 
+/* =====================================
+   ADMIN HEADER
+===================================== */
+
 .admin-header {
-  background: white;
+  background: #ffffff;
   padding: 30px;
   box-shadow: 0 14px 35px rgba(13, 110, 253, 0.08);
   display: flex;
@@ -120,7 +148,7 @@
 
 .admin-header p {
   margin: 6px 0 0;
-  color: #666;
+  color: #666666;
 }
 
 .admin-user {
@@ -134,18 +162,9 @@
   border-radius: 999px;
 }
 
-.admin-loading {
-  background: white;
-  padding: 45px;
-  text-align: center;
-  color: #0d47a1;
-  font-weight: 800;
-  border-radius: 20px;
-}
-
-/* =========================
-   STATS
-========================= */
+/* =====================================
+   STATS CARDS
+===================================== */
 
 .admin-stats-grid {
   display: grid;
@@ -155,7 +174,7 @@
 }
 
 .admin-stat-card {
-  background: white;
+  background: #ffffff;
   padding: 28px 22px;
   box-shadow: 0 14px 35px rgba(13, 110, 253, 0.08);
   border-radius: 20px;
@@ -188,11 +207,12 @@
 }
 
 .admin-stat-card p {
-  color: #666;
+  color: #666666;
   margin: 5px 0 0;
   font-weight: 700;
 }
 
+/* Stat card icon colors */
 .admin-stat-card.pending i {
   background: #fff7e6;
   color: #f59e0b;
@@ -213,12 +233,12 @@
   color: #7c3aed;
 }
 
-/* =========================
-   PANEL
-========================= */
+/* =====================================
+   PANEL CARDS
+===================================== */
 
 .admin-panel-card {
-  background: white;
+  background: #ffffff;
   padding: 30px;
   box-shadow: 0 14px 35px rgba(13, 110, 253, 0.08);
   border-radius: 22px;
@@ -230,20 +250,24 @@
   margin-bottom: 24px;
 }
 
-/* =========================
-   TABLE
-========================= */
+/* =====================================
+   TABLE WRAPPER
+===================================== */
 
 .admin-table-wrapper {
   width: 100%;
   overflow-x: auto;
 }
 
+/* =====================================
+   TABLE
+===================================== */
+
 .admin-table {
   width: 100%;
+  min-width: 1050px;
   border-collapse: separate;
   border-spacing: 0 12px;
-  min-width: 1050px;
 }
 
 .admin-table th {
@@ -264,9 +288,9 @@
 
 .admin-table td {
   padding: 16px 15px;
-  color: #333;
+  color: #333333;
+  background: #ffffff;
   white-space: nowrap;
-  background: #fff;
   border-top: 1px solid #eef4ff;
   border-bottom: 1px solid #eef4ff;
 }
@@ -290,9 +314,19 @@
   border-radius: 0 14px 14px 0;
 }
 
-/* =========================
+/* =====================================
+   MESSAGE COLUMN
+===================================== */
+
+.message-cell {
+  min-width: 280px;
+  line-height: 1.6;
+  white-space: normal !important;
+}
+
+/* =====================================
    STATUS BADGES
-========================= */
+===================================== */
 
 .status-badge {
   display: inline-flex;
@@ -332,7 +366,7 @@
 
 .status-badge.read {
   background: #f3f4f6;
-  color: #555;
+  color: #555555;
 }
 
 .status-badge.replied {
@@ -340,15 +374,25 @@
   color: #15803d;
 }
 
-/* =========================
-   ACTION BUTTONS
-========================= */
+/* =====================================
+   ACTION BUTTONS CONTAINER
+===================================== */
 
 .admin-action-buttons {
   display: flex;
   gap: 9px;
   flex-wrap: wrap;
 }
+
+.no-action-text {
+  color: #777777;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* =====================================
+   COMMON BUTTON STYLES
+===================================== */
 
 .admin-action-buttons button,
 .confirm-btn,
@@ -359,10 +403,37 @@
   padding: 10px 16px;
   font-size: 13px;
   font-weight: 900;
-  cursor: pointer;
   border-radius: 10px;
+  cursor: pointer;
   transition: 0.25s ease;
 }
+
+button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* =====================================
+   VIEW BUTTON
+===================================== */
+
+.view-btn {
+  background: #eaf3ff;
+  color: #0d6efd;
+  border: none;
+  padding: 8px 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.view-btn:hover {
+  background: #0d6efd;
+  color: #ffffff;
+}
+
+/* =====================================
+   CONFIRM BUTTON
+===================================== */
 
 .confirm-btn {
   background: #dcfce7;
@@ -371,9 +442,13 @@
 
 .confirm-btn:hover {
   background: #16a34a;
-  color: white;
+  color: #ffffff;
   transform: translateY(-2px);
 }
+
+/* =====================================
+   RESCHEDULE BUTTON
+===================================== */
 
 .reschedule-btn {
   background: #dbeafe;
@@ -382,9 +457,13 @@
 
 .reschedule-btn:hover {
   background: #2563eb;
-  color: white;
+  color: #ffffff;
   transform: translateY(-2px);
 }
+
+/* =====================================
+   CANCEL BUTTON
+===================================== */
 
 .cancel-btn {
   background: #fee2e2;
@@ -393,41 +472,110 @@
 
 .cancel-btn:hover {
   background: #dc2626;
-  color: white;
+  color: #ffffff;
   transform: translateY(-2px);
 }
 
-button:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
+/* =====================================
+   DELETE BUTTON
+===================================== */
 
-.no-action-text {
-  color: #777;
-  font-size: 13px;
+.delete-btn {
+  background: #111827;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
   font-weight: 800;
+  cursor: pointer;
 }
 
-/* =========================
-   MODAL
-========================= */
+.delete-btn:hover {
+  background: #000000;
+}
+
+/* =====================================
+   SEARCH + EXPORT TOOLBAR
+===================================== */
+
+.admin-search-export {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.admin-search-export input {
+  flex: 1;
+  min-width: 260px;
+  padding: 12px;
+  border: 2px solid #e8eef7;
+}
+
+.admin-search-export button {
+  border: none;
+  background: #0d6efd;
+  color: #ffffff;
+  padding: 12px 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-search-export button:hover {
+  background: #0b5ed7;
+}
+
+/* =====================================
+   FILTER BUTTONS
+===================================== */
+
+.appointment-filter-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.appointment-filter-bar button {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #f0f7ff;
+  color: #0d47a1;
+  font-weight: 800;
+  text-transform: capitalize;
+  transition: 0.25s ease;
+}
+
+.appointment-filter-bar button:hover,
+.appointment-filter-bar button.active {
+  background: #0d6efd;
+  color: #ffffff;
+}
+
+/* =====================================
+   MODAL OVERLAY
+===================================== */
 
 .admin-modal-overlay {
   position: fixed;
   inset: 0;
+  z-index: 99999;
   background: rgba(15, 23, 42, 0.72);
   backdrop-filter: blur(5px);
-  z-index: 99999;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
 }
 
+/* =====================================
+   MODAL BOX
+===================================== */
+
 .admin-modal {
   width: 100%;
   max-width: 520px;
-  background: white;
+  background: #ffffff;
   padding: 36px;
   border-radius: 24px;
   box-shadow: 0 30px 90px rgba(0, 0, 0, 0.28);
@@ -454,7 +602,7 @@ button:disabled {
 }
 
 .admin-modal p {
-  color: #555;
+  color: #555555;
   line-height: 1.7;
   margin-bottom: 18px;
 }
@@ -483,6 +631,10 @@ button:disabled {
   box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.12);
 }
 
+/* =====================================
+   MODAL ACTION BUTTONS
+===================================== */
+
 .admin-modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -492,23 +644,37 @@ button:disabled {
 
 .modal-close-btn {
   background: #f3f4f6;
-  color: #333;
+  color: #333333;
 }
 
 .modal-close-btn:hover {
   background: #e5e7eb;
 }
 
-/* =========================
-   TOAST
-========================= */
+/* =====================================
+   DETAILS LIST INSIDE MODALS
+===================================== */
+
+.details-list p {
+  margin-bottom: 10px;
+  color: #444444;
+  line-height: 1.6;
+}
+
+.details-list strong {
+  color: #0d47a1;
+}
+
+/* =====================================
+   TOAST STYLES
+===================================== */
 
 .admin-toast {
   position: fixed;
   top: 24px;
   right: 24px;
   z-index: 100000;
-  color: white;
+  color: #ffffff;
   padding: 15px 24px;
   font-weight: 900;
   border-radius: 14px;
@@ -536,119 +702,9 @@ button:disabled {
   background: #dc2626;
 }
 
-.message-cell {
-  white-space: normal !important;
-  min-width: 280px;
-  line-height: 1.6;
-}
-
-/* =========================
-   MOBILE TOP SPACE FIX
-========================= */
-
-.AdminApp,
-.admin-dashboard {
-  margin: 0;
-  padding: 0;
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-width: 1200px) {
-  .admin-stats-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 991px) {
-  .admin-dashboard {
-    flex-direction: column;
-    min-height: 100vh;
-    margin-top: 0;
-    padding-top: 0;
-  }
-
-  .admin-sidebar {
-    position: static;
-    width: 100%;
-    padding: 24px 18px;
-    border-radius: 0 0 24px 24px;
-  }
-
-  .admin-logo {
-    margin-bottom: 22px;
-  }
-
-  .admin-menu {
-    flex-direction: row;
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-
-  .admin-menu button {
-    min-width: max-content;
-  }
-
-  .admin-logout {
-    margin-top: 18px;
-  }
-
-  .admin-main {
-    margin-left: 0;
-    width: 100%;
-    padding: 20px;
-  }
-
-  .admin-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-
-  .admin-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 576px) {
-  .admin-main {
-    padding: 15px;
-  }
-
-  .admin-header {
-    padding: 24px;
-  }
-
-  .admin-header h1 {
-    font-size: 1.8rem;
-  }
-
-  .admin-stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .admin-panel-card {
-    padding: 22px;
-  }
-
-  .admin-modal {
-    padding: 26px;
-    border-radius: 18px;
-  }
-
-  .admin-modal h3 {
-    font-size: 1.5rem;
-  }
-
-  .admin-toast {
-    left: 15px;
-    right: 15px;
-    top: 15px;
-    text-align: center;
-  }
-}
+/* =====================================
+   AVAILABILITY FORM
+===================================== */
 
 .availability-form {
   display: grid;
@@ -683,174 +739,43 @@ button:disabled {
 .availability-form button {
   border: none;
   background: linear-gradient(135deg, #0d6efd, #0b3c91);
-  color: white;
+  color: #ffffff;
   padding: 14px 18px;
   border-radius: 12px;
   font-weight: 900;
-}
-
-@media (max-width: 991px) {
-  .availability-form {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 576px) {
-  .availability-form {
-    grid-template-columns: 1fr;
-  }
-}
-
-.appointment-filter-bar {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 22px;
-}
-
-.appointment-filter-bar button {
-  border: none;
-  padding: 10px 18px;
-  border-radius: 999px;
-  font-weight: 800;
-  background: #f0f7ff;
-  color: #0d47a1;
-  text-transform: capitalize;
-  transition: 0.25s ease;
-}
-
-.appointment-filter-bar button.active,
-.appointment-filter-bar button:hover {
-  background: #0d6efd;
-  color: white;
-}
-
-.delete-btn {
-  background: #111827;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  font-weight: 800;
   cursor: pointer;
 }
 
-.delete-btn:hover {
-  background: #000;
-}
-
-.admin-search-export {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-
-.admin-search-export input {
-  flex: 1;
-  min-width: 260px;
-  padding: 12px;
-  border: 2px solid #e8eef7;
-}
-
-.admin-search-export button {
-  border: none;
-  background: #0d6efd;
-  color: white;
-  font-weight: 700;
-  padding: 12px 18px;
-  cursor: pointer;
-}
-
-.admin-search-export button:hover {
-  background: #0b5ed7;
-}
-
-.admin-mobile-nav {
-  display: none;
-}
-
-@media (max-width: 991px) {
-  .desktop-menu {
-    display: none;
-  }
-
-  .admin-mobile-nav {
-    display: block;
-    width: 100%;
-    margin-top: 18px;
-  }
-
-  .mobile-nav-toggle {
-    width: 100%;
-    border: none;
-    background: rgba(255, 255, 255, 0.18);
-    color: #fff;
-    padding: 14px 16px;
-    font-weight: 800;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .mobile-nav-toggle span {
-    flex: 1;
-    text-align: left;
-    margin-left: 12px;
-  }
-
-  .mobile-nav-dropdown {
-    display: none;
-    margin-top: 10px;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .mobile-nav-dropdown.show {
-    display: flex;
-  }
-
-  .mobile-nav-dropdown button {
-    border: none;
-    width: 100%;
-    background: rgba(255, 255, 255, 0.12);
-    color: white;
-    padding: 13px 15px;
-    border-radius: 12px;
-    font-weight: 800;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .mobile-nav-dropdown button.active {
-    background: rgba(255, 255, 255, 0.25);
-  }
-}
+/* =====================================
+   ADMIN SELECT FIELD
+===================================== */
 
 .admin-select {
   width: 100%;
   padding: 14px 16px;
   border: 1px solid #d8e3f0;
   border-radius: 12px;
-  background: #fff;
+  background: #ffffff;
   font-size: 15px;
   font-weight: 500;
   color: #1b2b4b;
   outline: none;
-  transition: all 0.3s ease;
+  transition: 0.3s ease;
   margin-bottom: 15px;
 }
 
 .admin-select:focus {
   border-color: #0d6efd;
-  box-shadow: 0 0 0 4px rgba(13,110,253,0.12);
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.12);
 }
 
 .admin-select option {
   padding: 10px;
 }
+
+/* =====================================
+   RESCHEDULE SLOT GRID
+===================================== */
 
 .reschedule-slot-grid {
   display: grid;
@@ -861,7 +786,7 @@ button:disabled {
 
 .reschedule-slot-btn {
   border: 1px solid #dce8f7;
-  background: #fff;
+  background: #ffffff;
   color: #0d47a1;
   padding: 11px 10px;
   border-radius: 12px;
@@ -874,7 +799,7 @@ button:disabled {
 .reschedule-slot-btn.active {
   background: #0d6efd;
   border-color: #0d6efd;
-  color: white;
+  color: #ffffff;
   box-shadow: 0 8px 20px rgba(13, 110, 253, 0.2);
 }
 
@@ -885,35 +810,9 @@ button:disabled {
   margin: 0 0 10px;
 }
 
-@media (max-width: 576px) {
-  .reschedule-slot-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.view-btn {
-  background: #eaf3ff;
-  color: #0d6efd;
-  border: none;
-  padding: 8px 12px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.view-btn:hover {
-  background: #0d6efd;
-  color: white;
-}
-
-.details-list p {
-  margin-bottom: 10px;
-  color: #444;
-  line-height: 1.6;
-}
-
-.details-list strong {
-  color: #0d47a1;
-}
+/* =====================================
+   CHARTS
+===================================== */
 
 .admin-charts-grid {
   display: grid;
@@ -923,7 +822,7 @@ button:disabled {
 }
 
 .admin-chart-card {
-  background: white;
+  background: #ffffff;
   padding: 28px;
   border-radius: 22px;
   box-shadow: 0 12px 30px rgba(13, 110, 253, 0.08);
@@ -935,11 +834,9 @@ button:disabled {
   margin-bottom: 20px;
 }
 
-@media (max-width: 991px) {
-  .admin-charts-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* =====================================
+   PASSWORD FORM
+===================================== */
 
 .password-form {
   display: flex;
@@ -956,7 +853,7 @@ button:disabled {
 
 .password-form button {
   background: #0d6efd;
-  color: white;
+  color: #ffffff;
   border: none;
   padding: 14px;
   border-radius: 12px;
@@ -1001,4 +898,190 @@ button:disabled {
 .password-policy ul {
   margin: 10px 0 0;
   padding-left: 18px;
+}
+
+/* =====================================
+   RESPONSIVE: LARGE TABLET
+===================================== */
+
+@media (max-width: 1200px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* =====================================
+   RESPONSIVE: TABLET + MOBILE SIDEBAR
+===================================== */
+
+@media (max-width: 991px) {
+  .admin-dashboard {
+    flex-direction: column;
+    min-height: 100vh;
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .admin-sidebar {
+    position: static;
+    width: 100%;
+    padding: 24px 18px;
+    border-radius: 0 0 24px 24px;
+  }
+
+  .admin-logo {
+    margin-bottom: 22px;
+  }
+
+  .desktop-menu {
+    display: none;
+  }
+
+  .admin-mobile-nav {
+    display: block;
+    width: 100%;
+    margin-top: 18px;
+  }
+
+  .mobile-nav-toggle {
+    width: 100%;
+    border: none;
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    padding: 14px 16px;
+    font-weight: 800;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+
+  .mobile-nav-toggle span {
+    flex: 1;
+    text-align: left;
+    margin-left: 12px;
+  }
+
+  .mobile-nav-dropdown {
+    display: none;
+    margin-top: 10px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mobile-nav-dropdown.show {
+    display: flex;
+  }
+
+  .mobile-nav-dropdown button {
+    width: 100%;
+    border: none;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    padding: 13px 15px;
+    border-radius: 12px;
+    font-weight: 800;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .mobile-nav-dropdown button.active {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .admin-logout {
+    margin-top: 18px;
+  }
+
+  .admin-main {
+    width: 100%;
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .availability-form {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* =====================================
+   RESPONSIVE: SMALL MOBILE
+===================================== */
+
+@media (max-width: 576px) {
+  .admin-main {
+    padding: 15px;
+  }
+
+  .admin-header {
+    padding: 24px;
+  }
+
+  .admin-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .admin-user {
+    width: 100%;
+    justify-content: center;
+    font-size: 13px;
+  }
+
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-panel-card {
+    padding: 22px;
+  }
+
+  .admin-search-export input {
+    min-width: 100%;
+  }
+
+  .admin-search-export button {
+    flex: 1;
+  }
+
+  .availability-form {
+    grid-template-columns: 1fr;
+  }
+
+  .reschedule-slot-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-modal {
+    padding: 26px;
+    border-radius: 18px;
+  }
+
+  .admin-modal h3 {
+    font-size: 1.5rem;
+  }
+
+  .admin-toast {
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    text-align: center;
+  }
 }
