@@ -12,6 +12,10 @@ function ResetPassword() {
     confirmPassword: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState(false);
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -63,9 +67,11 @@ function ResetPassword() {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="admin-input-group">
+          <div className="admin-input-group password-input-group">
+            <i className="fa-solid fa-lock"></i>
+
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="New Password"
               value={formData.password}
               onChange={(e) =>
@@ -75,11 +81,31 @@ function ResetPassword() {
                 })
               }
             />
+
+            <button
+              type="button"
+              className="password-toggle-btn"
+              onClick={() =>
+                setShowPassword(!showPassword)
+              }
+            >
+              <i
+                className={
+                  showPassword
+                    ? "fa-solid fa-eye-slash"
+                    : "fa-solid fa-eye"
+                }
+              ></i>
+            </button>
           </div>
 
-          <div className="admin-input-group">
+          <div className="admin-input-group password-input-group">
+            <i className="fa-solid fa-lock"></i>
+
             <input
-              type="password"
+              type={
+                showConfirmPassword ? "text" : "password"
+              }
               placeholder="Confirm Password"
               value={formData.confirmPassword}
               onChange={(e) =>
@@ -89,6 +115,24 @@ function ResetPassword() {
                 })
               }
             />
+
+            <button
+              type="button"
+              className="password-toggle-btn"
+              onClick={() =>
+                setShowConfirmPassword(
+                  !showConfirmPassword
+                )
+              }
+            >
+              <i
+                className={
+                  showConfirmPassword
+                    ? "fa-solid fa-eye-slash"
+                    : "fa-solid fa-eye"
+                }
+              ></i>
+            </button>
           </div>
 
           <button type="submit">

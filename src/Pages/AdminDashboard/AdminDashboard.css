@@ -963,3 +963,42 @@ button:disabled {
   font-weight: 700;
   cursor: pointer;
 }
+
+.password-input-wrapper {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 50px;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #0d6efd;
+  font-size: 16px;
+}
+
+.password-toggle-btn:hover {
+  color: #0b3c91;
+}
+
+.password-policy {
+  background: #f8fbff;
+  border-left: 4px solid #0d6efd;
+  padding: 14px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.password-policy ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+}

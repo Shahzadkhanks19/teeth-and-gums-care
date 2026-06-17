@@ -11,6 +11,11 @@ import servicesData from "../../data/serviceData";
 // Page styles
 import "./ServiceDetails.css";
 
+// Error state
+import ErrorState from "../../Components/UI/ErrorState";
+
+import SEO from "../../Components/SEO/SEO";
+
 /* =====================================
    SERVICE DETAILS PAGE COMPONENT
 ===================================== */
@@ -26,54 +31,56 @@ function ServiceDetails() {
   ====================================== */
 
   if (!service) {
-    return (
-      <section className="service-not-found">
-        <div className="container text-center">
-          <h2>Service Not Found</h2>
-
-          <button onClick={() => navigate("/services")}>
-            Back to Services
-          </button>
-        </div>
-      </section>
-    );
-  }
+  return (
+    <ErrorState
+      icon="fa-solid fa-tooth"
+      title="Service Not Found"
+      message="The dental service you are looking for does not exist or may have been moved."
+      buttonText="Back to Services"
+      onButtonClick={() => navigate("/services")}
+    />
+  );
+}
 
   return (
     <>
+
+  <SEO
+  title={`${service.title} | Teeth and Gums Care Jodhpur`}
+  description={
+    service.shortDesc ||
+    `Learn about ${service.title} at Teeth and Gums Care, Jodhpur. Get expert dental care with modern treatment and patient-focused service.`
+  }
+  keywords={`${service.title}, ${service.title} Jodhpur, dental clinic Jodhpur, dentist in Jodhpur, Teeth and Gums Care`}
+/>
       {/* =====================================
           HERO SECTION
       ====================================== */}
       <section className="service-hero">
-        <img
-          src={service.image}
-          alt={service.title}
-          className="service-hero-img"
-        />
+  <div className="service-hero-shape shape-one"></div>
+  <div className="service-hero-shape shape-two"></div>
 
-        <div className="service-hero-overlay"></div>
+  <div className="service-hero-content" data-aos="fade-up">
+    <span className="service-hero-tag">Teeth & Gums Care</span>
 
-        <div className="service-hero-content" data-aos="fade-up">
-          <span className="service-hero-tag">Teeth & Gums Care</span>
+    <h1>{service.title}</h1>
 
-          <h1>{service.title}</h1>
+    <p>{service.shortDesc}</p>
 
-          <p>{service.shortDesc}</p>
+    <div className="service-hero-actions">
+      <Link to="/book-appointment" className="service-hero-btn">
+        Book Appointment
+      </Link>
 
-          <div className="service-hero-actions">
-            <Link to="/book-appointment" className="service-hero-btn">
-              Book Appointment
-            </Link>
-
-            <button
-              className="service-hero-outline-btn"
-              onClick={() => navigate("/services")}
-            >
-              View All Services
-            </button>
-          </div>
-        </div>
-      </section>
+      <button
+        className="service-hero-outline-btn"
+        onClick={() => navigate("/services")}
+      >
+        View All Services
+      </button>
+    </div>
+  </div>
+</section>
 
       {/* =====================================
           BACK BUTTON SECTION

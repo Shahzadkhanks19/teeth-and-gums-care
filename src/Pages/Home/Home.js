@@ -16,6 +16,8 @@ import aboutImg from "./Assets/about image.avif";
 // Components
 import HeroSlider from "../../Components/Slider/Slider";
 import Testimonials from "../../Components/Tesimonials/Testimonials";
+import SEO from "../../Components/SEO/SEO";
+import EmptyState from "../../Components/UI/EmptyState";
 
 // Animation counter
 import CountUp from "react-countup";
@@ -75,31 +77,37 @@ function Home() {
   ================================ */
 
   const services = [
-    {
-      image: rootCanalImg,
-      icon: "fa-solid fa-tooth",
-      title: "Root Canal Treatment",
-      text: "Advanced and painless root canal care to save infected teeth and restore oral health.",
-    },
-    {
-      image: implantImg,
-      icon: "fa-solid fa-teeth-open",
-      title: "Dental Implants",
-      text: "Permanent tooth replacement solutions that look, feel, and function like natural teeth.",
-    },
-    {
-      image: alignerImg,
-      icon: "fa-solid fa-face-smile",
-      title: "Clear Aligners",
-      text: "Straighten your teeth comfortably and discreetly without traditional metal braces.",
-    },
-    {
-      image: whiteningImg,
-      icon: "fa-solid fa-wand-magic-sparkles",
-      title: "Teeth Whitening",
-      text: "Brighten your smile with safe, professional whitening treatments.",
-    },
-  ];
+  {
+    image: implantImg,
+    icon: "fa-solid fa-teeth-open",
+    title: "Dental Implants",
+    slug: "dental-implants",
+    text: "Permanent tooth replacement solutions that look, feel, and function like natural teeth.",
+  },
+  {
+    image: alignerImg,
+    icon: "fa-solid fa-face-smile",
+    title: "Dental Aligners",
+    slug: "dental-aligners",
+    text: "Clear and comfortable aligners to straighten your teeth without traditional braces.",
+  },
+  {
+    image: rootCanalImg,
+    icon: "fa-solid fa-tooth",
+    title: "Root Canal Treatment",
+    slug: "root-canal-treatment",
+    text: "Painless root canal care to save infected teeth and restore oral health.",
+  },
+  {
+    image: whiteningImg,
+    icon: "fa-solid fa-wand-magic-sparkles",
+    title: "Smile Designing",
+    slug: "smile-designing",
+    text: "Customized cosmetic smile makeovers to improve the appearance of your smile.",
+  },
+];
+
+  const hasServices = services && services.length > 0;
 
   /* ================================
      PROCESS STEPS DATA
@@ -134,6 +142,12 @@ function Home() {
 
   return (
     <>
+      <SEO
+        title="Best Dental Clinic in Jodhpur | Teeth and Gums Care"
+        description="Teeth and Gums Care provides advanced dental treatments, root canal treatment, dental implants, aligners, smile designing and complete oral healthcare in Jodhpur."
+        keywords="best dental clinic in Jodhpur, dentist in Jodhpur, dental implants Jodhpur, root canal treatment Jodhpur, dental aligners Jodhpur, smile designing Jodhpur, teeth whitening Jodhpur"
+      />
+
       {/* ================================
           HERO SLIDER SECTION
       ================================ */}
@@ -312,43 +326,49 @@ function Home() {
               </p>
             </div>
 
-            <div className="row g-4">
-              {services.map((service, index) => (
-                <div
-                  className="col-lg-3 col-md-6"
-                  key={index}
-                  data-aos="fade-up"
-                  data-aos-delay={100 + index * 90}
-                >
-                  <div className="service-card premium-service-card">
-                    <div className="service-image-box">
-                      <img
-                        src={service.image}
-                        alt={service.title}
-                        className="home-service-image"
-                      />
+            {hasServices ? (
+              <div className="row g-4">
+                {services.map((service, index) => (
+                  <div
+                    className="col-lg-3 col-md-6"
+                    key={service.slug}
+                    data-aos="fade-up"
+                    data-aos-delay={100 + index * 90}
+                  >
+                    <div className="service-card premium-service-card">
+                      <div className="service-image-box">
+                        <img
+                          src={service.image}
+                          alt={service.title}
+                          className="home-service-image"
+                        />
+                      </div>
 
-                      <div className="service-icon-float">
-                        <i className={service.icon}></i>
+                      <div className="service-content">
+                        <h4>{service.title}</h4>
+                        <p>{service.text}</p>
+
+                        <button
+                          className="service-learn-btn"
+                          onClick={() => navigate(`/services/${service.slug}`)}
+                        >
+                          Learn More
+                          <i className="fa-solid fa-arrow-right ms-2"></i>
+                        </button>
                       </div>
                     </div>
-
-                    <div className="service-content">
-                      <h4>{service.title}</h4>
-                      <p>{service.text}</p>
-
-                      <button
-                        className="service-learn-btn"
-                        onClick={() => navigate("/services")}
-                      >
-                        Learn More
-                        <i className="fa-solid fa-arrow-right ms-2"></i>
-                      </button>
-                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyState
+                icon="fa-solid fa-tooth"
+                title="Services Coming Soon"
+                message="Our dental services will be added here soon."
+                buttonText="Book Appointment"
+                onButtonClick={() => navigate("/book-appointment")}
+              />
+            )}
 
             <div
               className="text-center services-button-wrap"

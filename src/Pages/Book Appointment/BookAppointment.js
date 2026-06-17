@@ -8,11 +8,17 @@ import React, { useEffect, useState } from "react";
 // Page styles
 import "./BookAppointment.css";
 
+import SEO from "../../Components/SEO/SEO"
+
 // API base URL
 import API_BASE_URL from "../../api/api";
 
 // Toast notifications
 import toast from "react-hot-toast";
+
+// UI states
+import EmptyState from "../../Components/UI/EmptyState";
+import ErrorState from "../../Components/UI/ErrorState";
 
 /* =====================================
    BOOK APPOINTMENT PAGE COMPONENT
@@ -22,6 +28,9 @@ function BookAppointment() {
   const [selectedSlot, setSelectedSlot] = useState("");
   const [loading, setLoading] = useState(false);
   const [slotLoading, setSlotLoading] = useState(false);
+
+  const [success, setSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const [unavailableSlots, setUnavailableSlots] = useState([]);
   const [isFullDayBlocked, setIsFullDayBlocked] = useState(false);
@@ -98,7 +107,9 @@ function BookAppointment() {
 
   const isPastSlot = (slot) => {
     if (!formData.date) return false;
+
     const slotDateTime = convertSlotToDateTime(formData.date, slot);
+
     return slotDateTime && slotDateTime <= new Date();
   };
 
@@ -209,6 +220,7 @@ function BookAppointment() {
     }
 
     setErrors(newErrors);
+
     return Object.keys(newErrors).length === 0;
   };
 
@@ -218,6 +230,8 @@ function BookAppointment() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    setSubmitError("");
 
     if (name === "phone") {
       const onlyNums = value.replace(/\D/g, "").slice(0, 10);
@@ -238,13 +252,17 @@ function BookAppointment() {
   };
 
   const handleDoctorSelect = (doctor) => {
+    if (loading) return;
+
+    setSubmitError("");
     setFormData({ ...formData, doctor });
     setErrors({ ...errors, doctor: "" });
   };
 
   const handleSlotClick = (slot) => {
-    if (isSlotUnavailable(slot)) return;
+    if (loading || isSlotUnavailable(slot)) return;
 
+    setSubmitError("");
     setSelectedSlot(slot);
     setErrors({ ...errors, slot: "" });
   };
@@ -255,6 +273,7 @@ function BookAppointment() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError("");
 
     if (!validateForm()) {
       toast.error("Please complete all required fields");
@@ -280,11 +299,17 @@ function BookAppointment() {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.message || "Failed to book appointment");
+        const errorMessage =
+          data.message || "Unable to submit appointment request.";
+
+        setSubmitError(errorMessage);
+        toast.error(errorMessage);
         return;
       }
 
       toast.success("Appointment request submitted successfully!");
+
+      setSuccess(true);
 
       setFormData({
         name: "",
@@ -303,7 +328,10 @@ function BookAppointment() {
       setBlockedSlotReasons({});
       setErrors({});
     } catch (error) {
-      toast.error("Server error. Please try again later.");
+      const errorMessage = "Server error. Please try again later.";
+
+      setSubmitError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -321,7 +349,7 @@ function BookAppointment() {
       <button
         type="button"
         key={slot}
-        disabled={unavailable || slotLoading}
+        disabled={unavailable || slotLoading || loading}
         className={
           unavailable
             ? "slot-btn booked-slot"
@@ -348,8 +376,47 @@ function BookAppointment() {
     );
   };
 
+  /* =====================================
+     SUCCESS STATE
+  ====================================== */
+
+  if (success) {
+    return (
+      <EmptyState
+        icon="fa-solid fa-calendar-check"
+        title="Appointment Request Submitted"
+        message="Thank you for booking with Teeth & Gums Care. Our team will contact you shortly to confirm your appointment."
+        buttonText="Book Another Appointment"
+        onButtonClick={() => setSuccess(false)}
+      />
+    );
+  }
+
+  /* =====================================
+     ERROR STATE
+  ====================================== */
+
+  if (submitError) {
+    return (
+      <ErrorState
+        icon="fa-solid fa-circle-exclamation"
+        title="Booking Failed"
+        message={submitError}
+        buttonText="Try Again"
+        onButtonClick={() => setSubmitError("")}
+      />
+    );
+  }
+
   return (
     <>
+
+<SEO
+  title="Book Dental Appointment in Jodhpur | Teeth and Gums Care"
+  description="Book your dental appointment online with Teeth and Gums Care in Jodhpur. Choose your preferred doctor, date and available appointment slot."
+  keywords="book dentist appointment Jodhpur, dental appointment Jodhpur, Teeth and Gums Care appointment, dentist booking Jodhpur"
+/>
+
       {/* =====================================
           HERO SECTION
       ====================================== */}
@@ -421,7 +488,7 @@ function BookAppointment() {
       <section className="appointment-section">
         <div className="container">
           <div className="row g-4 align-items-start">
-            {/* Left Info Column */}
+            {/* LEFT INFO COLUMN */}
             <div className="col-lg-5" data-aos="fade-right">
               <div className="appointment-info-card">
                 <span className="appointment-badge">Clinic Information</span>
@@ -507,7 +574,7 @@ function BookAppointment() {
               </div>
             </div>
 
-            {/* Right Form Column */}
+            {/* RIGHT FORM COLUMN */}
             <div className="col-lg-7" data-aos="fade-left">
               <div className="appointment-form-card">
                 <span className="appointment-badge">
@@ -526,6 +593,7 @@ function BookAppointment() {
                         placeholder="Full Name"
                         value={formData.name}
                         onChange={handleChange}
+                        disabled={loading}
                       />
 
                       {errors.name && (
@@ -540,6 +608,7 @@ function BookAppointment() {
                         placeholder="Indian Mobile Number"
                         value={formData.phone}
                         onChange={handleChange}
+                        disabled={loading}
                       />
 
                       {errors.phone && (
@@ -554,6 +623,7 @@ function BookAppointment() {
                         placeholder="Email Address"
                         value={formData.email}
                         onChange={handleChange}
+                        disabled={loading}
                       />
 
                       {errors.email && (
@@ -566,6 +636,7 @@ function BookAppointment() {
                         name="service"
                         value={formData.service}
                         onChange={handleChange}
+                        disabled={loading}
                       >
                         <option value="">Select Service</option>
                         <option>Root Canal Treatment</option>
@@ -594,6 +665,7 @@ function BookAppointment() {
                         min={getTodayDate()}
                         value={formData.date}
                         onChange={handleChange}
+                        disabled={loading}
                       />
 
                       {errors.date && (
@@ -615,6 +687,7 @@ function BookAppointment() {
                           <button
                             type="button"
                             key={doctor}
+                            disabled={loading}
                             className={
                               formData.doctor === doctor
                                 ? "doctor-select-card active-doctor"
@@ -696,6 +769,7 @@ function BookAppointment() {
                         placeholder="Message / Dental Concern"
                         value={formData.message}
                         onChange={handleChange}
+                        disabled={loading}
                       ></textarea>
                     </div>
 
@@ -705,10 +779,17 @@ function BookAppointment() {
                         className="appointment-submit"
                         disabled={loading}
                       >
-                        <i className="fa-solid fa-paper-plane me-2"></i>
-                        {loading
-                          ? "Submitting..."
-                          : "Submit Appointment Request"}
+                        {loading ? (
+                          <>
+                            <i className="fa-solid fa-spinner fa-spin me-2"></i>
+                            Submitting Appointment...
+                          </>
+                        ) : (
+                          <>
+                            <i className="fa-solid fa-paper-plane me-2"></i>
+                            Submit Appointment Request
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>

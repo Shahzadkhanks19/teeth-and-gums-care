@@ -1,0 +1,70 @@
+/* =====================================
+   PRELOADER
+===================================== */
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+
+  background: #ffffff;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preloader-content {
+  text-align: center;
+}
+
+.preloader-logo {
+  width: 95px;
+  height: 95px;
+  object-fit: contain;
+  margin-bottom: 20px;
+
+  animation: pulseLogo 1.8s infinite;
+}
+
+.preloader-spinner {
+  width: 55px;
+  height: 55px;
+
+  border: 4px solid #e5e7eb;
+  border-top: 4px solid #0d6efd;
+
+  border-radius: 50%;
+
+  margin: 0 auto 20px;
+
+  animation: spin 0.8s linear infinite;
+}
+
+.preloader-content h3 {
+  color: #0b3c91;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.preloader-content p {
+  color: #64748b;
+  margin: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseLogo {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}

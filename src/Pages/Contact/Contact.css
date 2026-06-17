@@ -730,3 +730,25 @@ section {
     padding: 16px;
   }
 }
+
+.contact-error-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: #fff1f2;
+  color: #be123c;
+
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  border-left: 4px solid #e11d48;
+
+  padding: 14px 16px;
+  border-radius: 14px;
+
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.contact-error-alert i {
+  color: #e11d48;
+}

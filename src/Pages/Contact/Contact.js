@@ -5,6 +5,8 @@
 // React hooks
 import React, { useState } from "react";
 
+import SEO from "../../Components/SEO/SEO"
+
 // Page styles
 import "./Contact.css";
 
@@ -14,11 +16,18 @@ import API_BASE_URL from "../../api/api";
 // Toast notifications
 import toast from "react-hot-toast";
 
+// UI states
+import EmptyState from "../../Components/UI/EmptyState";
+
 /* =====================================
    CONTACT PAGE COMPONENT
 ===================================== */
 
 function Contact() {
+  /* =====================================
+     FORM STATE
+  ====================================== */
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -28,6 +37,8 @@ function Contact() {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   /* =====================================
      FORM VALIDATION
@@ -72,6 +83,8 @@ function Contact() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    setSubmitError("");
+
     if (name === "phone") {
       const onlyNums = value.replace(/\D/g, "").slice(0, 10);
       setFormData({ ...formData, phone: onlyNums });
@@ -88,6 +101,7 @@ function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError("");
 
     if (!validateForm()) {
       toast.error("Please fix the highlighted fields");
@@ -113,11 +127,15 @@ function Contact() {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.message || "Failed to submit message");
+        const errorMessage = data.message || "Failed to submit message";
+        setSubmitError(errorMessage);
+        toast.error(errorMessage);
         return;
       }
 
       toast.success("Thank you! Your message has been sent successfully.");
+
+      setSuccess(true);
 
       setFormData({
         name: "",
@@ -128,14 +146,38 @@ function Contact() {
 
       setErrors({});
     } catch (error) {
-      toast.error("Server error. Please try again later.");
+      const errorMessage = "Server error. Please try again later.";
+      setSubmitError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
+  /* =====================================
+     SUCCESS STATE
+  ====================================== */
+
+  if (success) {
+    return (
+      <EmptyState
+        icon="fa-solid fa-circle-check"
+        title="Message Sent Successfully"
+        message="Thank you for contacting Teeth & Gums Care. Our team will get back to you shortly."
+        buttonText="Send Another Message"
+        onButtonClick={() => setSuccess(false)}
+      />
+    );
+  }
+
   return (
     <>
+
+    <SEO
+  title="Contact Teeth and Gums Care | Dental Clinic in Jodhpur"
+  description="Contact Teeth and Gums Care dental clinic in Jodhpur for appointments, clinic timings, location details and dental treatment enquiries."
+  keywords="contact dentist Jodhpur, dental clinic contact Jodhpur, Teeth and Gums Care contact, dentist Shastri Nagar Jodhpur"
+/>
       {/* =====================================
           HERO SECTION
       ====================================== */}
@@ -222,6 +264,13 @@ function Contact() {
                   back to you shortly.
                 </p>
 
+                {submitError && (
+                  <div className="contact-error-alert">
+                    <i className="fa-solid fa-triangle-exclamation"></i>
+                    {submitError}
+                  </div>
+                )}
+
                 <form onSubmit={handleSubmit}>
                   <div className="input-group-custom">
                     <i className="fa-solid fa-user"></i>
@@ -232,6 +281,7 @@ function Contact() {
                       placeholder="Full Name"
                       value={formData.name}
                       onChange={handleChange}
+                      disabled={loading}
                     />
 
                     {errors.name && (
@@ -248,6 +298,7 @@ function Contact() {
                       placeholder="Indian Mobile Number"
                       value={formData.phone}
                       onChange={handleChange}
+                      disabled={loading}
                     />
 
                     {errors.phone && (
@@ -264,6 +315,7 @@ function Contact() {
                       placeholder="Email Address"
                       value={formData.email}
                       onChange={handleChange}
+                      disabled={loading}
                     />
 
                     {errors.email && (
@@ -280,6 +332,7 @@ function Contact() {
                       placeholder="Tell us how we can help you..."
                       value={formData.message}
                       onChange={handleChange}
+                      disabled={loading}
                     ></textarea>
 
                     {errors.message && (
@@ -292,8 +345,17 @@ function Contact() {
                     className="contact-submit-btn"
                     disabled={loading}
                   >
-                    <i className="fa-solid fa-paper-plane me-2"></i>
-                    {loading ? "Sending..." : "Send Message"}
+                    {loading ? (
+                      <>
+                        <i className="fa-solid fa-spinner fa-spin me-2"></i>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa-solid fa-paper-plane me-2"></i>
+                        Send Message
+                      </>
+                    )}
                   </button>
                 </form>
               </div>
@@ -323,21 +385,33 @@ function Contact() {
               </div>
             </div>
 
-            <div className="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="100">
+            <div
+              className="col-md-3 col-6"
+              data-aos="zoom-in"
+              data-aos-delay="100"
+            >
               <div className="visit-card">
                 <i className="fa-solid fa-tooth"></i>
                 <h5>Advanced Treatments</h5>
               </div>
             </div>
 
-            <div className="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="200">
+            <div
+              className="col-md-3 col-6"
+              data-aos="zoom-in"
+              data-aos-delay="200"
+            >
               <div className="visit-card">
                 <i className="fa-solid fa-heart"></i>
                 <h5>Patient-Centered Care</h5>
               </div>
             </div>
 
-            <div className="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="300">
+            <div
+              className="col-md-3 col-6"
+              data-aos="zoom-in"
+              data-aos-delay="300"
+            >
               <div className="visit-card">
                 <i className="fa-solid fa-shield-heart"></i>
                 <h5>Comfort & Safety</h5>

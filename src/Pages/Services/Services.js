@@ -6,6 +6,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+import SEO from "../../Components/SEO/SEO";
+
 // Page styles
 import "./Services.css";
 
@@ -19,6 +21,26 @@ import servicesData from "../../data/serviceData";
 function Services() {
   return (
     <>
+
+ <SEO
+  title="Dental Services in Jodhpur | Teeth and Gums Care"
+  description="Explore complete dental services including Dental Implants, Cosmetic Dentistry, Smile Designing, Dental Veneers, Root Canal Treatment, Dental Aligners, Teeth Whitening, Braces, Dental Bridges and more in Jodhpur."
+  keywords="
+  dental services Jodhpur,
+  dental implants Jodhpur,
+  cosmetic dentistry Jodhpur,
+  smile designing Jodhpur,
+  dental veneers Jodhpur,
+  root canal treatment Jodhpur,
+  single sitting root canal Jodhpur,
+  dental aligners Jodhpur,
+  braces treatment Jodhpur,
+  teeth whitening Jodhpur,
+  dental bridge Jodhpur,
+  dental filling Jodhpur,
+  apicectomy Jodhpur"
+ />
+
       {/* =====================================
           HERO SECTION
       ====================================== */}
@@ -90,6 +112,46 @@ function Services() {
       </section>
 
       {/* =====================================
+    SERVICES HIGHLIGHTS
+===================================== */}
+
+<section className="services-highlights">
+  <div className="container">
+    <div className="row g-4">
+
+      <div className="col-lg-3 col-md-6">
+        <div className="highlight-card">
+          <h3>15+</h3>
+          <p>Dental Treatments</p>
+        </div>
+      </div>
+
+      <div className="col-lg-3 col-md-6">
+        <div className="highlight-card">
+          <h3>5000+</h3>
+          <p>Happy Patients</p>
+        </div>
+      </div>
+
+      <div className="col-lg-3 col-md-6">
+        <div className="highlight-card">
+          <h3>15+</h3>
+          <p>Years Experience</p>
+        </div>
+      </div>
+
+      <div className="col-lg-3 col-md-6">
+        <div className="highlight-card">
+          <h3>4.9★</h3>
+          <p>Patient Rating</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+      {/* =====================================
           SERVICES GRID SECTION
       ====================================== */}
       <section className="services-section">
@@ -98,13 +160,15 @@ function Services() {
             <span className="services-mini-tag">What We Offer</span>
 
             <h2 className="services-section-title">
-              Treatments Designed For Every Smile
-            </h2>
+  15 Specialized Dental Treatments Under One Roof
+</h2>
 
-            <p className="services-section-subtitle">
-              Explore our complete range of dental services delivered with
-              modern techniques, gentle care, and long-lasting results.
-            </p>
+<p className="services-section-subtitle">
+  From routine dental care and smile enhancement to advanced root
+  canal procedures, dental implants, aligners, braces and cosmetic
+  dentistry — we provide complete oral healthcare for patients of
+  every age.
+</p>
           </div>
 
           <div className="row g-4">

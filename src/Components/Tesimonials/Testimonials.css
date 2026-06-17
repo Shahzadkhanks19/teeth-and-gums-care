@@ -138,15 +138,39 @@
 }
 
 /* ======================================================
-   SLIDER SPACING
+   SLICK SLIDER BASE FIXES
+====================================================== */
+
+.testimonials-section .slick-slider {
+  width: 100%;
+  overflow: hidden;
+}
+
+.testimonials-section .slick-list {
+  overflow: hidden;
+  margin: 0 -12px;
+}
+
+.testimonials-section .slick-track {
+  display: flex !important;
+  align-items: stretch;
+}
+
+.testimonials-section .slick-slide {
+  height: auto;
+}
+
+.testimonials-section .slick-slide > div {
+  height: 100%;
+}
+
+/* ======================================================
+   SLIDE SPACING
 ====================================================== */
 
 .testimonial-slide {
   padding: 18px;
   box-sizing: border-box;
-}
-
-.testimonials-section .slick-slide > div {
   height: 100%;
 }
 
@@ -161,6 +185,7 @@
   background: #ffffff;
   padding: 32px 30px 72px;
   min-height: 375px;
+  height: 100%;
   width: 100%;
   box-sizing: border-box;
   text-decoration: none;
@@ -212,6 +237,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 
 .review-avatar {
@@ -233,6 +259,7 @@
   color: #0f172a;
   font-size: 16px;
   font-weight: 900;
+  word-break: normal;
 }
 
 .review-user span {
@@ -275,6 +302,8 @@
   margin-bottom: 25px;
   font-size: 15.5px;
   flex-grow: 1;
+  white-space: normal;
+  word-break: normal;
   overflow-wrap: break-word;
 }
 
@@ -412,12 +441,36 @@
     border-radius: 18px;
   }
 
+  .testimonials-section .container {
+    overflow: hidden;
+  }
+
+  .testimonials-section .slick-list {
+    margin: 0 !important;
+    overflow: hidden;
+  }
+
+  .testimonials-section .slick-track {
+    display: flex !important;
+    align-items: stretch;
+  }
+
+  .testimonials-section .slick-slide {
+    height: auto;
+  }
+
+  .testimonials-section .slick-slide > div {
+    height: 100%;
+  }
+
   .testimonial-slide {
     padding: 10px;
   }
 
   .google-review-card {
+    width: 100%;
     min-height: 360px;
+    height: auto;
     padding: 28px 22px 70px;
     border-radius: 22px;
   }
@@ -429,6 +482,9 @@
   .review-text {
     font-size: 15px;
     line-height: 1.75;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: break-word;
   }
 
   .verified-review {

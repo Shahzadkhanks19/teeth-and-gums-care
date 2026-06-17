@@ -4,9 +4,16 @@
 
 // React + state
 import React, { useState } from "react";
+import CountUp from "react-countup";
+import { useInView } from "react-intersection-observer";
+
+import SEO from "../../Components/SEO/SEO"
 
 // Routing
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+// Empty state
+import EmptyState from "../../Components/UI/EmptyState";
 
 // Page styles
 import "./Gallery.css";
@@ -22,11 +29,48 @@ import gallery7 from "./Assets/gallery2.avif";
 import gallery8 from "./Assets/gallery2.avif";
 
 /* =====================================
+   GALLERY COUNTER CARD COMPONENT
+===================================== */
+
+function GalleryCounterCard({ end, suffix, title, delay }) {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.3,
+  });
+
+  return (
+    <div
+      className="col-lg-3 col-6"
+      data-aos="zoom-in"
+      data-aos-delay={delay}
+    >
+      <div className="gallery-stat-card" ref={ref}>
+        <h2>
+          {inView ? (
+            <CountUp end={end} duration={2.5} separator="," />
+          ) : (
+            "0"
+          )}
+          {suffix}
+        </h2>
+
+        <p>{title}</p>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================
    GALLERY PAGE COMPONENT
 ===================================== */
 
 function Gallery() {
+  const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
+
+  /* =====================================
+     GALLERY IMAGE DATA
+  ====================================== */
 
   const galleryImages = [
     { img: gallery1, title: "Clinic Interior", category: "Clinic" },
@@ -39,8 +83,30 @@ function Gallery() {
     { img: gallery8, title: "Comfortable Space", category: "Clinic" },
   ];
 
+  /* =====================================
+     EMPTY STATE
+  ====================================== */
+
+  if (!galleryImages.length) {
+    return (
+      <EmptyState
+        icon="fa-solid fa-images"
+        title="Gallery Coming Soon"
+        message="Clinic photos and treatment images will be added soon."
+        buttonText="Book Appointment"
+        onButtonClick={() => navigate("/book-appointment")}
+      />
+    );
+  }
+
   return (
     <>
+
+    <SEO
+  title="Clinic Gallery | Teeth amd Gums Care Jodhpur"
+  description="View the clinic gallery of Teeth and Gums Care, including our dental treatment spaces, modern equipment and patient-friendly environment in Jodhpur."
+  keywords="dental clinic gallery Jodhpur, Teeth and Gums Care gallery, dental clinic photos Jodhpur, modern dental clinic Jodhpur"
+/>
       {/* HERO SECTION */}
       <section className="gallery-hero">
         <div className="gallery-hero-shape shape-one"></div>
@@ -62,33 +128,33 @@ function Gallery() {
       <section className="gallery-stats">
         <div className="container">
           <div className="row g-4 text-center">
-            <div className="col-lg-3 col-6" data-aos="zoom-in">
-              <div className="gallery-stat-card">
-                <h2>5000+</h2>
-                <p>Happy Patients</p>
-              </div>
-            </div>
+            <GalleryCounterCard
+              end={5000}
+              suffix="+"
+              title="Happy Patients"
+              delay="0"
+            />
 
-            <div className="col-lg-3 col-6" data-aos="zoom-in" data-aos-delay="100">
-              <div className="gallery-stat-card">
-                <h2>10+</h2>
-                <p>Years Experience</p>
-              </div>
-            </div>
+            <GalleryCounterCard
+              end={10}
+              suffix="+"
+              title="Years Experience"
+              delay="100"
+            />
 
-            <div className="col-lg-3 col-6" data-aos="zoom-in" data-aos-delay="200">
-              <div className="gallery-stat-card">
-                <h2>15+</h2>
-                <p>Dental Services</p>
-              </div>
-            </div>
+            <GalleryCounterCard
+              end={15}
+              suffix="+"
+              title="Dental Services"
+              delay="200"
+            />
 
-            <div className="col-lg-3 col-6" data-aos="zoom-in" data-aos-delay="300">
-              <div className="gallery-stat-card">
-                <h2>100%</h2>
-                <p>Patient Focused</p>
-              </div>
-            </div>
+            <GalleryCounterCard
+              end={100}
+              suffix="%"
+              title="Patient Focused"
+              delay="300"
+            />
           </div>
         </div>
       </section>

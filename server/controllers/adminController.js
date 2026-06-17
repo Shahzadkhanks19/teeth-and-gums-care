@@ -6,11 +6,29 @@ const Admin = require("../models/Admin");
 const sendEmail = require("../utils/sendEmail");
 const logActivity = require("../utils/logActivity");
 
+/* =====================================
+   PASSWORD POLICY
+===================================== */
+
+const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+const passwordPolicyMessage =
+  "Password must be at least 8 characters and include uppercase, lowercase, number, and special character.";
+
+/* =====================================
+   TOKEN GENERATOR
+===================================== */
+
 const generateToken = (adminId) => {
   return jwt.sign({ id: adminId }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
 };
+
+/* =====================================
+   CREATE DEFAULT ADMIN
+===================================== */
 
 const createDefaultAdmin = async () => {
   const existingAdmin = await Admin.findOne({
@@ -18,6 +36,13 @@ const createDefaultAdmin = async () => {
   });
 
   if (!existingAdmin) {
+    if (!passwordRegex.test(process.env.ADMIN_PASSWORD)) {
+      console.error(
+        "Default admin password does not meet strict password policy."
+      );
+      process.exit(1);
+    }
+
     const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
 
     await Admin.create({
@@ -28,6 +53,10 @@ const createDefaultAdmin = async () => {
     console.log("Default admin created");
   }
 };
+
+/* =====================================
+   ADMIN LOGIN
+===================================== */
 
 const loginAdmin = async (req, res) => {
   try {
@@ -70,6 +99,10 @@ const loginAdmin = async (req, res) => {
   }
 };
 
+/* =====================================
+   CHANGE ADMIN PASSWORD
+===================================== */
+
 const changeAdminPassword = async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmPassword } = req.body;
@@ -81,10 +114,10 @@ const changeAdminPassword = async (req, res) => {
       });
     }
 
-    if (newPassword.length < 8) {
+    if (!passwordRegex.test(newPassword)) {
       return res.status(400).json({
         success: false,
-        message: "New password must be at least 8 characters",
+        message: passwordPolicyMessage,
       });
     }
 
@@ -113,6 +146,15 @@ const changeAdminPassword = async (req, res) => {
       });
     }
 
+    const isSamePassword = await bcrypt.compare(newPassword, admin.password);
+
+    if (isSamePassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New password cannot be the same as current password",
+      });
+    }
+
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     admin.password = hashedPassword;
@@ -131,6 +173,10 @@ const changeAdminPassword = async (req, res) => {
     });
   }
 };
+
+/* =====================================
+   FORGOT ADMIN PASSWORD
+===================================== */
 
 const forgotAdminPassword = async (req, res) => {
   try {
@@ -184,6 +230,10 @@ const forgotAdminPassword = async (req, res) => {
   }
 };
 
+/* =====================================
+   RESET ADMIN PASSWORD
+===================================== */
+
 const resetAdminPassword = async (req, res) => {
   try {
     const { password, confirmPassword } = req.body;
@@ -195,10 +245,10 @@ const resetAdminPassword = async (req, res) => {
       });
     }
 
-    if (password.length < 8) {
+    if (!passwordRegex.test(password)) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 8 characters",
+        message: passwordPolicyMessage,
       });
     }
 
@@ -223,6 +273,15 @@ const resetAdminPassword = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Invalid or expired reset token",
+      });
+    }
+
+    const isSamePassword = await bcrypt.compare(password, admin.password);
+
+    if (isSamePassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New password cannot be the same as old password",
       });
     }
 

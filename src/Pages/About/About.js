@@ -4,6 +4,7 @@
 
 // React
 import React from "react";
+import { useInView } from "react-intersection-observer";
 
 // Counter animation
 import CountUp from "react-countup";
@@ -11,10 +12,49 @@ import CountUp from "react-countup";
 // Page styles
 import "./About.css";
 
+import SEO from "../../Components/SEO/SEO";
+
 // Images
 import aboutImg from "../About/Assets/about image.avif";
 import doctor1 from "../About/Assets/sunita.jpg";
 import doctor2 from "../About/Assets/vishal.jpg";
+
+// ABOUT COUNTER CARD
+
+function AboutCounterCard({ icon, end, suffix, decimals = 0, title, delay }) {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.3,
+  });
+
+  return (
+    <div
+      className="col-md-3 col-6 mb-4"
+      data-aos="zoom-in"
+      data-aos-delay={delay}
+    >
+      <div className="about-achievement-card" ref={ref}>
+        <i className={icon}></i>
+
+        <h2>
+          {inView ? (
+            <CountUp
+              end={end}
+              duration={2.5}
+              decimals={decimals}
+              separator=","
+            />
+          ) : (
+            decimals > 0 ? "0.0" : "0"
+          )}
+          {suffix}
+        </h2>
+
+        <p>{title}</p>
+      </div>
+    </div>
+  );
+}
 
 /* =====================================
    ABOUT PAGE COMPONENT
@@ -23,6 +63,12 @@ import doctor2 from "../About/Assets/vishal.jpg";
 function About() {
   return (
     <>
+
+    <SEO
+  title="About Us | Teeth and Gums Care Jodhpur"
+  description="Learn about Teeth and Gums Care, our experienced dentists, modern dental care approach and patient-first dental treatments in Jodhpur."
+  keywords="about teeth and gums care, dentist Jodhpur, dental experts Jodhpur, dental clinic Shastri Nagar Jodhpur"
+/>
       {/* =====================================
           HERO SECTION
       ====================================== */}
@@ -162,9 +208,8 @@ function About() {
                   />
 
                   <div className="doctor-badge">
-                    <i className="fa-solid fa-award"></i>
-                    <span>15+ Years</span>
-                  </div>
+  <span>15+ Years Experience</span>
+</div>
                 </div>
 
                 <div className="doctor-content">
@@ -223,9 +268,8 @@ function About() {
                   />
 
                   <div className="doctor-badge">
-                    <i className="fa-solid fa-award"></i>
-                    <span>15+ Years</span>
-                  </div>
+  <span>15+ Years Experience</span>
+</div>
                 </div>
 
                 <div className="doctor-content">
@@ -459,54 +503,39 @@ function About() {
           </div>
 
           <div className="row text-center">
-            <div className="col-md-3 col-6 mb-4" data-aos="zoom-in">
-              <div className="about-achievement-card">
-                <i className="fa-solid fa-users"></i>
+  <AboutCounterCard
+    icon="fa-solid fa-users"
+    end={1500}
+    suffix="+"
+    title="Happy Patients"
+    delay="0"
+  />
 
-                <h2>
-                  <CountUp end={1500} duration={3} separator="," />+
-                </h2>
+  <AboutCounterCard
+    icon="fa-solid fa-user-doctor"
+    end={2}
+    suffix="+"
+    title="Expert Dentists"
+    delay="100"
+  />
 
-                <p>Happy Patients</p>
-              </div>
-            </div>
+  <AboutCounterCard
+    icon="fa-solid fa-star"
+    end={4.9}
+    suffix="★"
+    decimals={1}
+    title="Google Rating"
+    delay="200"
+  />
 
-            <div className="col-md-3 col-6 mb-4" data-aos="zoom-in" data-aos-delay="100">
-              <div className="about-achievement-card">
-                <i className="fa-solid fa-user-doctor"></i>
-
-                <h2>
-                  <CountUp end={2} duration={2} />+
-                </h2>
-
-                <p>Expert Dentists</p>
-              </div>
-            </div>
-
-            <div className="col-md-3 col-6 mb-4" data-aos="zoom-in" data-aos-delay="200">
-              <div className="about-achievement-card">
-                <i className="fa-solid fa-star"></i>
-
-                <h2>
-                  <CountUp end={4.9} decimals={1} duration={3} />★
-                </h2>
-
-                <p>Google Rating</p>
-              </div>
-            </div>
-
-            <div className="col-md-3 col-6 mb-4" data-aos="zoom-in" data-aos-delay="300">
-              <div className="about-achievement-card">
-                <i className="fa-solid fa-heart"></i>
-
-                <h2>
-                  <CountUp end={100} duration={3} />%
-                </h2>
-
-                <p>Patient Satisfaction</p>
-              </div>
-            </div>
-          </div>
+  <AboutCounterCard
+    icon="fa-solid fa-heart"
+    end={100}
+    suffix="%"
+    title="Patient Satisfaction"
+    delay="300"
+  />
+</div>
         </div>
       </section>
 

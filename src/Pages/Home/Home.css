@@ -308,6 +308,7 @@ a,
 }
 
 .premium-service-card {
+  position: relative;
   background: white;
   border-radius: 26px;
   overflow: visible;
@@ -341,25 +342,9 @@ a,
   filter: saturate(120%);
 }
 
-.service-icon-float {
-  position: absolute;
-  left: 24px;
-  bottom: -28px;
-  width: 62px;
-  height: 62px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #0d6efd, #0b3c91);
-  color: white;
-  display: grid;
-  place-items: center;
-  font-size: 1.45rem;
-  box-shadow: 0 14px 30px rgba(13, 110, 253, 0.3);
-  border: 5px solid white;
-  z-index: 5;
-}
 
 .service-content {
-  padding: 48px 25px 28px;
+  padding: 32px 25px 28px;
 }
 
 .service-content h4 {

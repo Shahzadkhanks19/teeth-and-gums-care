@@ -20,6 +20,11 @@ import {
 import { io } from "socket.io-client";
 import toast from "react-hot-toast";
 
+import LoadingState from "../../Components/UI/LoadingState";
+import EmptyState from "../../Components/UI/EmptyState";
+import ErrorState from "../../Components/UI/ErrorState";
+
+
 const SOCKET_URL = API_BASE_URL.replace("/api", "");
 
 function AdminDashboard() {
@@ -41,6 +46,7 @@ function AdminDashboard() {
   const [rescheduleModal, setRescheduleModal] = useState(null);
   const [viewAppointmentModal, setViewAppointmentModal] = useState(null);
   const [viewMessageModal, setViewMessageModal] = useState(null);
+  const [error, setError] = useState("");
 
   const [cancelReason, setCancelReason] = useState("");
 
@@ -67,6 +73,10 @@ function AdminDashboard() {
     newPassword: "",
     confirmPassword: "",
   });
+
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+const [showNewPassword, setShowNewPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const token = localStorage.getItem("adminToken");
   const adminEmail = localStorage.getItem("adminEmail");
@@ -126,7 +136,8 @@ function AdminDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      setLoading(true);
+  setLoading(true);
+  setError("");
 
       const [appointmentsRes, contactsRes, blockedRes, activityLogsRes] =
         await Promise.all([
@@ -164,9 +175,10 @@ function AdminDashboard() {
       if (activityLogsData.success) {
         setActivityLogs(activityLogsData.logs);
       }
-    } catch (error) {
-      toast.error("Failed to load dashboard data");
-    } finally {
+    }catch (error) {
+  setError("Failed to load dashboard data");
+  toast.error("Failed to load dashboard data");
+} finally {
       setLoading(false);
     }
   };
@@ -1019,8 +1031,18 @@ function AdminDashboard() {
         </header>
 
         {loading ? (
-          <div className="admin-loading">Loading dashboard...</div>
-        ) : (
+  <LoadingState
+    title="Loading Dashboard"
+    message="Fetching appointments, messages and reports..."
+  />
+) : error ? (
+  <ErrorState
+    title="Dashboard Error"
+    message={error}
+    buttonText="Retry"
+    onRetry={fetchDashboardData}
+  />
+) : (
           <>
             {activeTab === "dashboard" && (
               <>
@@ -1223,93 +1245,101 @@ function AdminDashboard() {
                     </thead>
 
                     <tbody>
-                      {filteredAppointments.map((item) => (
-                        <tr key={item._id}>
-                          <td>{item.name}</td>
-                          <td>{item.phone}</td>
-                          <td>{item.email}</td>
-                          <td>{item.service}</td>
-                          <td>{item.date}</td>
-                          <td>{item.timeSlot}</td>
-                          <td>{item.doctor}</td>
+  {filteredAppointments.length > 0 ? (
+    filteredAppointments.map((item) => (
+      <tr key={item._id}>
+        <td>{item.name}</td>
+        <td>{item.phone}</td>
+        <td>{item.email}</td>
+        <td>{item.service}</td>
+        <td>{item.date}</td>
+        <td>{item.timeSlot}</td>
+        <td>{item.doctor}</td>
 
-                          <td>
-                            <span className={`status-badge ${item.status}`}>
-                              {item.status}
-                            </span>
-                          </td>
+        <td>
+          <span className={`status-badge ${item.status}`}>
+            {item.status}
+          </span>
+        </td>
 
-                          <td>
-                            <div className="admin-action-buttons">
-                              <button
-                                className="view-btn"
-                                onClick={() => setViewAppointmentModal(item)}
-                              >
-                                View
-                              </button>
+        <td>
+          <div className="admin-action-buttons">
+            <button
+              className="view-btn"
+              onClick={() => setViewAppointmentModal(item)}
+            >
+              View
+            </button>
 
-                              {item.status === "pending" && (
-                                <button
-                                  className="confirm-btn"
-                                  disabled={actionLoading}
-                                  onClick={() =>
-                                    updateAppointmentStatus(
-                                      item._id,
-                                      "confirmed"
-                                    )
-                                  }
-                                >
-                                  Confirm
-                                </button>
-                              )}
+            {item.status === "pending" && (
+              <button
+                className="confirm-btn"
+                disabled={actionLoading}
+                onClick={() =>
+                  updateAppointmentStatus(item._id, "confirmed")
+                }
+              >
+                Confirm
+              </button>
+            )}
 
-                              {item.status !== "cancelled" && (
-                                <button
-                                  className="reschedule-btn"
-                                  disabled={actionLoading}
-                                  onClick={() => {
-                                    setRescheduleModal(item);
-                                    setRescheduleData({
-                                      date: item.date,
-                                      timeSlot: item.timeSlot,
-                                      reason: "",
-                                    });
-                                  }}
-                                >
-                                  Reschedule
-                                </button>
-                              )}
+            {item.status !== "cancelled" && (
+              <button
+                className="reschedule-btn"
+                disabled={actionLoading}
+                onClick={() => {
+                  setRescheduleModal(item);
+                  setRescheduleData({
+                    date: item.date,
+                    timeSlot: item.timeSlot,
+                    reason: "",
+                  });
+                }}
+              >
+                Reschedule
+              </button>
+            )}
 
-                              {item.status !== "cancelled" && (
-                                <button
-                                  className="cancel-btn"
-                                  disabled={actionLoading}
-                                  onClick={() => {
-                                    setCancelModal(item);
-                                    setCancelReason("");
-                                  }}
-                                >
-                                  Cancel
-                                </button>
-                              )}
+            {item.status !== "cancelled" && (
+              <button
+                className="cancel-btn"
+                disabled={actionLoading}
+                onClick={() => {
+                  setCancelModal(item);
+                  setCancelReason("");
+                }}
+              >
+                Cancel
+              </button>
+            )}
 
-                              <button
-                                className="delete-btn"
-                                onClick={() => setDeleteModal(item)}
-                              >
-                                Delete
-                              </button>
+            <button
+              className="delete-btn"
+              disabled={actionLoading}
+              onClick={() => setDeleteModal(item)}
+            >
+              Delete
+            </button>
 
-                              {item.status === "cancelled" && (
-                                <span className="no-action-text">
-                                  No actions
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
+            {item.status === "cancelled" && (
+              <span className="no-action-text">No actions</span>
+            )}
+          </div>
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="9">
+        <EmptyState
+          icon="fa-solid fa-calendar-xmark"
+          title="No Appointments Found"
+          message="There are currently no appointments matching your filters."
+        />
+      </td>
+    </tr>
+  )}
+</tbody>
                   </table>
                 </div>
               </section>
@@ -1358,61 +1388,76 @@ function AdminDashboard() {
                     </thead>
 
                     <tbody>
-                      {filteredContacts.map((item) => (
-                        <tr key={item._id}>
-                          <td>{item.name}</td>
-                          <td>{item.phone}</td>
-                          <td>{item.email}</td>
-                          <td className="message-cell">{item.message}</td>
+  {filteredContacts.length > 0 ? (
+    filteredContacts.map((item) => (
+      <tr key={item._id}>
+        <td>{item.name}</td>
+        <td>{item.phone}</td>
+        <td>{item.email}</td>
 
-                          <td>
-                            <span className={`status-badge ${item.status}`}>
-                              {item.status}
-                            </span>
-                          </td>
+        <td className="message-cell">
+          {item.message}
+        </td>
 
-                          <td>
-                            <div className="admin-action-buttons">
-                              <button
-                                className="view-btn"
-                                onClick={() => setViewMessageModal(item)}
-                              >
-                                View
-                              </button>
+        <td>
+          <span className={`status-badge ${item.status}`}>
+            {item.status}
+          </span>
+        </td>
 
-                              {item.status === "new" && (
-                                <button
-                                  className="confirm-btn"
-                                  onClick={() =>
-                                    updateMessageStatus(item._id, "read")
-                                  }
-                                >
-                                  Mark Read
-                                </button>
-                              )}
+        <td>
+          <div className="admin-action-buttons">
+            <button
+              className="view-btn"
+              onClick={() => setViewMessageModal(item)}
+            >
+              View
+            </button>
 
-                              {item.status !== "replied" && (
-                                <button
-                                  className="reschedule-btn"
-                                  onClick={() =>
-                                    updateMessageStatus(item._id, "replied")
-                                  }
-                                >
-                                  Mark Replied
-                                </button>
-                              )}
+            {item.status === "new" && (
+              <button
+                className="confirm-btn"
+                onClick={() =>
+                  updateMessageStatus(item._id, "read")
+                }
+              >
+                Mark Read
+              </button>
+            )}
 
-                              <button
-                                className="delete-btn"
-                                onClick={() => setDeleteMessageModal(item)}
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
+            {item.status !== "replied" && (
+              <button
+                className="reschedule-btn"
+                onClick={() =>
+                  updateMessageStatus(item._id, "replied")
+                }
+              >
+                Mark Replied
+              </button>
+            )}
+
+            <button
+              className="delete-btn"
+              onClick={() => setDeleteMessageModal(item)}
+            >
+              Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="6">
+        <EmptyState
+          icon="fa-solid fa-envelope-open"
+          title="No Messages Found"
+          message="No contact messages match your current search or filter."
+        />
+      </td>
+    </tr>
+  )}
+</tbody>
                   </table>
                 </div>
               </section>
@@ -1449,10 +1494,16 @@ function AdminDashboard() {
                       ))}
 
                       {activityLogs.length === 0 && (
-                        <tr>
-                          <td colSpan="4">No activity logs found</td>
-                        </tr>
-                      )}
+  <tr>
+    <td colSpan="4">
+      <EmptyState
+        icon="fa-solid fa-clock-rotate-left"
+        title="No Activity Logs"
+        message="No admin activity has been recorded yet."
+      />
+    </td>
+  </tr>
+)}
                     </tbody>
                   </table>
                 </div>
@@ -1585,10 +1636,16 @@ function AdminDashboard() {
                       ))}
 
                       {blockedSlots.length === 0 && (
-                        <tr>
-                          <td colSpan="5">No blocked availability found.</td>
-                        </tr>
-                      )}
+  <tr>
+    <td colSpan="5">
+      <EmptyState
+        icon="fa-solid fa-calendar-check"
+        title="No Blocked Slots"
+        message="All appointment slots are currently available."
+      />
+    </td>
+  </tr>
+)}
                     </tbody>
                   </table>
                 </div>
@@ -1600,46 +1657,116 @@ function AdminDashboard() {
                 <h2>Change Password</h2>
 
                 <form className="password-form" onSubmit={changePassword}>
-                  <input
-                    type="password"
-                    placeholder="Current Password"
-                    value={passwordData.currentPassword}
-                    onChange={(e) =>
-                      setPasswordData({
-                        ...passwordData,
-                        currentPassword: e.target.value,
-                      })
-                    }
-                  />
 
-                  <input
-                    type="password"
-                    placeholder="New Password"
-                    value={passwordData.newPassword}
-                    onChange={(e) =>
-                      setPasswordData({
-                        ...passwordData,
-                        newPassword: e.target.value,
-                      })
-                    }
-                  />
+  <div className="password-input-wrapper">
+    <input
+      type={showCurrentPassword ? "text" : "password"}
+      placeholder="Current Password"
+      value={passwordData.currentPassword}
+      onChange={(e) =>
+        setPasswordData({
+          ...passwordData,
+          currentPassword: e.target.value,
+        })
+      }
+    />
 
-                  <input
-                    type="password"
-                    placeholder="Confirm New Password"
-                    value={passwordData.confirmPassword}
-                    onChange={(e) =>
-                      setPasswordData({
-                        ...passwordData,
-                        confirmPassword: e.target.value,
-                      })
-                    }
-                  />
+    <button
+      type="button"
+      className="password-toggle-btn"
+      onClick={() =>
+        setShowCurrentPassword(!showCurrentPassword)
+      }
+    >
+      <i
+        className={`fa-solid ${
+          showCurrentPassword
+            ? "fa-eye-slash"
+            : "fa-eye"
+        }`}
+      />
+    </button>
+  </div>
 
-                  <button type="submit" disabled={actionLoading}>
-                    {actionLoading ? "Updating..." : "Update Password"}
-                  </button>
-                </form>
+  <div className="password-input-wrapper">
+    <input
+      type={showNewPassword ? "text" : "password"}
+      placeholder="New Password"
+      value={passwordData.newPassword}
+      onChange={(e) =>
+        setPasswordData({
+          ...passwordData,
+          newPassword: e.target.value,
+        })
+      }
+    />
+
+    <button
+      type="button"
+      className="password-toggle-btn"
+      onClick={() =>
+        setShowNewPassword(!showNewPassword)
+      }
+    >
+      <i
+        className={`fa-solid ${
+          showNewPassword
+            ? "fa-eye-slash"
+            : "fa-eye"
+        }`}
+      />
+    </button>
+  </div>
+
+  <div className="password-input-wrapper">
+    <input
+      type={showConfirmPassword ? "text" : "password"}
+      placeholder="Confirm New Password"
+      value={passwordData.confirmPassword}
+      onChange={(e) =>
+        setPasswordData({
+          ...passwordData,
+          confirmPassword: e.target.value,
+        })
+      }
+    />
+
+    <button
+      type="button"
+      className="password-toggle-btn"
+      onClick={() =>
+        setShowConfirmPassword(!showConfirmPassword)
+      }
+    >
+      <i
+        className={`fa-solid ${
+          showConfirmPassword
+            ? "fa-eye-slash"
+            : "fa-eye"
+        }`}
+      />
+    </button>
+  </div>
+
+  <div className="password-policy">
+    <strong>Password Requirements</strong>
+
+    <ul>
+      <li>Minimum 8 characters</li>
+      <li>1 uppercase letter</li>
+      <li>1 lowercase letter</li>
+      <li>1 number</li>
+      <li>1 special character</li>
+    </ul>
+  </div>
+
+  <button type="submit" disabled={actionLoading}>
+    {actionLoading
+      ? "Updating..."
+      : "Update Password"}
+  </button>
+
+</form>
               </section>
             )}
           </>

@@ -2,10 +2,15 @@
    IMPORTS
 ===================================== */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
+import { useNavigate } from "react-router-dom";
+
 import "./Testimonials.css";
 import googleIcon from "../Tesimonials/Assets/google.svg";
+
+// Empty state
+import EmptyState from "../UI/EmptyState";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -69,7 +74,49 @@ const testimonials = [
 ===================================== */
 
 function Testimonials() {
+  const navigate = useNavigate();
   const googleReviewsLink = "https://share.google/X1DeFzBmXM8WkGAuc";
+
+  /* =====================================
+     WINDOW WIDTH STATE
+  ====================================== */
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  /* =====================================
+     HANDLE WINDOW RESIZE
+  ====================================== */
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  /* =====================================
+     EMPTY STATE
+  ====================================== */
+
+  if (!testimonials.length) {
+    return (
+      <EmptyState
+        icon="fa-solid fa-star"
+        title="No Testimonials Yet"
+        message="Patient reviews and testimonials will appear here soon."
+        buttonText="Book Appointment"
+        onButtonClick={() => navigate("/book-appointment")}
+      />
+    );
+  }
+
+  /* =====================================
+     GET USER INITIALS
+  ====================================== */
 
   const getInitials = (name) =>
     name
@@ -78,6 +125,12 @@ function Testimonials() {
       .join("")
       .slice(0, 2)
       .toUpperCase();
+
+  /* =====================================
+     RESPONSIVE SLIDE COUNT
+  ====================================== */
+
+  const slidesCount = windowWidth <= 768 ? 1 : windowWidth <= 1200 ? 2 : 3;
 
   /* =====================================
      SLIDER SETTINGS
@@ -89,26 +142,11 @@ function Testimonials() {
     speed: 700,
     autoplay: true,
     autoplaySpeed: 3500,
-    slidesToShow: 3,
+    slidesToShow: slidesCount,
     slidesToScroll: 1,
     pauseOnHover: true,
-    arrows: true,
-    adaptiveHeight: false,
-    responsive: [
-      {
-        breakpoint: 1200,
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-          arrows: false,
-        },
-      },
-    ],
+    arrows: windowWidth > 768,
+    adaptiveHeight: windowWidth <= 768,
   };
 
   return (
