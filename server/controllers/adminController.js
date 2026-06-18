@@ -1,3 +1,7 @@
+/* =====================================
+   ADMIN CONTROLLER
+===================================== */
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
@@ -21,9 +25,15 @@ const passwordPolicyMessage =
 ===================================== */
 
 const generateToken = (adminId) => {
-  return jwt.sign({ id: adminId }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
+  return jwt.sign(
+    {
+      id: adminId,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "7d",
+    }
+  );
 };
 
 /* =====================================
@@ -35,23 +45,29 @@ const createDefaultAdmin = async () => {
     email: process.env.ADMIN_EMAIL,
   });
 
-  if (!existingAdmin) {
-    if (!passwordRegex.test(process.env.ADMIN_PASSWORD)) {
-      console.error(
-        "Default admin password does not meet strict password policy."
-      );
-      process.exit(1);
-    }
-
-    const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
-
-    await Admin.create({
-      email: process.env.ADMIN_EMAIL,
-      password: hashedPassword,
-    });
-
-    console.log("Default admin created");
+  if (existingAdmin) {
+    return;
   }
+
+  if (!passwordRegex.test(process.env.ADMIN_PASSWORD)) {
+    console.error(
+      "Default admin password does not meet strict password policy."
+    );
+
+    process.exit(1);
+  }
+
+  const hashedPassword = await bcrypt.hash(
+    process.env.ADMIN_PASSWORD,
+    10
+  );
+
+  await Admin.create({
+    email: process.env.ADMIN_EMAIL,
+    password: hashedPassword,
+  });
+
+  console.log("Default admin created");
 };
 
 /* =====================================
@@ -62,7 +78,22 @@ const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const admin = await Admin.findOne({ email });
+    /*
+      Validate Required Fields
+    */
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    /*
+      Find Admin By Email
+    */
+    const admin = await Admin.findOne({
+      email,
+    });
 
     if (!admin) {
       return res.status(401).json({
@@ -71,7 +102,13 @@ const loginAdmin = async (req, res) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(password, admin.password);
+    /*
+      Compare Password
+    */
+    const isMatch = await bcrypt.compare(
+      password,
+      admin.password
+    );
 
     if (!isMatch) {
       return res.status(401).json({
@@ -80,8 +117,18 @@ const loginAdmin = async (req, res) => {
       });
     }
 
-    await logActivity("Admin Login", admin.email, "admin");
+    /*
+      Save Login Activity
+    */
+    await logActivity(
+      "Admin Login",
+      admin.email,
+      "admin"
+    );
 
+    /*
+      Send Auth Response
+    */
     res.json({
       success: true,
       message: "Login successful",
@@ -92,6 +139,11 @@ const loginAdmin = async (req, res) => {
       },
     });
   } catch (error) {
+    console.error(
+      "Admin Login Error:",
+      error.message
+    );
+
     res.status(500).json({
       success: false,
       message: "Admin login failed",
@@ -105,15 +157,29 @@ const loginAdmin = async (req, res) => {
 
 const changeAdminPassword = async (req, res) => {
   try {
-    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const {
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    } = req.body;
 
-    if (!currentPassword || !newPassword || !confirmPassword) {
+    /*
+      Validate Required Fields
+    */
+    if (
+      !currentPassword ||
+      !newPassword ||
+      !confirmPassword
+    ) {
       return res.status(400).json({
         success: false,
         message: "All password fields are required",
       });
     }
 
+    /*
+      Validate Password Strength
+    */
     if (!passwordRegex.test(newPassword)) {
       return res.status(400).json({
         success: false,
@@ -121,14 +187,23 @@ const changeAdminPassword = async (req, res) => {
       });
     }
 
+    /*
+      Match New Password & Confirm Password
+    */
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: "New password and confirm password do not match",
+        message:
+          "New password and confirm password do not match",
       });
     }
 
-    const admin = await Admin.findById(req.admin.id);
+    /*
+      Get Logged In Admin
+    */
+    const admin = await Admin.findById(
+      req.admin.id
+    );
 
     if (!admin) {
       return res.status(404).json({
@@ -137,7 +212,13 @@ const changeAdminPassword = async (req, res) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(currentPassword, admin.password);
+    /*
+      Verify Current Password
+    */
+    const isMatch = await bcrypt.compare(
+      currentPassword,
+      admin.password
+    );
 
     if (!isMatch) {
       return res.status(401).json({
@@ -146,27 +227,53 @@ const changeAdminPassword = async (req, res) => {
       });
     }
 
-    const isSamePassword = await bcrypt.compare(newPassword, admin.password);
+    /*
+      Prevent Same Password Reuse
+    */
+    const isSamePassword = await bcrypt.compare(
+      newPassword,
+      admin.password
+    );
 
     if (isSamePassword) {
       return res.status(400).json({
         success: false,
-        message: "New password cannot be the same as current password",
+        message:
+          "New password cannot be the same as current password",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    /*
+      Hash & Save New Password
+    */
+    const hashedPassword = await bcrypt.hash(
+      newPassword,
+      10
+    );
 
     admin.password = hashedPassword;
+
     await admin.save();
 
-    await logActivity("Password Changed", admin.email, "admin");
+    /*
+      Save Activity Log
+    */
+    await logActivity(
+      "Password Changed",
+      admin.email,
+      "admin"
+    );
 
     res.json({
       success: true,
       message: "Password changed successfully",
     });
   } catch (error) {
+    console.error(
+      "Change Password Error:",
+      error.message
+    );
+
     res.status(500).json({
       success: false,
       message: "Failed to change password",
@@ -182,7 +289,22 @@ const forgotAdminPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
-    const admin = await Admin.findOne({ email });
+    /*
+      Validate Email
+    */
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    /*
+      Find Admin
+    */
+    const admin = await Admin.findOne({
+      email,
+    });
 
     if (!admin) {
       return res.status(404).json({
@@ -191,38 +313,82 @@ const forgotAdminPassword = async (req, res) => {
       });
     }
 
-    const resetToken = crypto.randomBytes(32).toString("hex");
+    /*
+      Generate Reset Token
+    */
+    const resetToken = crypto
+      .randomBytes(32)
+      .toString("hex");
 
+    /*
+      Hash Reset Token Before Saving
+    */
     admin.resetPasswordToken = crypto
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
 
-    admin.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+    /*
+      Token Valid For 15 Minutes
+    */
+    admin.resetPasswordExpire =
+      Date.now() + 15 * 60 * 1000;
 
     await admin.save();
 
+    /*
+      Frontend Reset Link
+    */
     const resetUrl = `${process.env.CLIENT_URL}/admin/reset-password/${resetToken}`;
 
+    /*
+      Send Reset Email
+    */
     await sendEmail({
       to: admin.email,
-      subject: "Admin Password Reset - Teeth & Gums Care",
+      subject:
+        "Admin Password Reset - Teeth & Gums Care",
       html: `
         <h2>Password Reset Request</h2>
-        <p>You requested to reset your admin password.</p>
-        <p>Click the link below to reset your password:</p>
-        <a href="${resetUrl}">${resetUrl}</a>
-        <p>This link will expire in 15 minutes.</p>
+
+        <p>
+          You requested to reset your admin password.
+        </p>
+
+        <p>
+          Click the link below to reset your password:
+        </p>
+
+        <a href="${resetUrl}">
+          ${resetUrl}
+        </a>
+
+        <p>
+          This link will expire in 15 minutes.
+        </p>
       `,
     });
 
-    await logActivity("Forgot Password Requested", admin.email, "admin");
+    /*
+      Save Activity Log
+    */
+    await logActivity(
+      "Forgot Password Requested",
+      admin.email,
+      "admin"
+    );
 
     res.json({
       success: true,
-      message: "Password reset link sent to admin email",
+      message:
+        "Password reset link sent to admin email",
     });
   } catch (error) {
+    console.error(
+      "Forgot Password Error:",
+      error.message
+    );
+
     res.status(500).json({
       success: false,
       message: "Failed to send reset email",
@@ -236,15 +402,25 @@ const forgotAdminPassword = async (req, res) => {
 
 const resetAdminPassword = async (req, res) => {
   try {
-    const { password, confirmPassword } = req.body;
+    const {
+      password,
+      confirmPassword,
+    } = req.body;
 
+    /*
+      Validate Required Fields
+    */
     if (!password || !confirmPassword) {
       return res.status(400).json({
         success: false,
-        message: "Password and confirm password are required",
+        message:
+          "Password and confirm password are required",
       });
     }
 
+    /*
+      Validate Password Strength
+    */
     if (!passwordRegex.test(password)) {
       return res.status(400).json({
         success: false,
@@ -252,6 +428,9 @@ const resetAdminPassword = async (req, res) => {
       });
     }
 
+    /*
+      Match Passwords
+    */
     if (password !== confirmPassword) {
       return res.status(400).json({
         success: false,
@@ -259,14 +438,22 @@ const resetAdminPassword = async (req, res) => {
       });
     }
 
+    /*
+      Hash Token From URL
+    */
     const hashedToken = crypto
       .createHash("sha256")
       .update(req.params.token)
       .digest("hex");
 
+    /*
+      Find Admin With Valid Token
+    */
     const admin = await Admin.findOne({
       resetPasswordToken: hashedToken,
-      resetPasswordExpire: { $gt: Date.now() },
+      resetPasswordExpire: {
+        $gt: Date.now(),
+      },
     });
 
     if (!admin) {
@@ -276,34 +463,67 @@ const resetAdminPassword = async (req, res) => {
       });
     }
 
-    const isSamePassword = await bcrypt.compare(password, admin.password);
+    /*
+      Prevent Same Password Reuse
+    */
+    const isSamePassword = await bcrypt.compare(
+      password,
+      admin.password
+    );
 
     if (isSamePassword) {
       return res.status(400).json({
         success: false,
-        message: "New password cannot be the same as old password",
+        message:
+          "New password cannot be the same as old password",
       });
     }
 
-    admin.password = await bcrypt.hash(password, 10);
+    /*
+      Save New Password
+    */
+    admin.password = await bcrypt.hash(
+      password,
+      10
+    );
+
+    /*
+      Clear Reset Token
+    */
     admin.resetPasswordToken = "";
     admin.resetPasswordExpire = undefined;
 
     await admin.save();
 
-    await logActivity("Password Reset Successfully", admin.email, "admin");
+    /*
+      Save Activity Log
+    */
+    await logActivity(
+      "Password Reset Successfully",
+      admin.email,
+      "admin"
+    );
 
     res.json({
       success: true,
       message: "Password reset successfully",
     });
   } catch (error) {
+    console.error(
+      "Reset Password Error:",
+      error.message
+    );
+
     res.status(500).json({
       success: false,
       message: "Failed to reset password",
     });
   }
 };
+
+/* =====================================
+   EXPORT CONTROLLERS
+===================================== */
 
 module.exports = {
   loginAdmin,

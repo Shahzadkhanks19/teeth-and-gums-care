@@ -364,13 +364,15 @@ function BookAppointment() {
         <span>{slot}</span>
 
         {unavailable ? (
-          <small>
-            {isPastSlot(slot)
-              ? "Time passed"
-              : blockedReasonForSlot
-              ? "Blocked"
-              : "Booked"}
-          </small>
+          <small
+  title={blockedReasonForSlot}
+>
+  {isPastSlot(slot)
+    ? "Time Passed"
+    : blockedReasonForSlot
+    ? `Blocked • ${blockedReasonForSlot}`
+    : "Already Booked"}
+</small>
         ) : (
           <small>Available</small>
         )}

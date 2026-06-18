@@ -1,20 +1,46 @@
+/* =====================================
+   AUTH MIDDLEWARE
+===================================== */
+
 const jwt = require("jsonwebtoken");
+
+/* =====================================
+   PROTECT ADMIN ROUTES
+===================================== */
 
 const protectAdmin = (req, res, next) => {
   let token;
 
+  /*
+    Check Authorization Header
+
+    Expected Format:
+    Authorization: Bearer TOKEN
+  */
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
     try {
+      /*
+        Extract JWT Token
+      */
       token = req.headers.authorization.split(" ")[1];
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      /*
+        Verify Token
+      */
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET
+      );
 
+      /*
+        Attach Admin Data To Request
+      */
       req.admin = decoded;
 
-      next();
+      return next();
     } catch (error) {
       return res.status(401).json({
         success: false,
@@ -23,12 +49,17 @@ const protectAdmin = (req, res, next) => {
     }
   }
 
-  if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: "Not authorized, no token",
-    });
-  }
+  /*
+    No Token Found
+  */
+  return res.status(401).json({
+    success: false,
+    message: "Not authorized, no token",
+  });
 };
+
+/* =====================================
+   EXPORT MIDDLEWARE
+===================================== */
 
 module.exports = protectAdmin;

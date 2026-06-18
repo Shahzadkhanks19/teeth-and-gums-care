@@ -1,6 +1,14 @@
+/* =====================================
+   BLOCKED SLOT CONTROLLER
+===================================== */
+
 const Appointment = require("../models/Appointment");
 const BlockedSlot = require("../models/BlockedSlots");
 const logActivity = require("../utils/logActivity");
+
+/* =====================================
+   CONVERT SLOT TO DATE TIME
+===================================== */
 
 const convertSlotToDateTime = (date, timeSlot) => {
   if (!date || !timeSlot) return null;
@@ -18,6 +26,10 @@ const convertSlotToDateTime = (date, timeSlot) => {
     )}:00`
   );
 };
+
+/* =====================================
+   GET UNAVAILABLE SLOTS
+===================================== */
 
 const getUnavailableSlots = async (req, res) => {
   try {
@@ -39,27 +51,54 @@ const getUnavailableSlots = async (req, res) => {
 
     const fullDayBlock = blockedSlots.find((item) => item.type === "day");
 
+    const slotBlocks = blockedSlots.filter((item) => item.type === "slot");
+
+    const bookedSlots = appointments.map((item) => item.timeSlot);
+
+    const blockedSlotTimes = slotBlocks.map((item) => item.timeSlot);
+
+    const blockedSlotReasons = {};
+
+    slotBlocks.forEach((item) => {
+      blockedSlotReasons[item.timeSlot] =
+        item.reason || "This slot is blocked by clinic.";
+    });
+
     const unavailableSlots = [
-      ...appointments.map((item) => item.timeSlot),
-      ...blockedSlots
-        .filter((item) => item.type === "slot")
-        .map((item) => item.timeSlot),
+      ...bookedSlots,
+      ...blockedSlotTimes,
     ];
 
     res.json({
       success: true,
+
       isFullDayBlocked: Boolean(fullDayBlock),
+
       fullDayReason: fullDayBlock?.reason || "",
+
       unavailableSlots: [...new Set(unavailableSlots)],
+
+      bookedSlots,
+
+      blockedSlotTimes,
+
+      blockedSlotReasons,
+
       blockedSlots,
     });
   } catch (error) {
+    console.error("Get Unavailable Slots Error:", error.message);
+
     res.status(500).json({
       success: false,
       message: "Failed to fetch unavailable slots",
     });
   }
 };
+
+/* =====================================
+   BLOCK SLOT OR FULL DAY
+===================================== */
 
 const blockSlotOrDay = async (req, res) => {
   try {
@@ -91,7 +130,7 @@ const blockSlotOrDay = async (req, res) => {
 
       const slotDateTime = convertSlotToDateTime(date, timeSlot);
 
-      if (slotDateTime <= new Date()) {
+      if (!slotDateTime || slotDateTime <= new Date()) {
         return res.status(400).json({
           success: false,
           message: "You cannot block a past time slot.",
@@ -122,8 +161,10 @@ const blockSlotOrDay = async (req, res) => {
     await logActivity(
       "Availability Blocked",
       type === "day"
-        ? `Full day blocked on ${date}`
-        : `Slot blocked on ${date} at ${timeSlot}`,
+        ? `Full day blocked on ${date}. Reason: ${reason || "No reason"}`
+        : `Slot blocked on ${date} at ${timeSlot}. Reason: ${
+            reason || "No reason"
+          }`,
       "availability"
     );
 
@@ -133,6 +174,8 @@ const blockSlotOrDay = async (req, res) => {
       block,
     });
   } catch (error) {
+    console.error("Block Slot Or Day Error:", error.message);
+
     res.status(500).json({
       success: false,
       message: "Failed to block slot/day",
@@ -140,21 +183,33 @@ const blockSlotOrDay = async (req, res) => {
   }
 };
 
+/* =====================================
+   GET ALL BLOCKED SLOTS
+===================================== */
+
 const getBlockedSlots = async (req, res) => {
   try {
-    const blockedSlots = await BlockedSlot.find().sort({ createdAt: -1 });
+    const blockedSlots = await BlockedSlot.find().sort({
+      createdAt: -1,
+    });
 
     res.json({
       success: true,
       blockedSlots,
     });
   } catch (error) {
+    console.error("Get Blocked Slots Error:", error.message);
+
     res.status(500).json({
       success: false,
       message: "Failed to fetch blocked slots",
     });
   }
 };
+
+/* =====================================
+   DELETE BLOCKED SLOT OR DAY
+===================================== */
 
 const deleteBlockedSlot = async (req, res) => {
   try {
@@ -180,12 +235,18 @@ const deleteBlockedSlot = async (req, res) => {
       message: "Blocked slot/day removed",
     });
   } catch (error) {
+    console.error("Delete Blocked Slot Error:", error.message);
+
     res.status(500).json({
       success: false,
       message: "Failed to remove blocked slot/day",
     });
   }
 };
+
+/* =====================================
+   EXPORT CONTROLLERS
+===================================== */
 
 module.exports = {
   getUnavailableSlots,

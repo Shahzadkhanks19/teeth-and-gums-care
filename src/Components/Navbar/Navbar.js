@@ -16,9 +16,8 @@ function Navbar() {
 
   return (
     <>
-      {/* =====================================
-          TOP HEADER BAR
-      ====================================== */}
+    <header className="site-header-wrapper">
+      {/* TOP HEADER BAR */}
       <div className="top-bar">
         <div className="header-container">
           <div className="top-bar-inner">
@@ -77,13 +76,10 @@ function Navbar() {
         </div>
       </div>
 
-      {/* =====================================
-          MAIN NAVBAR
-      ====================================== */}
+      {/* MAIN NAVBAR */}
       <nav className="main-navbar">
         <div className="header-container">
           <div className="nav-inner">
-            {/* LOGO */}
             <Link
               className="navbar-brand"
               to="/"
@@ -103,7 +99,6 @@ function Navbar() {
               </div>
             </Link>
 
-            {/* MOBILE MENU BUTTON */}
             <button
               className={`nav-toggler${menuOpen ? " open" : ""}`}
               onClick={() => setMenuOpen(!menuOpen)}
@@ -115,7 +110,6 @@ function Navbar() {
               <span></span>
             </button>
 
-            {/* NAV LINKS + CTA BUTTONS */}
             <div className={`nav-collapse${menuOpen ? " show" : ""}`}>
               <ul className="nav-menu">
                 <li>
@@ -204,6 +198,8 @@ function Navbar() {
           </div>
         </div>
       </nav>
+    </header>
+    <div className="navbar-spacer"></div>
     </>
   );
 }
